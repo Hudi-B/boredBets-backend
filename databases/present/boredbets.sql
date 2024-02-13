@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2024. Feb 08. 12:55
--- Kiszolgáló verziója: 10.4.32-MariaDB
--- PHP verzió: 8.0.30
+-- Létrehozás ideje: 2024. Feb 13. 17:56
+-- Kiszolgáló verziója: 10.4.28-MariaDB
+-- PHP verzió: 8.0.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -34,6 +34,14 @@ CREATE TABLE `horses` (
   `stallion` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- A tábla adatainak kiíratása `horses`
+--
+
+INSERT INTO `horses` (`id`, `name`, `age`, `stallion`) VALUES
+('a80a8f02-3c08-4d05-8cd9-29e75e8ac99e', 'paci2', 69, 0),
+('d7b63fd3-1203-4eef-96a7-5fff5edacc5b', 'paci', 23, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -46,18 +54,35 @@ CREATE TABLE `jockey` (
   `quality` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- A tábla adatainak kiíratása `jockey`
+--
+
+INSERT INTO `jockey` (`id`, `name`, `quality`) VALUES
+('46a8ad88-a6af-4f30-bf6e-db4583884aa4', 'emese', 2),
+('7188e5bb-4630-47d1-a062-5514edbc6782', 'lovag', 5);
+
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `participant`
+-- Tábla szerkezet ehhez a táblához `participants`
 --
 
-CREATE TABLE `participant` (
+CREATE TABLE `participants` (
+  `Id` char(36) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
   `race_id` char(36) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
   `horse_id` char(36) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
   `jockey_id` char(36) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
   `placement` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- A tábla adatainak kiíratása `participants`
+--
+
+INSERT INTO `participants` (`Id`, `race_id`, `horse_id`, `jockey_id`, `placement`) VALUES
+('08dc28cb-a2b4-413c-8a7b-4e8386b7990b', 'ff01a0f4-44f4-4943-8cca-d9ab6b8551c6', 'd7b63fd3-1203-4eef-96a7-5fff5edacc5b', '46a8ad88-a6af-4f30-bf6e-db4583884aa4', 0),
+('08dc28cb-d12f-4b0c-8fbc-bf94d6791664', 'ff01a0f4-44f4-4943-8cca-d9ab6b8551c6', 'd7b63fd3-1203-4eef-96a7-5fff5edacc5b', '46a8ad88-a6af-4f30-bf6e-db4583884aa4', 0);
 
 -- --------------------------------------------------------
 
@@ -67,11 +92,31 @@ CREATE TABLE `participant` (
 
 CREATE TABLE `races` (
   `id` char(36) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
-  `race_time` datetime NOT NULL,
+  `race_time` double NOT NULL,
   `race_scheduled` datetime NOT NULL,
   `weather` varchar(255) DEFAULT NULL,
   `track_id` char(36) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- A tábla adatainak kiíratása `races`
+--
+
+INSERT INTO `races` (`id`, `race_time`, `race_scheduled`, `weather`, `track_id`) VALUES
+('036453a3-d760-4b54-948d-fa3a28f43fa4', 43, '2024-02-03 19:11:31', 'mi', '6951f577-3213-4561-9275-98a3bcfe9844'),
+('2c31f557-ed21-44b0-b78b-2fe5713f4b74', 54, '2024-02-14 19:19:02', 'jg', '6951f577-3213-4561-9275-98a3bcfe9844'),
+('3cc883ae-7f46-44d9-b1d4-808b5aa80251', 342, '2024-02-28 19:19:02', 'wfwe', '6951f577-3213-4561-9275-98a3bcfe9844'),
+('50b50aec-30c5-4406-807d-64bb134c092b', 45, '2024-02-04 18:32:26', 'd', '6951f577-3213-4561-9275-98a3bcfe9844'),
+('5bfd7f3e-c9a4-425a-b09b-520994da6c1a', 45, '2024-02-06 18:32:26', 'c', '6951f577-3213-4561-9275-98a3bcfe9844'),
+('5dab46f5-3ff1-4666-996d-0548c865b89c', 87, '2024-02-12 19:19:02', 'ouui', '6951f577-3213-4561-9275-98a3bcfe9844'),
+('93053cd6-a709-4bc1-8d03-3ee8fc0f1a2f', 23, '2024-02-24 19:19:02', 'oilkj', '6951f577-3213-4561-9275-98a3bcfe9844'),
+('9a811ac4-5491-49fa-995e-611e49fc1c42', 43, '2024-02-01 19:11:31', 'et', '6951f577-3213-4561-9275-98a3bcfe9844'),
+('adc1d348-ac1f-4e2a-bf01-0373b14eec04', 58, '2024-02-06 18:32:26', 'b', '6951f577-3213-4561-9275-98a3bcfe9844'),
+('b76bcb57-581e-43c8-9d5c-f27a8037f412', 34, '2024-02-11 19:19:02', 'asd', '6951f577-3213-4561-9275-98a3bcfe9844'),
+('b793627c-debb-4378-acb1-dad20d530f12', 69, '2024-02-18 19:19:02', 'ryr', '6951f577-3213-4561-9275-98a3bcfe9844'),
+('c508f4a5-35ae-4e44-b428-14479db3c3eb', 33, '2024-02-06 19:11:31', 'rr', '6951f577-3213-4561-9275-98a3bcfe9844'),
+('f474f671-493f-4eca-a771-35e1d28dbd3e', 56, '2024-02-06 18:32:26', 'a', '6951f577-3213-4561-9275-98a3bcfe9844'),
+('ff01a0f4-44f4-4943-8cca-d9ab6b8551c6', 65, '2024-02-10 17:29:27', 'esos', '6951f577-3213-4561-9275-98a3bcfe9844');
 
 -- --------------------------------------------------------
 
@@ -87,6 +132,13 @@ CREATE TABLE `tracks` (
   `surface` varchar(255) DEFAULT NULL,
   `oval` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- A tábla adatainak kiíratása `tracks`
+--
+
+INSERT INTO `tracks` (`id`, `name`, `country`, `length`, `surface`, `oval`) VALUES
+('6951f577-3213-4561-9275-98a3bcfe9844', 'monaco', 'Monaco', 500, 'beton(hofi)', 1);
 
 -- --------------------------------------------------------
 
@@ -160,7 +212,7 @@ CREATE TABLE `__efmigrationshistory` (
 --
 
 INSERT INTO `__efmigrationshistory` (`MigrationId`, `ProductVersion`) VALUES
-('20240208115406_eleventh', '8.0.0');
+('20240208172217_thirteenth', '8.0.0');
 
 --
 -- Indexek a kiírt táblákhoz
@@ -179,9 +231,10 @@ ALTER TABLE `jockey`
   ADD PRIMARY KEY (`id`);
 
 --
--- A tábla indexei `participant`
+-- A tábla indexei `participants`
 --
-ALTER TABLE `participant`
+ALTER TABLE `participants`
+  ADD PRIMARY KEY (`Id`),
   ADD KEY `horse_id` (`horse_id`),
   ADD KEY `jockey_id` (`jockey_id`),
   ADD KEY `race_id` (`race_id`);
@@ -211,8 +264,8 @@ ALTER TABLE `users`
 ALTER TABLE `user_bets`
   ADD PRIMARY KEY (`Id`),
   ADD KEY `IX_user_bets_user_id` (`user_id`),
-  ADD KEY `horse_id` (`horse_id`),
-  ADD KEY `race_id` (`race_id`);
+  ADD KEY `horse_id1` (`horse_id`),
+  ADD KEY `race_id1` (`race_id`);
 
 --
 -- A tábla indexei `user_cards`
@@ -248,9 +301,9 @@ ALTER TABLE `user_cards`
 --
 
 --
--- Megkötések a táblához `participant`
+-- Megkötések a táblához `participants`
 --
-ALTER TABLE `participant`
+ALTER TABLE `participants`
   ADD CONSTRAINT `participant_ibfk_1` FOREIGN KEY (`race_id`) REFERENCES `races` (`id`),
   ADD CONSTRAINT `participant_ibfk_2` FOREIGN KEY (`horse_id`) REFERENCES `horses` (`id`),
   ADD CONSTRAINT `participant_ibfk_3` FOREIGN KEY (`jockey_id`) REFERENCES `jockey` (`id`);
