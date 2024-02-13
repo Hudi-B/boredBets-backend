@@ -8,7 +8,7 @@ public partial class Track
     public Guid Id { get; set; }
 
     public string Name { get; set; }
-
+    
     public string Country { get; set; }
 
     public float Length { get; set; }

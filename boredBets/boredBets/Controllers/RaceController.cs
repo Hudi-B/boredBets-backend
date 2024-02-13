@@ -1,6 +1,7 @@
 ﻿using boredBets.Models;
 using boredBets.Models.Dtos;
 using boredBets.Repositories.Interface;
+using boredBets.Repositories.Viewmodels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -41,6 +42,16 @@ namespace boredBets.Controllers
         public async Task<ActionResult<Race>> GetAllFutureRaces()
         {
             return StatusCode(201, await _raceInterface.GetAllFutureRaces());
+        }
+        [HttpGet("GetByRaceId")]
+        public async Task<ActionResult<Race>> GetByRaceId(Guid Id)
+        {
+            return StatusCode(201, await _raceInterface.GetByRaceId(Id));
+        }
+        [HttpGet("GetByCountry")]
+        public async Task<ActionResult<Race>> GetByCountry(string country)
+        {
+            return StatusCode(201, await _raceInterface.GetByCountry(country));
         }
     }
 }
