@@ -144,5 +144,64 @@ namespace boredBets.Repositories
             }
         }
 
+        public async Task<Race> GetByRaceId(Guid RaceId)
+        {
+            try
+            {
+                var race = await _context.Races.SingleOrDefaultAsync(x => x.Id.Equals(RaceId));
+                if (race == null)
+                {
+                    throw new Exception();
+                }
+                return race;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error: {e.Message}");
+
+                if (e.InnerException != null)
+                {
+                    Console.WriteLine($"Inner Exception: {e.InnerException.Message}");
+                }
+
+                throw new Exception("An error occurred while saving the entity changes.", e);
+            }
+        }
+
+        public async Task<IEnumerable<GetByCountryViewModel>> GetByCountry(string country)
+        {
+            try
+            {
+                var racecountries = await _context.Tracks
+                    .Include(t => t.Races)
+                    .Where(t => t.Country == country)
+                    .SelectMany(t => t.Races.DefaultIfEmpty(), (t, race) => new GetByCountryViewModel
+                    {
+                        Id = race != null ? race.Id : Guid.Empty,
+                        Country = t.Country,
+                        Length = race != null ? t.Length : 0,
+                        Weather = race.Weather,
+                        Oval = t.Oval,
+                    })
+                    .ToListAsync();
+
+                return racecountries;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error: {e.Message}");
+
+                if (e.InnerException != null)
+                {
+                    Console.WriteLine($"Inner Exception: {e.InnerException.Message}");
+                }
+
+                throw new Exception("An error occurred while retrieving the entity.", e);
+            }
+        }
+
+
+
+
     }
 }

@@ -1,0 +1,11 @@
+﻿namespace boredBets.Repositories.Viewmodels
+{
+    public class GetByCountryViewModel
+    {
+        public Guid Id { get; set; }
+        public string Country { get; set; }
+        public float Length { get; set; }
+        public string Weather { get; set; }
+        public bool Oval { get; set; }
+    }
+}
