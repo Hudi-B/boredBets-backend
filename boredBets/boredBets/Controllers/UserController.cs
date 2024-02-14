@@ -26,5 +26,14 @@ namespace boredBets.Controllers
                 return StatusCode(201, await userInterface.Post(userCreateDto)); 
             }
         }
+        [HttpGet("GetByEmail")]
+        public async Task<ActionResult<User>> GetByEmail(string Email) 
+        {
+            if (Email == null) { return BadRequest(); }
+            else
+            {
+                return StatusCode(201, await userInterface.GetByEmail(Email));
+            }
+        } 
     }
 }

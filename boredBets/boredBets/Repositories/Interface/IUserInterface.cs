@@ -6,5 +6,6 @@ namespace boredBets.Repositories.Interface
     public interface IUserInterface
     {
         Task<User> Post(UserCreateDto userCreateDto);
+        Task<IEnumerable<User>> GetByEmail(string Email);
     }
 }
