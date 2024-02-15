@@ -171,13 +171,13 @@ public partial class BoredbetsContext : DbContext
 
             entity.Property(e => e.Id)
                 .ValueGeneratedOnAdd()
-                .HasColumnName("Id"); // Changing the column name to "ID" for Id with uppercase
+                .HasColumnName("Id");
 
             entity.Property(e => e.BetAmount).HasColumnName("bet_amount");
             entity.Property(e => e.HorseId).HasColumnName("horse_id");
             entity.Property(e => e.RaceId).HasColumnName("race_id");
 
-            entity.Property(e => e.UserId).HasColumnName("user_id"); // Changing the column name to "USERID" for UserId with uppercase
+            entity.Property(e => e.UserId).HasColumnName("user_id"); 
 
             entity.HasOne(d => d.Horse).WithMany(p => p.UserBets)
                 .HasForeignKey(d => d.HorseId)
@@ -188,7 +188,7 @@ public partial class BoredbetsContext : DbContext
                 .HasConstraintName("user_bets_ibfk_1");
 
             entity.HasOne(d => d.User).WithMany(p => p.UserBets)
-                .HasForeignKey(d => d.UserId) // Assuming UserId is the foreign key referencing the User entity
+                .HasForeignKey(d => d.UserId) 
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("user_bets_ibfk_3");
         });
@@ -199,10 +199,8 @@ public partial class BoredbetsContext : DbContext
         {
             entity.ToTable("user_cards");
 
-            // Set the primary key
             entity.HasKey(e => e.CreditcardNum).HasName("PRIMARY");
 
-            // Define properties
             entity.Property(e => e.CreditcardNum)
                 .HasColumnType("int")
                 .HasColumnName("creditcard_num")

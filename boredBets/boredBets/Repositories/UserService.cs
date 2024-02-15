@@ -20,8 +20,11 @@ namespace boredBets.Repositories
         {
             try
             {
+
                 var racecountries = await _context.Users
                     .Where(u => u.Email == Email)
+                    .Include(u => u.UserDetail)
+                    .Where(u => !u.UserDetail.IsPrivate)
                     .ToListAsync();
 
 
