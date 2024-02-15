@@ -18,7 +18,7 @@ namespace boredBets.Controllers
             this.trackInterface = trackInterface;
         }
 
-        [HttpPost]
+        [HttpPost("TrackPost")]
         public async Task<ActionResult<Track>> Post(TrackCreateDto trackCreateDto)
         {
             return StatusCode(201, await trackInterface.Post(trackCreateDto));

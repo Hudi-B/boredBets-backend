@@ -17,7 +17,7 @@ namespace boredBets.Controllers
             _userBetInterface = userBetInterface;
         }
 
-        [HttpPost]
+        [HttpPost("UserBetPost")]
         public async Task<ActionResult<UserBet>> Post(Guid Id,Guid HorseId ,Guid RaceId, UserBetCreateDto userBetCreateDto) 
         {
             return StatusCode(201, await _userBetInterface.Post(Id, HorseId,RaceId,userBetCreateDto));

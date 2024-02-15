@@ -18,7 +18,7 @@ namespace boredBets.Controllers
             _raceInterface = raceInterface;
         }
 
-        [HttpPost]
+        [HttpPost("RacePost")]
         public async Task<ActionResult<Race>> Post(Guid TrackId, RaceCreateDto raceCreateDto)
         {
             return StatusCode(201, await _raceInterface.Post(TrackId, raceCreateDto));
@@ -38,7 +38,7 @@ namespace boredBets.Controllers
         {
             return StatusCode(201, await _raceInterface.GetFutureRaces());
         }
-        [HttpGet("GetAllFutureFiveRaces")]
+        [HttpGet("GetAllFutureRaces")]
         public async Task<ActionResult<Race>> GetAllFutureRaces()
         {
             return StatusCode(201, await _raceInterface.GetAllFutureRaces());

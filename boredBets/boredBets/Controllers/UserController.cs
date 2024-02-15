@@ -17,7 +17,7 @@ namespace boredBets.Controllers
             this.userInterface = userInterface;
         }
 
-        [HttpPost]
+        [HttpPost("UserRegister")]
         public async Task<ActionResult<User>> Post(UserCreateDto userCreateDto) 
         {
             if (userCreateDto == null) { return BadRequest(); }
@@ -25,6 +25,11 @@ namespace boredBets.Controllers
             { 
                 return StatusCode(201, await userInterface.Post(userCreateDto)); 
             }
+        }
+        [HttpGet("UserLogin")]
+        public async Task<ActionResult<string>> Get(string Email, string Password)
+        {
+            return StatusCode(201, await userInterface.Get(Email, Password));
         }
         [HttpGet("GetByEmail")]
         public async Task<ActionResult<User>> GetByEmail(string Email) 
@@ -34,6 +39,8 @@ namespace boredBets.Controllers
             {
                 return StatusCode(201, await userInterface.GetByEmail(Email));
             }
-        } 
+        }
+
+        
     }
 }

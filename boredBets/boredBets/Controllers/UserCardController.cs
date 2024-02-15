@@ -17,7 +17,7 @@ namespace boredBets.Controllers
             _userCardInterface = userCardInterface;
         }
 
-        [HttpPost]
+        [HttpPost("UserCardPost")]
         public async Task<ActionResult<UserCard>> Post(Guid Id, UserCardCreateDto userCardCreateDto)
         {
             if (userCardCreateDto.CreditcardNum == null)

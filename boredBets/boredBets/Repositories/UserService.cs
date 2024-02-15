@@ -93,5 +93,38 @@ namespace boredBets.Repositories
             }
         }
 
+        public async Task<User> Get(string email, string password)
+        {
+            try
+            {
+                var user = await _context.Users
+                                          .Include(x => x.UserCards)
+                                          .Include(x => x.UserDetail)
+                                          .Include (x => x.UserBets)
+                                          .FirstOrDefaultAsync(x => x.Email == email && x.Password == password);
+                                          
+
+                if (user == null)
+                {
+                    throw new Exception("User not found"); 
+                }
+
+
+
+                return user;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error: {e.Message}");
+
+                if (e.InnerException != null)
+                {
+                    Console.WriteLine($"Inner Exception: {e.InnerException.Message}");
+                }
+
+                throw;
+            }
+        }
+
     }
 }

@@ -17,7 +17,7 @@ namespace boredBets.Controllers
             this.jockeyInterface = jockeyInterface;
         }
 
-        [HttpPost]
+        [HttpPost("JockeyPost")]
         public async Task<ActionResult<Jockey>> Post(JockeyCreateDto jockeyCreateDto)
         {
             return StatusCode(201, await jockeyInterface.Post(jockeyCreateDto));

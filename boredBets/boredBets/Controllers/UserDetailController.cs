@@ -17,7 +17,7 @@ namespace boredBets.Controllers
             _userDetail = userDetail;
         }
 
-        [HttpPost]
+        [HttpPost("UserDetailPost")]
         public async Task<ActionResult<UserDetail>> Post(Guid Id, UserDetailCreateDto userDetailCreateDto) 
         {
             return StatusCode(201, await _userDetail.Post(Id, userDetailCreateDto));

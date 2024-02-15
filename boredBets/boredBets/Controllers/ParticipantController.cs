@@ -17,7 +17,7 @@ namespace boredBets.Controllers
             _participant = participant;
         }
 
-        [HttpPost]
+        [HttpPost("ParticipantPost")]
         public async Task<ActionResult<Participant>> Post(Guid RaceId, Guid HorseId, Guid JockeyId, ParticipantCreateDto participantCreateDto) 
         {
             return StatusCode(201, await _participant.Post(RaceId,HorseId,JockeyId, participantCreateDto));

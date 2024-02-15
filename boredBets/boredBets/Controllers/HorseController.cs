@@ -17,7 +17,7 @@ namespace boredBets.Controllers
             this.horseInterface = horseInterface;
         }
 
-        [HttpPost]
+        [HttpPost("HorsePost")]
         public async Task<ActionResult<Horse>> Post(HorseCreateDto horseCreateDto) 
         {
             return StatusCode(201, await horseInterface.Post(horseCreateDto));
