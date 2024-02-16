@@ -9,6 +9,7 @@
 *.user
 *.userosscache
 *.sln.docstates
+.boredBets/boredBets/appsettings.json
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
