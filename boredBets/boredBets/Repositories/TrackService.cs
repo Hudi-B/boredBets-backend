@@ -1,6 +1,7 @@
 ﻿using boredBets.Models;
 using boredBets.Models.Dtos;
 using boredBets.Repositories.Interface;
+using Microsoft.EntityFrameworkCore;
 
 namespace boredBets.Repositories
 {
@@ -28,6 +29,10 @@ namespace boredBets.Repositories
             await _context.SaveChangesAsync();
 
             return tracks;
+        }
+        public async Task<IEnumerable<Track>> GetAllTrack()
+        {
+            return await _context.Tracks.ToListAsync();
         }
     }
 }

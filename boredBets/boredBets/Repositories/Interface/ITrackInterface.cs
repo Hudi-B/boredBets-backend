@@ -6,5 +6,6 @@ namespace boredBets.Repositories.Interface
     public interface ITrackInterface
     {
         Task<Track> Post(TrackCreateDto trackCreateDto);
+        Task<IEnumerable<Track>> GetAllTrack();
     }
 }
