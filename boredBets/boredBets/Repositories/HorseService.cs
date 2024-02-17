@@ -1,6 +1,7 @@
 ﻿using boredBets.Models;
 using boredBets.Models.Dtos;
 using boredBets.Repositories.Interface;
+using Microsoft.EntityFrameworkCore;
 using System.Runtime.CompilerServices;
 
 namespace boredBets.Repositories
@@ -12,6 +13,11 @@ namespace boredBets.Repositories
         public HorseService(BoredbetsContext context)
         {
             _context = context;
+        }
+
+        public async Task<IEnumerable<Horse>> GetAllHorse()
+        {
+            return await _context.Horses.ToListAsync();
         }
 
         public async Task<Horse> Post(HorseCreateDto horseCreateDto)
@@ -28,5 +34,6 @@ namespace boredBets.Repositories
 
             return horses;
         }
+        
     }
 }
