@@ -126,5 +126,35 @@ namespace boredBets.Repositories
             }
         }
 
+        public async Task<IEnumerable<User>> GetByRole(string Role)
+        {
+            try
+            {
+                var userRole = await _context.Users
+                                                    .Where(x => x.Role == Role)
+                                                    .ToListAsync();
+                if (userRole == null)
+                {
+                    new Exception("No user has this role or the role doesn't exist");
+                }
+                return userRole;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error: {e.Message}");
+
+                if (e.InnerException != null)
+                {
+                    Console.WriteLine($"Inner Exception: {e.InnerException.Message}");
+                }
+
+                throw;
+            }
+        }
+
+        public async Task<IEnumerable<User>> GetAllUser()
+        {
+            return await _context.Users.ToListAsync();
+        }
     }
 }
