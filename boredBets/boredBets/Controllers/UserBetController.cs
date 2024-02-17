@@ -22,5 +22,11 @@ namespace boredBets.Controllers
         {
             return StatusCode(201, await _userBetInterface.Post(Id, HorseId,RaceId,userBetCreateDto));
         }
+
+        [HttpGet("GetAllUserBetByUserId")]
+        public async Task<ActionResult<UserBet>> GetAllUserBetByUserId(Guid UserId)
+        {
+            return StatusCode(201, await _userBetInterface.GetAllUserBetsByUserId(UserId));
+        }
     }
 }
