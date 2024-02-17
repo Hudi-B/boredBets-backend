@@ -22,5 +22,11 @@ namespace boredBets.Controllers
         {
             return StatusCode(201, await jockeyInterface.Post(jockeyCreateDto));
         }
+
+        [HttpGet("GetAllJockey")]
+        public async Task<ActionResult<Jockey>> GetAllJockey()
+        {
+            return StatusCode(201, await jockeyInterface.GetAllJockey());
+        }
     }
 }

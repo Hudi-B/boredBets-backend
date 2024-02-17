@@ -14,6 +14,11 @@ namespace boredBets.Repositories
             _context = context;
         }
 
+        public async Task<IEnumerable<Jockey>> GetAllJockey()
+        {
+            return await _context.Jockeys.ToListAsync();
+        }
+
         public async Task<Jockey> Post(JockeyCreateDto jockeyCreateDto)
         {
             var jockeys = new Jockey
@@ -27,5 +32,6 @@ namespace boredBets.Repositories
 
             return jockeys;
         }
+
     }
 }
