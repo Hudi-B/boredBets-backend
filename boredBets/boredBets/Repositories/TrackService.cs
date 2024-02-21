@@ -22,7 +22,6 @@ namespace boredBets.Repositories
                 Name = trackCreateDto.Name,
                 Country = trackCreateDto.Country,
                 Length = trackCreateDto.Length,
-                Surface = trackCreateDto.Surface,
                 Oval = trackCreateDto.Oval,
             };
             await _context.Tracks.AddAsync(tracks);

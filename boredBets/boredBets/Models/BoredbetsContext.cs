@@ -148,9 +148,6 @@ public partial class BoredbetsContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("name");
             entity.Property(e => e.Oval).HasColumnName("oval");
-            entity.Property(e => e.Surface)
-                .HasMaxLength(255)
-                .HasColumnName("surface");
         });
 
         modelBuilder.Entity<User>(entity =>
