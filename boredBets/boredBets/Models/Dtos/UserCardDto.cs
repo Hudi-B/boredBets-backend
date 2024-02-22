@@ -1,4 +1,4 @@
 ﻿namespace boredBets.Models.Dtos
 {
-    public record UserCardCreateDto(int CreditcardNum, int Cvc, string ExpDate, string CardName);
+    public record UserCardCreateDto(string CreditcardNum, string Cvc, string ExpMonth, string ExpYear, string CardName);
 }

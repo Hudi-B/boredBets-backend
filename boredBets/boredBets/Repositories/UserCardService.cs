@@ -38,11 +38,11 @@ namespace boredBets.Repositories
 
         }
 
-        public async Task<UserCard> Post(Guid Id, UserCardCreateDto userCardCreateDto)
+        public async Task<UserCard> Post(Guid UserId, UserCardCreateDto userCardCreateDto)
         {
             try
             {
-                var userDetail = await _context.Users.FirstOrDefaultAsync(x => x.Id == Id);
+                var userDetail = await _context.Users.FirstOrDefaultAsync(x => x.Id == UserId);
 
                 if (userDetail == null)
                 {
@@ -60,7 +60,8 @@ namespace boredBets.Repositories
                 {
                     CreditcardNum = userCardCreateDto.CreditcardNum,
                     Cvc = userCardCreateDto.Cvc,
-                    ExpDate = userCardCreateDto.ExpDate,
+                    ExpMonth = userCardCreateDto.ExpMonth,
+                    ExpYear = userCardCreateDto.ExpYear,
                     CardName = userCardCreateDto.CardName,
                     UserId = userDetail.Id
                 };

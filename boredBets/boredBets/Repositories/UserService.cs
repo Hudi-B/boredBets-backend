@@ -20,15 +20,26 @@ namespace boredBets.Repositories
         {
             try
             {
+                var users = await _context.Users
+                .Where(u => u.Email == Email)
+                .Select(u => new User
+                {
+                    // Select only necessary fields from the User table
+                    Id = u.Id,
+                    Email = u.Email,
+                    Role = u.Role,
+                    Created=u.Created,
+                    // Add other fields as needed, excluding the password
 
-                var racecountries = await _context.Users
-                    .Where(u => u.Email == Email)
-                    .Include(u => u.UserDetail)
-                    .Where(u => !u.UserDetail.IsPrivate)
-                    .ToListAsync();
+                    // Include user details only if not marked as private
+                    UserDetail = !u.UserDetail.IsPrivate
+                        ? u.UserDetail
+                        : new UserDetail { IsPrivate = u.UserDetail.IsPrivate }
+                })
+                .ToListAsync();
 
 
-                return racecountries;
+                return users;
             }
             catch (Exception e)
             {
@@ -42,6 +53,7 @@ namespace boredBets.Repositories
                 throw new Exception("An error occurred while retrieving the entity.", e);
             }
         }
+
 
         public async Task<User> Post(UserCreateDto userCreateDto)
         {
@@ -154,7 +166,9 @@ namespace boredBets.Repositories
 
         public async Task<IEnumerable<User>> GetAllUser()
         {
-            return await _context.Users.ToListAsync();
+            return await _context.Users
+                                        .Include(u => u.UserDetail)
+                                        .ToListAsync();
         }
     }
 }

@@ -1,25 +1,22 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace boredBets.Models
+namespace boredBets.Models;
+
+public partial class UserCard
 {
-    public class UserCard
-    {
-        [Key]
-        public int CreditcardNum { get; set; }
+    public string CreditcardNum { get; set; } = null!;
 
-        public int Cvc { get; set; }
+    public string Cvc { get; set; } = null!;
 
-        public string ExpDate { get; set; }
+    public string ExpYear { get; set; } = null!;
 
-        public string CardName { get; set; }
+    public string ExpMonth { get; set; } = null!;
 
-        [ForeignKey("User")]
-        public Guid UserId { get; set; }
+    public string CardName { get; set; } = null!;
 
-        [JsonIgnore]
-        public virtual User User { get; set; } = null!;
-    }
+    public Guid UserId { get; set; }
+    [JsonIgnore]
+    public virtual User User { get; set; } = null!;
 }
