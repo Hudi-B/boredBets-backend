@@ -33,7 +33,7 @@ namespace boredBets.Controllers
             return StatusCode(201, await userInterface.Get(Email, Password));
         }
 
-        [HttpGet("GetAllUser")]
+        [HttpGet("GetAllUsers")]
         public async Task<ActionResult<User>> GetAllUser() 
         {
             return StatusCode(201, await userInterface.GetAllUser());

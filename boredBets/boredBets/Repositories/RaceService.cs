@@ -55,7 +55,6 @@ namespace boredBets.Repositories
                     RaceScheduled = r.RaceScheduled,
                     Country = r.Track.Country,
                     Length = r.Track.Length,
-                    Oval = r.Track.Oval
                 })
                 .ToListAsync();
 
@@ -95,7 +94,6 @@ namespace boredBets.Repositories
                     RaceScheduled = r.RaceScheduled,
                     Country = r.Track.Country,
                     Length = r.Track.Length,
-                    Oval = r.Track.Oval
                 })
                 .ToListAsync();
 
@@ -181,7 +179,6 @@ namespace boredBets.Repositories
                         Country = t.Country,
                         Length = race != null ? t.Length : 0,
                         Weather = race.Weather,
-                        Oval = t.Oval,
                     })
                     .ToListAsync();
 

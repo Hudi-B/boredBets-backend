@@ -6,6 +6,5 @@
         public string Country { get; set; }
         public float Length { get; set; }
         public string Weather { get; set; }
-        public bool Oval { get; set; }
     }
 }

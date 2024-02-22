@@ -13,7 +13,5 @@ public partial class Track
 
     public float Length { get; set; }
 
-    public bool Oval { get; set; }
-
     public virtual ICollection<Race> Races { get; set; } = new List<Race>();
 }

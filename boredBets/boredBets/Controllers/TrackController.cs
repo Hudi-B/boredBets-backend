@@ -24,7 +24,7 @@ namespace boredBets.Controllers
             return StatusCode(201, await trackInterface.Post(trackCreateDto));
         }
 
-        [HttpGet("GetAllTrack")]
+        [HttpGet("GetAllTracks")]
         public async Task<ActionResult<Track>> GetAllTrack()
         {
             return StatusCode(201, await trackInterface.GetAllTrack());

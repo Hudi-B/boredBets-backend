@@ -8,5 +8,6 @@ namespace boredBets.Repositories.Interface
     {
         Task<UserBet> Post(Guid Id,Guid HorseId,Guid RaceId,UserBetCreateDto userBetCreateDto);
         Task<IEnumerable<UserBet>> GetAllUserBetsByUserId(Guid UserId);
+        Task<IEnumerable<UserBet>> GetAllUserBetsById(Guid Id);
     }
 }

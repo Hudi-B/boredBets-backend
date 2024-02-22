@@ -15,6 +15,32 @@ namespace boredBets.Repositories
             _context = context;
         }
 
+        public async Task<IEnumerable<UserBet>> GetAllUserBetsById(Guid Id)
+        {
+            try
+            {
+                var id = await _context.UserBets
+                                            .Where(x => x.Id == Id)
+                                            .ToListAsync();
+                if (id == null) 
+                {
+                    throw new Exception("User doesn1t exists");
+                }
+
+                return id;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error: {e.Message}");
+                if (e.InnerException != null)
+                {
+                    Console.WriteLine($"Inner Exception: {e.InnerException.Message}");
+                }
+
+                throw new Exception("An error occurred while saving the entity changes.", e);
+            }
+        }
+
         public async Task<IEnumerable<UserBet>> GetAllUserBetsByUserId(Guid UserId)
         {
             try
