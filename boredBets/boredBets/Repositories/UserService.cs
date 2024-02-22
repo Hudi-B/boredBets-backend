@@ -16,7 +16,7 @@ namespace boredBets.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<User>> GetByEmail(string Email)//tbc check if private
+        public async Task<IEnumerable<User>> GetByEmail(string Email)
         {
             try
             {

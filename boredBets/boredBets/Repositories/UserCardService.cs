@@ -14,18 +14,42 @@ namespace boredBets.Repositories
             _context = context;
         }
 
+        public async Task<IEnumerable<UserCard>> GetAllUserCardsByUserId(Guid UserId)
+        {
+            try
+            {
+                var userid = await _context.UserCards
+                                                 .Where(x => x.UserId == UserId)
+                                                 .ToListAsync();
+
+                if (userid == null) 
+                {
+                    throw new Exception("User doesn't have a card");
+                }
+
+                return userid;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error: {e.Message}");
+
+                throw new Exception("An error occurred while saving the entity changes.", e);
+            }
+
+        }
+
         public async Task<UserCard> Post(Guid Id, UserCardCreateDto userCardCreateDto)
         {
             try
             {
-                var userDetail = await _context.UserDetails.FirstAsync(x => x.UserId == Id);
+                var userDetail = await _context.Users.FirstOrDefaultAsync(x => x.Id == Id);
 
                 if (userDetail == null)
                 {
-                    return null;
+                    throw new Exception("User doesn't exists");
                 }
 
-                var existingUserCard = await _context.UserCards.FirstAsync(x => x.CreditcardNum == userCardCreateDto.CreditcardNum);
+                var existingUserCard = await _context.UserCards.FirstOrDefaultAsync(x => x.CreditcardNum == userCardCreateDto.CreditcardNum);
 
                 if (existingUserCard != null)
                 {
@@ -38,7 +62,7 @@ namespace boredBets.Repositories
                     Cvc = userCardCreateDto.Cvc,
                     ExpDate = userCardCreateDto.ExpDate,
                     CardName = userCardCreateDto.CardName,
-                    UserId = userDetail.UserId 
+                    UserId = userDetail.Id
                 };
 
                 _context.UserCards.Add(userCard);

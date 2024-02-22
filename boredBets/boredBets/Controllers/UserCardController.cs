@@ -20,11 +20,7 @@ namespace boredBets.Controllers
         [HttpPost("UserCardPost")]
         public async Task<ActionResult<UserCard>> Post(Guid Id, UserCardCreateDto userCardCreateDto)
         {
-            if (userCardCreateDto.CreditcardNum == null)
-            {
-                return BadRequest("Credit card number cannot be null");
-            }
-
+         
             var result = await _userCardInterface.Post(Id, userCardCreateDto);
 
             if (result == null)
@@ -33,6 +29,12 @@ namespace boredBets.Controllers
             }
 
             return StatusCode(201, result);
+        }
+
+        [HttpGet("GetAllUserCardsByUserId")]
+        public async Task<ActionResult<UserCard>> GetAllUserCardsByUserId(Guid UserId) 
+        {
+            return StatusCode(201, await _userCardInterface.GetAllUserCardsByUserId(UserId));
         }
 
     }
