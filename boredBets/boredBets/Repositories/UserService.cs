@@ -2,13 +2,48 @@
 using boredBets.Models.Dtos;
 using boredBets.Repositories.Interface;
 using boredBets.Repositories.Viewmodels;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Diagnostics.Metrics;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
 
 namespace boredBets.Repositories
 {
     public class UserService : IUserInterface
     {
+        private string GenerateToken(Guid UserId)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = GenerateSecureKey(); // Generate a secure key with sufficient key size
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[] 
+                {
+                    new Claim(ClaimTypes.NameIdentifier,UserId.ToString()) 
+                }),
+                Expires = DateTime.UtcNow.AddDays(1), //token expires in 1 day
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            
+            return tokenHandler.WriteToken(token);
+
+        }
+
+        private byte[] GenerateSecureKey()
+        {
+            using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
+            {
+                byte[] key = new byte[32]; // 32 bytes = 256 bits
+                rng.GetBytes(key);
+                return key;
+            }
+        }
         private string HashPassword(string password) 
         {
             return BCrypt.Net.BCrypt.HashPassword(password);
@@ -130,8 +165,11 @@ namespace boredBets.Repositories
                     throw new Exception("Unauthorized"); 
                 }
 
+                var token = GenerateToken(user.Id);
 
-                return user;
+
+                return user; 
+                
             }
             catch (Exception e)
             {
