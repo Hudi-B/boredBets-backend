@@ -9,6 +9,16 @@ namespace boredBets.Repositories
 {
     public class UserService : IUserInterface
     {
+        private string HashPassword(string password) 
+        {
+            return BCrypt.Net.BCrypt.HashPassword(password);
+        }
+
+        private bool VerifyHashedPassword(string enteredPassword, string storedPassword) 
+        {
+            return BCrypt.Net.BCrypt.Verify(enteredPassword, storedPassword);
+        }
+
         private readonly BoredbetsContext _context;
 
         public UserService(BoredbetsContext context)
@@ -24,14 +34,11 @@ namespace boredBets.Repositories
                 .Where(u => u.Email == Email)
                 .Select(u => new User
                 {
-                    // Select only necessary fields from the User table
                     Id = u.Id,
                     Email = u.Email,
                     Role = u.Role,
                     Created=u.Created,
-                    // Add other fields as needed, excluding the password
-
-                    // Include user details only if not marked as private
+                   
                     UserDetail = !u.UserDetail.IsPrivate
                         ? u.UserDetail
                         : new UserDetail { IsPrivate = u.UserDetail.IsPrivate }
@@ -55,7 +62,7 @@ namespace boredBets.Repositories
         }
 
 
-        public async Task<User> Post(UserCreateDto userCreateDto)
+        public async Task<User> Post(UserCreateDto userCreateDto) //register
         {
             try
             {
@@ -66,12 +73,14 @@ namespace boredBets.Repositories
                     throw new InvalidOperationException("User with this email already exists");
                 }
 
+                string hashedpassword = HashPassword(userCreateDto.Password);
+
                 var user = new User
                 {
                     Id = Guid.NewGuid(),
                     Email = userCreateDto.Email,
                     Role = "Member",
-                    Password = userCreateDto.Password,
+                    Password = hashedpassword,
                     Created = DateTime.UtcNow,
                 };
 
@@ -90,7 +99,7 @@ namespace boredBets.Repositories
                 await _context.UserDetails.AddAsync(userDetails);
                 await _context.SaveChangesAsync();
 
-                return user;
+                return user;//only id
             }
             catch (Exception e)
             {
@@ -105,7 +114,7 @@ namespace boredBets.Repositories
             }
         }
 
-        public async Task<User> Get(string email, string password)
+        public async Task<User> Get(string email, string password) //login
         {
             try
             {
@@ -113,14 +122,13 @@ namespace boredBets.Repositories
                                           .Include(x => x.UserCards)
                                           .Include(x => x.UserDetail)
                                           .Include (x => x.UserBets)
-                                          .FirstOrDefaultAsync(x => x.Email == email && x.Password == password);
+                                          .FirstOrDefaultAsync(x => x.Email == email);
                                           
 
-                if (user == null)
+                if (user == null || !VerifyHashedPassword(password,user.Password))
                 {
-                    throw new Exception("User not found"); 
+                    throw new Exception("Unauthorized"); 
                 }
-
 
 
                 return user;
