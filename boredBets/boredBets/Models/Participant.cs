@@ -15,13 +15,10 @@ public partial class Participant
     public Guid? JockeyId { get; set; }
 
     public int? Placement { get; set; }
-
     [JsonIgnore]
     public virtual Horse? Horse { get; set; }
-
     [JsonIgnore]
     public virtual Jockey? Jockey { get; set; }
-
     [JsonIgnore]
     public virtual Race? Race { get; set; }
 }

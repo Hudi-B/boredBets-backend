@@ -13,8 +13,6 @@ public partial class Track
     public string? Country { get; set; }
 
     public float Length { get; set; }
-
     [JsonIgnore]
-
     public virtual ICollection<Race> Races { get; set; } = new List<Race>();
 }

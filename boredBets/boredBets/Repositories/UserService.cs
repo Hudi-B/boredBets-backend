@@ -10,55 +10,63 @@ using System.Diagnostics.Metrics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace boredBets.Repositories
 {
     public class UserService : IUserInterface
     {
-        private string GenerateToken(Guid UserId)
+       
+        private readonly string _jwtSecret = "d7z9ncS3TqH0QtdM9L2DghR4FXvJYlVujjbK8YrAhzU=";
+        private readonly string _jwtRefreshSecret = "Wt5XtVFvBdC3NkP8EwYrQgM1JsK6DbqMnZwHfVrKwRt=";
+
+        private readonly BoredbetsContext _context;
+        private readonly IConfiguration _configuration;
+
+        public UserService(BoredbetsContext context, IConfiguration configuration)
+        {
+            _context = context;
+            _configuration = configuration;
+        }
+        private string GenerateRefreshToken(string email)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = GenerateSecureKey(); // Generate a secure key with sufficient key size
+            var key = Encoding.ASCII.GetBytes(_jwtRefreshSecret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new Claim[] 
-                {
-                    new Claim(ClaimTypes.NameIdentifier,UserId.ToString()) 
-                }),
-                Expires = DateTime.UtcNow.AddDays(1), //token expires in 1 day
+                Subject = new ClaimsIdentity(new Claim[] { new Claim("userEmail", email) }),
+                Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
-
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            
             return tokenHandler.WriteToken(token);
-
         }
 
-        private byte[] GenerateSecureKey()
+        private string GenerateAccessToken(string email)
         {
-            using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(_jwtSecret);
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
-                byte[] key = new byte[32]; // 32 bytes = 256 bits
-                rng.GetBytes(key);
-                return key;
-            }
+                Subject = new ClaimsIdentity(new Claim[] { new Claim("userEmail", email) }),
+                Expires = DateTime.UtcNow.AddMinutes(59),
+                Issuer = _configuration["Jwt:Issuer"],
+                Audience = _configuration["Jwt:Audience"],
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
+
         private string HashPassword(string password) 
         {
-            return BCrypt.Net.BCrypt.HashPassword(password);
+            string salt = BCrypt.Net.BCrypt.GenerateSalt(5);
+            return BCrypt.Net.BCrypt.HashPassword(password,salt);
         }
 
         private bool VerifyHashedPassword(string enteredPassword, string storedPassword) 
         {
             return BCrypt.Net.BCrypt.Verify(enteredPassword, storedPassword);
-        }
-
-        private readonly BoredbetsContext _context;
-
-        public UserService(BoredbetsContext context)
-        {
-            _context = context;
         }
 
         public async Task<IEnumerable<User>> GetByEmail(string Email)
@@ -71,7 +79,7 @@ namespace boredBets.Repositories
                 {
                     Id = u.Id,
                     Email = u.Email,
-                    Role = u.Role,
+                    Admin = u.Admin,
                     Created=u.Created,
                    
                     UserDetail = !u.UserDetail.IsPrivate
@@ -97,7 +105,7 @@ namespace boredBets.Repositories
         }
 
 
-        public async Task<User> Post(UserCreateDto userCreateDto) //register
+        public async Task<User> Register(UserCreateDto userCreateDto) //register
         {
             try
             {
@@ -114,9 +122,10 @@ namespace boredBets.Repositories
                 {
                     Id = Guid.NewGuid(),
                     Email = userCreateDto.Email,
-                    Role = "Member",
+                    Admin = false,
                     Password = hashedpassword,
                     Created = DateTime.UtcNow,
+                    RefreshToken=GenerateRefreshToken(userCreateDto.Email)
                 };
 
                 await _context.Users.AddAsync(user);
@@ -149,7 +158,7 @@ namespace boredBets.Repositories
             }
         }
 
-        public async Task<User> Get(string email, string password) //login
+        public async Task<object> Login(string email, string password) //login
         {
             try
             {
@@ -159,17 +168,22 @@ namespace boredBets.Repositories
                                           .Include (x => x.UserBets)
                                           .FirstOrDefaultAsync(x => x.Email == email);
                                           
-
                 if (user == null || !VerifyHashedPassword(password,user.Password))
                 {
                     throw new Exception("Unauthorized"); 
                 }
 
-                var token = GenerateToken(user.Id);
+                var accessToken = GenerateAccessToken(user.Email);
+                var refreshToken = user.RefreshToken;
 
+                var response = new
+                {
+                    AccessToken = accessToken,
+                    RefreshToken = refreshToken,
+                    UserId = user.Id,
+                };
 
-                return user; 
-                
+                return response;
             }
             catch (Exception e)
             {
@@ -184,7 +198,7 @@ namespace boredBets.Repositories
             }
         }
 
-        public async Task<IEnumerable<User>> GetByRole(string Role)
+        /*public async Task<IEnumerable<User>> GetByRole(string Role)
         {
             try
             {
@@ -208,7 +222,7 @@ namespace boredBets.Repositories
 
                 throw;
             }
-        }
+        }*/
 
         public async Task<IEnumerable<User>> GetAllUser()
         {
@@ -216,5 +230,27 @@ namespace boredBets.Repositories
                                         .Include(u => u.UserDetail)
                                         .ToListAsync();
         }
+
+        public async Task<string> GetCheckRefreshToken(Guid id, string refreshtoken)
+        {
+            try
+            {
+                var right_token = await _context.Users
+                                                  .FirstOrDefaultAsync(x => x.RefreshToken == refreshtoken && x.Id == id);
+
+                if (right_token == null)
+                {
+                    throw new UnauthorizedAccessException("Unauthorized");
+                }
+
+                var new_accesstoken = GenerateAccessToken(right_token.Email); // Assuming there is an Email property in your User entity
+                return new_accesstoken;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
     }
 }

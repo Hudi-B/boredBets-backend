@@ -177,6 +177,7 @@ public partial class BoredbetsContext : DbContext
                 .HasColumnName("id")
                 .UseCollation("ascii_general_ci")
                 .HasCharSet("ascii");
+            entity.Property(e => e.Admin).HasColumnName("admin");
             entity.Property(e => e.Created)
                 .HasMaxLength(6)
                 .HasColumnName("created");
@@ -186,9 +187,9 @@ public partial class BoredbetsContext : DbContext
             entity.Property(e => e.Password)
                 .HasMaxLength(255)
                 .HasColumnName("password");
-            entity.Property(e => e.Role)
+            entity.Property(e => e.RefreshToken)
                 .HasMaxLength(255)
-                .HasColumnName("role");
+                .HasColumnName("refresh_token");
         });
 
         modelBuilder.Entity<UserBet>(entity =>

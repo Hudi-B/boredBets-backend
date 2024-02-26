@@ -11,7 +11,6 @@ public partial class Jockey
     public string? Name { get; set; }
 
     public int? Quality { get; set; }
-
     [JsonIgnore]
     public virtual ICollection<Participant> Participants { get; set; } = new List<Participant>();
 }

@@ -16,9 +16,8 @@ public partial class Race
 
     public Guid? TrackId { get; set; }
     [JsonIgnore]
-
     public virtual ICollection<Participant> Participants { get; set; } = new List<Participant>();
-    [JsonIgnore]
+
     public virtual Track? Track { get; set; }
     [JsonIgnore]
     public virtual ICollection<UserBet> UserBets { get; set; } = new List<UserBet>();

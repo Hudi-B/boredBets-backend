@@ -19,19 +19,19 @@ namespace boredBets.Controllers
         }
 
         [HttpPost("UserRegister")]
-        public async Task<ActionResult<User>> Post(UserCreateDto userCreateDto)
+        public async Task<ActionResult<User>> Register(UserCreateDto userCreateDto)
         {
             if (userCreateDto == null) { return BadRequest(); }
             else
             {
-                return StatusCode(201, await userInterface.Post(userCreateDto));
+                return StatusCode(201, await userInterface.Register(userCreateDto));
             }
         }
 
         [HttpGet("UserLogin")]
-        public async Task<ActionResult<string>> Get(string Email, string Password)
+        public async Task<ActionResult<string>> Login(string Email, string Password)
         {
-            return StatusCode(201, await userInterface.Get(Email, Password));
+            return StatusCode(201, await userInterface.Login(Email, Password));
         }
 
         [HttpGet("GetAllUsers")]
@@ -50,7 +50,7 @@ namespace boredBets.Controllers
             }
         }
 
-        [HttpGet("GetByRole")]
+        /*[HttpGet("GetByRole")]
         public async Task<ActionResult<User>> GetByRole(string Role)
         {
             if (Role == null) { return BadRequest(); }
@@ -58,7 +58,7 @@ namespace boredBets.Controllers
             {
                 return StatusCode(201, await userInterface.GetByRole(Role));
             }
-        }
+        }*/
 
 
     }
