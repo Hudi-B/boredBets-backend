@@ -1,7 +1,10 @@
 using boredBets.Models;
 using boredBets.Repositories;
 using boredBets.Repositories.Interface;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using System.Text.Json.Serialization;
 
 namespace boredBets
@@ -11,6 +14,7 @@ namespace boredBets
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var configuration = builder.Configuration;
 
             // Add services to the container.
             builder.Services.AddDbContext<BoredbetsContext>();
@@ -26,7 +30,20 @@ namespace boredBets
 
             builder.Services.AddControllers();
 
-            
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = configuration["Jwt:Issuer"],
+                        ValidAudience = configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
+                    };
+                });
 
             var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
@@ -62,7 +79,10 @@ namespace boredBets
             }
 
             app.UseHttpsRedirection();
+
+            app.UseAuthentication();
             app.UseAuthorization();
+
             app.MapControllers();
 
             app.Run();

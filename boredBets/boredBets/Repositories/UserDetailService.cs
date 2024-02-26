@@ -15,48 +15,45 @@ namespace boredBets.Repositories
         }
 
         public async Task<UserDetail> Post(Guid Id, UserDetailCreateDto userDetailCreateDto)
-{
-    try
-    {
-        var userDetail = await _context.UserDetails.FirstOrDefaultAsync(x => x.UserId == Id);
-
-        if (userDetail == null)
         {
-            userDetail = new UserDetail
+            var userExists = await _context.Users.FirstOrDefaultAsync(x => x.Id == Id);
+
+            if (userExists == null)
             {
-                UserId = Id,
-                Fullname = userDetailCreateDto.Fullname,
-                Address = userDetailCreateDto.Address,
-                IsPrivate = userDetailCreateDto.IsPrivate,
-                BirthDate = userDetailCreateDto.BirthDate,
-            };
+                return null;
+            }
+            else
+            {
+                var userDetail = await _context.UserDetails.FirstOrDefaultAsync(x => x.UserId == Id);
 
-            // Add the new UserDetail entity to the context
-            await _context.UserDetails.AddAsync(userDetail);
+                if (userDetail == null)
+                {
+                    userDetail = new UserDetail
+                    {
+                        UserId = Guid.NewGuid(),
+                        Fullname = userDetailCreateDto.Fullname,
+                        Address = userDetailCreateDto.Address,
+                        IsPrivate = userDetailCreateDto.IsPrivate,
+                        BirthDate = userDetailCreateDto.BirthDate,
+                    };
+
+
+                    await _context.UserDetails.AddAsync(userDetail);
+                }
+                else
+                {
+                    userDetail.Fullname = userDetailCreateDto.Fullname;
+                    userDetail.Address = userDetailCreateDto.Address;
+                    userDetail.IsPrivate = userDetailCreateDto.IsPrivate;
+                    userDetail.BirthDate = userDetailCreateDto.BirthDate;
+                }
+
+
+                await _context.SaveChangesAsync();
+
+                return userDetail;
+            }
         }
-        else
-        {
-            // Update existing UserDetail entity
-            userDetail.Fullname = userDetailCreateDto.Fullname;
-            userDetail.Address = userDetailCreateDto.Address;
-            userDetail.IsPrivate = userDetailCreateDto.IsPrivate;
-            userDetail.BirthDate = userDetailCreateDto.BirthDate;
-        }
-
-        // Save all changes in a single transaction
-        await _context.SaveChangesAsync();
-
-        return userDetail;
-    }
-    catch (Exception e)
-    {
-        // Log the error using a proper logging framework
-        Console.WriteLine($"Error: {e.Message}");
-
-        // Rethrow with a more general message
-        throw new Exception("An error occurred while saving the entity changes.", e);
-    }
-}
 
 
     }

@@ -20,19 +20,37 @@ namespace boredBets.Controllers
         [HttpPost("UserBetPost")]
         public async Task<ActionResult<UserBet>> Post(Guid Id,Guid HorseId ,Guid RaceId, UserBetCreateDto userBetCreateDto) 
         {
-            return StatusCode(201, await _userBetInterface.Post(Id, HorseId,RaceId,userBetCreateDto));
+            var result = await _userBetInterface.Post(Id, HorseId, RaceId, userBetCreateDto);
+
+            if (result==null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
         }
 
         [HttpGet("GetAllUserBetsByUserId")]
         public async Task<ActionResult<UserBet>> GetAllUserBetByUserId(Guid UserId)
         {
-            return StatusCode(201, await _userBetInterface.GetAllUserBetsByUserId(UserId));
+            var result = await _userBetInterface.GetAllUserBetsByUserId(UserId);
+
+            if (result==null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
         }
 
         [HttpGet("GetAllUserBetsById")]
         public async Task<ActionResult<UserBet>> GetAllUserBetById(Guid Id)
         {
-            return StatusCode(201, await _userBetInterface.GetAllUserBetsById(Id));
+            var result = await _userBetInterface.GetAllUserBetsById(Id);
+
+            if (result==null) 
+            {
+                return NotFound();
+            }
+            return Ok(result);
         }
     }
 }

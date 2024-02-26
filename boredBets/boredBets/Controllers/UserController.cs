@@ -1,6 +1,7 @@
 ﻿using boredBets.Models;
 using boredBets.Models.Dtos;
 using boredBets.Repositories.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,33 +22,62 @@ namespace boredBets.Controllers
         [HttpPost("UserRegister")]
         public async Task<ActionResult<User>> Register(UserCreateDto userCreateDto)
         {
-            if (userCreateDto == null) { return BadRequest(); }
-            else
+            var result = await userInterface.Register(userCreateDto);
+
+            if (result==null)
             {
-                return StatusCode(201, await userInterface.Register(userCreateDto));
+                return Conflict();
             }
+            return Ok(result);
         }
 
         [HttpGet("UserLogin")]
         public async Task<ActionResult<string>> Login(string Email, string Password)
         {
-            return StatusCode(201, await userInterface.Login(Email, Password));
+            var result = await userInterface.Login(Email, Password);
+
+            if (result == null)
+            {
+                return Unauthorized();
+            }
+            return Ok(result);
         }
 
+        [Authorize]
         [HttpGet("GetAllUsers")]
         public async Task<ActionResult<User>> GetAllUser() 
         {
-            return StatusCode(201, await userInterface.GetAllUser());
+            var result = await userInterface.GetAllUser();
+
+            if (result == null)
+            { 
+                return NoContent();
+            }
+            return Ok(result);
         }
 
         [HttpGet("GetByEmail")]
         public async Task<ActionResult<User>> GetByEmail(string Email) 
         {
-            if (Email == null) { return BadRequest(); }
-            else
+            var result = await userInterface.GetByEmail(Email);
+
+            if (result == null)
             {
-                return StatusCode(201, await userInterface.GetByEmail(Email));
+                return NoContent();
             }
+            return Ok(result);
+        }
+
+        [HttpGet("GetNewAccessToken")]
+        public async Task<ActionResult<User>> GetNewAccessToken(Guid id, string refreshtoken) 
+        {
+            var result =await userInterface.GetNewAccessToken(id, refreshtoken);
+
+            if (result == null)
+            {
+                return Unauthorized();
+            }
+            return Ok(result);
         }
 
         /*[HttpGet("GetByRole")]
