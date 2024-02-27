@@ -56,10 +56,10 @@ namespace boredBets.Controllers
             return Ok(result);
         }
 
-        [HttpGet("GetByEmail")]
-        public async Task<ActionResult<User>> GetByEmail(string Email) 
+        [HttpGet("GetByUserId")]
+        public async Task<ActionResult<User>> GetByUserId(Guid id) 
         {
-            var result = await userInterface.GetByEmail(Email);
+            var result = await userInterface.GetByUserId(id);
 
             if (result == null)
             {

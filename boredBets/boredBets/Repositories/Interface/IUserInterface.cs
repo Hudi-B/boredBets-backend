@@ -10,7 +10,7 @@ namespace boredBets.Repositories.Interface
         Task<object> Login(string email, string password);
         Task<object> GetNewAccessToken(Guid id, string refreshtoken);
         Task<IEnumerable<User>> GetAllUser();
-        Task<IEnumerable<User>> GetByEmail(string Email);
+        Task<IEnumerable<User>> GetByUserId(Guid id);
         //Task<IEnumerable<User>> GetByRole(string Role);
 
     }

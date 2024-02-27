@@ -71,10 +71,10 @@ namespace boredBets.Repositories
             return BCrypt.Net.BCrypt.Verify(enteredPassword, storedPassword);
         }
 
-        public async Task<IEnumerable<User>> GetByEmail(string Email)
+        public async Task<IEnumerable<User>> GetByUserId(Guid id)
         {
             var users = await _context.Users
-                .Where(u => u.Email == Email)
+                .Where(u => u.Id == id)
                 .Select(u => new User
                 {
                     Id = u.Id,
