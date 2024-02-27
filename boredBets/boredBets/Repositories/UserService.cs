@@ -156,6 +156,11 @@ namespace boredBets.Repositories
             var accessToken = GenerateAccessToken(user.Id.ToString());
             var refreshToken = user.RefreshToken;
 
+            if (user.RefreshToken == null)
+            {
+                GenerateRefreshToken(user.Id.ToString());
+            }
+
             var response = new
             {
                 AccessToken = accessToken,
