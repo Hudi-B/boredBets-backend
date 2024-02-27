@@ -30,13 +30,13 @@ namespace boredBets.Repositories
             _context = context;
             _configuration = configuration;
         }
-        private string GenerateRefreshToken(string email)
+        private string GenerateRefreshToken(string Id)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtRefreshSecret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new Claim[] { new Claim("userEmail", email) }),
+                Subject = new ClaimsIdentity(new Claim[] { new Claim("UserId", Id) }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
@@ -115,7 +115,6 @@ namespace boredBets.Repositories
                 Admin = false,
                 Password = hashedpassword,
                 Created = DateTime.UtcNow,
-                RefreshToken = GenerateRefreshToken(userCreateDto.Email)
             };
 
             if (user == null)
