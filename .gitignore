@@ -400,3 +400,6 @@ FodyWeavers.xsd
 #Custom
 boredBets/boredBets/appsettings.json
 
+boredBets/boredBets/Properties/serviceDependencies.boredBetsAPI - Web Deploy1.json
+boredBets/boredBets/Properties/ServiceDependencies/boredBetsAPI - Web Deploy1/apis1.arm.json
+boredBets/boredBets/Properties/ServiceDependencies/boredBetsAPI - Web Deploy1/profile.arm.json
