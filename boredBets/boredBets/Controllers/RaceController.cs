@@ -19,9 +19,9 @@ namespace boredBets.Controllers
         }
 
         [HttpPost("RacePost")]
-        public async Task<ActionResult<Race>> Post(Guid TrackId, RaceCreateDto raceCreateDto)
+        public async Task<ActionResult<Race>> Post(RaceCreateDto raceCreateDto)
         {
-            return StatusCode(201, await _raceInterface.Post(TrackId, raceCreateDto));
+            return StatusCode(201, await _raceInterface.Post(raceCreateDto));
         }
         [HttpGet("GetFivePreviousRaces")]
         public async Task<ActionResult<Race>> GetAlreadyHappenedRaces()

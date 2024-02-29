@@ -42,11 +42,11 @@ namespace boredBets.Repositories
             return userBet;
         }
 
-        public async Task<UserBet> Post(Guid UserId, Guid HorseId, Guid RaceId, UserBetCreateDto userBetCreateDto)
+        public async Task<UserBet> Post(UserBetCreateDto userBetCreateDto)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == UserId);
-            var horse = await _context.Horses.FirstOrDefaultAsync(x => x.Id == HorseId);
-            var race = await _context.Races.FirstOrDefaultAsync(x => x.Id == RaceId);
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userBetCreateDto.UserId);
+            var horse = await _context.Horses.FirstOrDefaultAsync(x => x.Id == userBetCreateDto.HorseId);
+            var race = await _context.Races.FirstOrDefaultAsync(x => x.Id == userBetCreateDto.RaceId);
 
             if (user == null || horse == null || race == null)
             {
@@ -57,9 +57,9 @@ namespace boredBets.Repositories
             var userbet = new UserBet
             {
                 Id = id,
-                UserId = UserId,
-                RaceId = RaceId,
-                HorseId = HorseId,
+                UserId = userBetCreateDto.UserId,
+                RaceId = userBetCreateDto.RaceId,
+                HorseId = userBetCreateDto.HorseId,
                 BetAmount = userBetCreateDto.BetAmount
             };
 

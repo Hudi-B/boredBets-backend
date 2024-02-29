@@ -31,10 +31,10 @@ namespace boredBets.Controllers
             return Ok(result);
         }
 
-        [HttpGet("UserLogin")]
-        public async Task<ActionResult<string>> Login(string Email, string Password)
+        [HttpPost("UserLogin")]
+        public async Task<ActionResult<string>> Login(UserCreateDto userCreateDto)
         {
-            var result = await userInterface.Login(Email, Password);
+            var result = await userInterface.Login(userCreateDto);
 
             if (result == null)
             {

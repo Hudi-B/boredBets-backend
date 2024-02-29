@@ -1,6 +1,7 @@
 ﻿using boredBets.Models;
 using boredBets.Models.Dtos;
 using boredBets.Repositories.Interface;
+using boredBets.Repositories.Viewmodels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,9 +19,9 @@ namespace boredBets.Controllers
         }
 
         [HttpPost("ParticipantPost")]
-        public async Task<ActionResult<Participant>> Post(Guid RaceId, Guid HorseId, Guid JockeyId, ParticipantCreateDto participantCreateDto) 
+        public async Task<ActionResult<Participant>> Post(ParticipantDto participantDto) 
         {
-            return StatusCode(201, await _participant.Post(RaceId,HorseId,JockeyId, participantCreateDto));
+            return StatusCode(201, await _participant.Post(participantDto));
         }
 
         

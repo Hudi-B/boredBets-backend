@@ -102,11 +102,11 @@ namespace boredBets.Repositories
 
         
 
-        public async Task<Race> Post(Guid TrackId, RaceCreateDto raceCreateDto)
+        public async Task<Race> Post(RaceCreateDto raceCreateDto)
         {
             try
             {
-                var track = await _context.Tracks.FirstOrDefaultAsync(x => x.Id == TrackId);
+                var track = await _context.Tracks.FirstOrDefaultAsync(x => x.Id == raceCreateDto.TrackId);
 
                 if (track == null)
                 {
@@ -118,7 +118,7 @@ namespace boredBets.Repositories
                 {
                     Id = Guid.NewGuid(),
                     Weather = raceCreateDto.Weather,
-                    TrackId = TrackId,
+                    TrackId = raceCreateDto.TrackId,
                     RaceTime = raceCreateDto.RaceTime,
                     RaceScheduled= raceCreateDto.RaceScheduled,
                     

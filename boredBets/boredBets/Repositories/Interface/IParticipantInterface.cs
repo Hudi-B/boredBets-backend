@@ -1,11 +1,12 @@
 ﻿using boredBets.Models;
 using boredBets.Models.Dtos;
+using boredBets.Repositories.Viewmodels;
 
 namespace boredBets.Repositories.Interface
 {
     public interface IParticipantInterface
     {
-        Task<Participant> Post(Guid RaceId, Guid HorseId, Guid JockeyId, ParticipantCreateDto participantCreateDto);
+        Task<Participant> Post(ParticipantDto participantDto);
         Task<IEnumerable<Participant>> Get();
     }
 }

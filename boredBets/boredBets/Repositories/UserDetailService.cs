@@ -14,9 +14,9 @@ namespace boredBets.Repositories
             _context = context;
         }
 
-        public async Task<UserDetail> Post(Guid Id, UserDetailCreateDto userDetailCreateDto)
+        public async Task<UserDetail> Post(Guid UserId, UserDetailCreateDto userDetailCreateDto)
         {
-            var userExists = await _context.Users.FirstOrDefaultAsync(x => x.Id == Id);
+            var userExists = await _context.Users.FirstOrDefaultAsync(x => x.Id == UserId);
 
             if (userExists == null)
             {
@@ -24,7 +24,7 @@ namespace boredBets.Repositories
             }
             else
             {
-                var userDetail = await _context.UserDetails.FirstOrDefaultAsync(x => x.UserId == Id);
+                var userDetail = await _context.UserDetails.FirstOrDefaultAsync(x => x.UserId == UserId);
 
                 if (userDetail == null)
                 {

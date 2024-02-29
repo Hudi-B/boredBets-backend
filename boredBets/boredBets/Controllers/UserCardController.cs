@@ -18,10 +18,10 @@ namespace boredBets.Controllers
         }
 
         [HttpPost("UserCardPost")]
-        public async Task<ActionResult<UserCard>> Post(Guid UserId, UserCardCreateDto userCardCreateDto)
+        public async Task<ActionResult<UserCard>> Post(UserCardCreateDto userCardCreateDto)
         {
 
-            var result = await _userCardInterface.Post(UserId, userCardCreateDto);
+            var result = await _userCardInterface.Post(userCardCreateDto);
 
             if (result == null)
             {

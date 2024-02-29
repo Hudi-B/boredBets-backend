@@ -29,9 +29,9 @@ namespace boredBets.Repositories
 
         }
 
-        public async Task<UserCard> Post(Guid UserId, UserCardCreateDto userCardCreateDto)
+        public async Task<UserCard> Post(UserCardCreateDto userCardCreateDto)
         {
-            var userDetail = await _context.Users.FirstOrDefaultAsync(x => x.Id == UserId);
+            var userDetail = await _context.Users.FirstOrDefaultAsync(x => x.Id == userCardCreateDto.UserId);
 
             var existingUserCard = await _context.UserCards.FirstOrDefaultAsync(x => x.CreditcardNum == userCardCreateDto.CreditcardNum);
 
@@ -47,7 +47,7 @@ namespace boredBets.Repositories
                 ExpMonth = userCardCreateDto.ExpMonth,
                 ExpYear = userCardCreateDto.ExpYear,
                 CardName = userCardCreateDto.CardName,
-                UserId = userDetail.Id
+                UserId = userCardCreateDto.UserId
             };
 
             _context.UserCards.Add(userCard);

@@ -1,6 +1,7 @@
 ﻿using boredBets.Models;
 using boredBets.Models.Dtos;
 using boredBets.Repositories.Interface;
+using boredBets.Repositories.Viewmodels;
 using Microsoft.EntityFrameworkCore;
 
 namespace boredBets.Repositories
@@ -19,13 +20,13 @@ namespace boredBets.Repositories
             return await context.Participants.ToListAsync();
         }
 
-        public async Task<Participant> Post(Guid RaceId, Guid HorseId, Guid JockeyId, ParticipantCreateDto participantCreateDto)
+        public async Task<Participant> Post(ParticipantDto participantDto)
         {
             try
             {
-                var raceid = await context.Races.FirstOrDefaultAsync(x => x.Id == RaceId);
-                var horseid = await context.Horses.FirstOrDefaultAsync(x => x.Id == HorseId);
-                var jockeyid = await context.Jockeys.FirstOrDefaultAsync(x => x.Id == JockeyId);
+                var raceid = await context.Races.FirstOrDefaultAsync(x => x.Id == participantDto.RaceId);
+                var horseid = await context.Horses.FirstOrDefaultAsync(x => x.Id == participantDto.HorseId);
+                var jockeyid = await context.Jockeys.FirstOrDefaultAsync(x => x.Id == participantDto.JockeyId);
 
                 if (raceid == null && horseid == null && jockeyid == null)
                 {
@@ -34,10 +35,10 @@ namespace boredBets.Repositories
 
                 var participant = new Participant
                 {
-                    RaceId = RaceId,
-                    HorseId = HorseId,
-                    JockeyId = JockeyId,
-                    Placement = participantCreateDto.Placement,
+                    RaceId = participantDto.RaceId,
+                    HorseId = participantDto.HorseId,
+                    JockeyId = participantDto.JockeyId,
+                    Placement = participantDto.Placement,
                 };
 
                 await context.Participants.AddAsync(participant);

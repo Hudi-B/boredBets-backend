@@ -108,13 +108,16 @@ namespace boredBets.Repositories
 
             string hashedpassword = HashPassword(userCreateDto.Password);
 
+            Guid userId = Guid.NewGuid();
+
             var user = new User
             {
-                Id = Guid.NewGuid(),
+                Id = userId,
                 Email = userCreateDto.Email,
                 Admin = false,
                 Password = hashedpassword,
                 Created = DateTime.UtcNow,
+                RefreshToken = GenerateRefreshToken(userId.ToString())
             };
 
             if (user == null)
@@ -140,15 +143,15 @@ namespace boredBets.Repositories
             return user;//only id
         }
 
-        public async Task<object> Login(string email, string password) //login
+        public async Task<object> Login(UserCreateDto userCreateDto) //login
         {
             var user = await _context.Users
                                           .Include(x => x.UserCards)
                                           .Include(x => x.UserDetail)
                                           .Include(x => x.UserBets)
-                                          .FirstOrDefaultAsync(x => x.Email == email);
+                                          .FirstOrDefaultAsync(x => x.Email == userCreateDto.Email);
 
-            if (user == null || !VerifyHashedPassword(password, user.Password))
+            if (user == null || !VerifyHashedPassword(userCreateDto.Password, user.Password))
             {
                 return null;
             }
@@ -166,6 +169,7 @@ namespace boredBets.Repositories
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
                 UserId = user.Id,
+                Admin=user.Admin,
             };
 
             return response;

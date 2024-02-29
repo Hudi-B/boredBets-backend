@@ -18,9 +18,9 @@ namespace boredBets.Controllers
         }
 
         [HttpPost("UserBetPost")]
-        public async Task<ActionResult<UserBet>> Post(Guid Id,Guid HorseId ,Guid RaceId, UserBetCreateDto userBetCreateDto) 
+        public async Task<ActionResult<UserBet>> Post(UserBetCreateDto userBetCreateDto) 
         {
-            var result = await _userBetInterface.Post(Id, HorseId, RaceId, userBetCreateDto);
+            var result = await _userBetInterface.Post(userBetCreateDto);
 
             if (result==null)
             {
