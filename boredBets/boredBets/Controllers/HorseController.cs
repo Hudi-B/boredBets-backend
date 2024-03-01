@@ -28,5 +28,18 @@ namespace boredBets.Controllers
         {
             return StatusCode(201, await horseInterface.GetAllHorse());
         }
+
+        [HttpGet("GetHorseById")]
+        public async Task<ActionResult<Horse>> GetHorseById(Guid HorseId)
+        {
+            var result = await horseInterface.GetHorseById(HorseId);
+
+            if (result == null)
+            {
+                NotFound();
+            }
+
+            return result;
+        }
     }
 }

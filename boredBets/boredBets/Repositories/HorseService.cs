@@ -20,6 +20,18 @@ namespace boredBets.Repositories
             return await _context.Horses.ToListAsync();
         }
 
+        public async Task<Horse> GetHorseById(Guid HorseId)
+        {
+            var horse = await _context.Horses.FirstOrDefaultAsync(x=>x.Id==HorseId);
+
+            if (horse == null)
+            {
+                return null;
+            }
+
+            return horse;
+        }
+
         public async Task<Horse> Post(HorseCreateDto horseCreateDto)
         {
             var horses = new Horse

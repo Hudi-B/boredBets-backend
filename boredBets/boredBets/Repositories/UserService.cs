@@ -33,7 +33,7 @@ namespace boredBets.Repositories
         private string GenerateRefreshToken(string Id)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_jwtRefreshSecret);
+            var key = Encoding.UTF8.GetBytes(_jwtRefreshSecret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[] { new Claim("UserId", Id) }),
