@@ -28,5 +28,18 @@ namespace boredBets.Controllers
         {
             return StatusCode(201, await jockeyInterface.GetAllJockey());
         }
+
+        [HttpGet("GetJockeyById")]
+        public async Task<ActionResult<Jockey>> GetJockeyById(Guid JockeyId) 
+        {
+            var result = await jockeyInterface.GetJockeyById(JockeyId);
+
+            if (result == null)
+            {
+                NotFound();
+            }
+
+            return result;
+        }
     }
 }
