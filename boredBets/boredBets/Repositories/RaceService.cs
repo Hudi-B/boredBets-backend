@@ -34,7 +34,7 @@ namespace boredBets.Repositories
                 {
                     Id = r.Id,
                     RaceScheduled = r.RaceScheduled,
-                    Name = r.Track.Name
+                    Name = r.Track.Name 
                 })
                 .ToListAsync();
 
@@ -146,7 +146,9 @@ namespace boredBets.Repositories
         {
             try
             {
-                var race = await _context.Races.SingleOrDefaultAsync(x => x.Id.Equals(RaceId));
+                var race = await _context.Races
+                                               .Include(x => x.Track)
+                                               .SingleOrDefaultAsync(x => x.Id.Equals(RaceId));
                 if (race == null)
                 {
                     throw new Exception();
