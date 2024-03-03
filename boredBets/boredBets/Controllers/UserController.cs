@@ -90,6 +90,17 @@ namespace boredBets.Controllers
             }
         }*/
 
+        [HttpDelete("DeleteUserById")]
+        public async Task<ActionResult<User>> DeleteUserById(Guid Id)
+        {
+            var result = await userInterface.DeleteUserById(Id);
 
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(result);
+        }
     }
 }

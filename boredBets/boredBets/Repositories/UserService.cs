@@ -235,5 +235,19 @@ namespace boredBets.Repositories
             return new { AccessToken = new_accesstoken };
         }
 
+        public async Task<User> DeleteUserById(Guid id)
+        {
+            var userid = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (userid == null)
+            {
+                return null; 
+            }
+
+            _context.Users.Remove(userid);
+            await _context.SaveChangesAsync();
+
+            return userid;
+        }
     }
 }
