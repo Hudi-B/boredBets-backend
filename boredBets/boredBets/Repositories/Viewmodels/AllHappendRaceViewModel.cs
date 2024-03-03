@@ -7,7 +7,7 @@
         public DateTime RaceScheduled { get; set; }
 
         // Properties from Track class
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
     }
 }

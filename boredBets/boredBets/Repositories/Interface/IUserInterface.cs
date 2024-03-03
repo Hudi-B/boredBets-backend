@@ -12,6 +12,7 @@ namespace boredBets.Repositories.Interface
         Task<IEnumerable<User>> GetAllUser();
         Task<IEnumerable<User>> GetByUserId(Guid id);
         //Task<IEnumerable<User>> GetByRole(string Role);
+        Task<User> DeleteUserById(Guid id);
 
     }
 }

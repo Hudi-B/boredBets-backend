@@ -27,5 +27,16 @@ namespace boredBets.Controllers
             }
             return Ok(result);
         }
+
+        [HttpGet("GetUserDetailByUserId")]
+        public async Task<ActionResult<UserDetail>> GetUserDetailByUserId(Guid UserId)
+        {
+            var result = await _userDetail.GetUserDetailByUserId(UserId);
+            if (result == null) 
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
     }
 }
