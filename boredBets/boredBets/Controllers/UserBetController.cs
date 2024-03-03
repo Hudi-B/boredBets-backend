@@ -41,10 +41,10 @@ namespace boredBets.Controllers
             return Ok(result);
         }
 
-        [HttpGet("GetAllUserBetsById")]
-        public async Task<ActionResult<UserBet>> GetAllUserBetById(Guid Id)
+        [HttpGet("GetUserBetsById")]
+        public async Task<ActionResult<UserBet>> GetUserBetById(Guid Id)
         {
-            var result = await _userBetInterface.GetAllUserBetsById(Id);
+            var result = await _userBetInterface.GetUserBetsById(Id);
 
             if (result==null) 
             {

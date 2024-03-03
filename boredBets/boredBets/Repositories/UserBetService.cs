@@ -16,11 +16,10 @@ namespace boredBets.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<UserBet>> GetAllUserBetsById(Guid Id)
+        public async Task<UserBet> GetUserBetsById(Guid Id)
         {
-            var id = await _context.UserBets
-                                            .Where(x => x.Id == Id)
-                                            .ToListAsync();
+            var id = await _context.UserBets.FirstOrDefaultAsync(x => x.Id == Id);
+
             if (id == null)
             {
                 return null;
