@@ -7,5 +7,6 @@ namespace boredBets.Repositories.Interface
     {
         Task<UserCard> Post(UserCardCreateDto userCardCreateDto);
         Task<IEnumerable<UserCard>> GetAllUserCardsByUserId(Guid UserId);
+        Task<UserCard> DeleteByCreditCardNum(string CreditCardNum);
     }
 }

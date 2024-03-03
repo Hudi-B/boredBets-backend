@@ -14,6 +14,21 @@ namespace boredBets.Repositories
             _context = context;
         }
 
+        public async Task<UserCard> DeleteByCreditCardNum(string CreditCardNum)
+        {
+            var creditCardNum = await _context.UserCards.FirstOrDefaultAsync(x => x.CreditcardNum == CreditCardNum);
+
+            if (creditCardNum == null) 
+            {
+                return null;
+            }
+
+            _context.UserCards.Remove(creditCardNum);
+            await _context.SaveChangesAsync();
+
+            return creditCardNum;
+        }
+
         public async Task<IEnumerable<UserCard>> GetAllUserCardsByUserId(Guid UserId)
         {
             var userid = await _context.UserCards

@@ -43,5 +43,18 @@ namespace boredBets.Controllers
             return Ok(result);
         }
 
+        [HttpDelete("DeleteByCreditCardNum")]
+        public async Task<ActionResult<UserCard>> DeleteByCreditCardNum(string CreditCardNum)
+        {
+            var result = await _userCardInterface.DeleteByCreditCardNum(CreditCardNum);
+
+            if (result == null)
+            {
+                NotFound();
+            }
+
+            return Ok(result);
+        }
+
     }
 }
