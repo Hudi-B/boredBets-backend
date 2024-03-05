@@ -42,15 +42,15 @@ namespace boredBets.Controllers
             return result;
         }
 
-        [HttpDelete("DeleteHorseAndJockeyBy")]
-        public async Task<ActionResult<Horse>> DeleteHorseAndJockeyBy(Guid Id) 
+        [HttpDelete("DeleteHorseAndJockeyById")]
+        public async Task<ActionResult<Horse>> DeleteHorseAndJockeyById(Guid Id) 
         {
-            var result = horseInterface.DeleteHorseAndJockeyBy(Id);
+            var result = await horseInterface.DeleteHorseAndJockeyBy(Id);
             if(result == null) 
             {
                 NotFound(); 
             }
-            return result;
+            return Ok(result);
         }
     }
 }
