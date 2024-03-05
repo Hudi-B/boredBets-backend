@@ -41,5 +41,16 @@ namespace boredBets.Controllers
 
             return result;
         }
+
+        [HttpDelete("DeleteHorseAndJockeyBy")]
+        public async Task<ActionResult<Horse>> DeleteHorseAndJockeyBy(Guid Id) 
+        {
+            var result = horseInterface.DeleteHorseAndJockeyBy(Id);
+            if(result == null) 
+            {
+                NotFound(); 
+            }
+            return result;
+        }
     }
 }

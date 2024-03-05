@@ -15,6 +15,21 @@ namespace boredBets.Repositories
             _context = context;
         }
 
+        public async Task<Horse> DeleteHorseAndJockeyBy(Guid Id)
+        {
+            var id = await _context.Horses.FirstOrDefaultAsync(x => x.Id == Id);
+
+            if (id == null) 
+            {
+                return null;
+            }
+
+            _context.Horses.Remove(id);
+            await _context.SaveChangesAsync();
+
+            return id;
+        }
+
         public async Task<IEnumerable<Horse>> GetAllHorse()
         {
             return await _context.Horses.ToListAsync();
