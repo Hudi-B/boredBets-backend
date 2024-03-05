@@ -14,5 +14,6 @@ namespace boredBets.Repositories.Interface
 
         Task<Race> GetByRaceId(Guid RaceId);
         Task<IEnumerable<GetByCountryViewModel>> GetByCountry(string Country);
+        Task<Race> DeleteRaceById(Guid Id);
     }
 }

@@ -199,8 +199,19 @@ namespace boredBets.Repositories
             }
         }
 
+        public async Task<Race> DeleteRaceById(Guid Id)
+        {
+            var id = await _context.Races.FirstOrDefaultAsync(x => x.Id == Id);
 
+            if (id == null) 
+            { 
+                return null; 
+            }
 
+            _context.Races.Remove(id);
+            await _context.SaveChangesAsync();
 
+            return id;
+        }
     }
 }
