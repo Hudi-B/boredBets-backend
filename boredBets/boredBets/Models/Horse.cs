@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace boredBets.Models;
 
@@ -13,8 +12,12 @@ public partial class Horse
     public int? Age { get; set; }
 
     public bool? Stallion { get; set; }
-    [JsonIgnore]
+
+    public Guid? JockeyId { get; set; }
+
+    public virtual Jockey? Jockey { get; set; }
+
     public virtual ICollection<Participant> Participants { get; set; } = new List<Participant>();
-    [JsonIgnore]
+
     public virtual ICollection<UserBet> UserBets { get; set; } = new List<UserBet>();
 }

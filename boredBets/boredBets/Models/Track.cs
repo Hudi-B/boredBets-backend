@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace boredBets.Models;
 
@@ -12,7 +11,9 @@ public partial class Track
 
     public string? Country { get; set; }
 
-    public float Length { get; set; }
-    [JsonIgnore]
+    public float? Length { get; set; }
+
+    public string? Address { get; set; }
+
     public virtual ICollection<Race> Races { get; set; } = new List<Race>();
 }
