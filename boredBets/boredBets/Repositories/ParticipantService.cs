@@ -37,7 +37,6 @@ namespace boredBets.Repositories
                 {
                     RaceId = participantDto.RaceId,
                     HorseId = participantDto.HorseId,
-                    JockeyId = participantDto.JockeyId,
                     Placement = participantDto.Placement,
                 };
 

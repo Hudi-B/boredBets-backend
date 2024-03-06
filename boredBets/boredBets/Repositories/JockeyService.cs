@@ -38,6 +38,7 @@ namespace boredBets.Repositories
                 Id = Guid.NewGuid(),
                 Name = jockeyCreateDto.Name,
                 Quality = jockeyCreateDto.Quality,
+                Male = jockeyCreateDto.Male,
             };
             await _context.Jockeys.AddAsync(jockeys);
             await _context.SaveChangesAsync();
