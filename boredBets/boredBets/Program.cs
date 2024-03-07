@@ -29,6 +29,8 @@ namespace boredBets
             builder.Services.AddScoped<IParticipantInterface, ParticipantService>();
 
             builder.Services.AddControllers();
+            builder.Services.AddControllers().AddNewtonsoftJson();
+
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
