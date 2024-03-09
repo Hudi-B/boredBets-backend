@@ -70,28 +70,46 @@ namespace boredBets.Controllers
             {
                 try
                 {
-                    List<string> horseNames = new List<string>();
+                    List<string> maleHorseName = new List<string>();
+                    List<string> femaleHorseName = new List<string>();
 
                     #region ReadFile
-                    string Path = "../../../staticData/maleHorses.txt";
-                    string absolutePath = AppDomain.CurrentDomain.BaseDirectory.ToString() + Path;
 
-                    StreamReader sr = new StreamReader(absolutePath);
+
+                    string staticData = AppDomain.CurrentDomain.BaseDirectory.ToString() + "../../../staticData/";
+
+                    StreamReader sr;
+                    sr = new StreamReader(staticData + "maleHorses.txt");
                     while (!sr.EndOfStream)
                     {
-                        horseNames.Add(sr.ReadLine());
+                        maleHorseName.Add(sr.ReadLine());
+                    }
+                    sr = new StreamReader(staticData + "femaleHorses.txt");
+                    while (!sr.EndOfStream)
+                    {
+                        femaleHorseName.Add(sr.ReadLine());
                     }
                     #endregion
 
                     Random random = new Random();
                     for (int i = 0; i < quantity; i++)
                     {
+                        bool male = random.Next(2) == 0;
+                        string name;
+                        if (male)
+                        { 
+                            name = maleHorseName[random.Next(maleHorseName.Count())];
+                        }
+                        else
+                        {
+                            name = femaleHorseName[random.Next(femaleHorseName.Count())];
+                        }
                         var newHorse = new Horse
                         {
                             Id = Guid.NewGuid(),
-                            Name = horseNames[random.Next(horseNames.Count)],
+                            Name = name,
                             Age = random.Next(4) + 2,
-                            Stallion = random.Next(2) == 0,
+                            Stallion = male,
                             JockeyId = freeJockeys.ToList()[i]
                         };
 
