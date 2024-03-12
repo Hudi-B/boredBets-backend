@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace boredBets.Models;
 
@@ -16,10 +17,10 @@ public partial class User
     public string? RefreshToken { get; set; }
 
     public bool? Admin { get; set; }
-
+    [JsonIgnore]
     public virtual ICollection<UserBet> UserBets { get; set; } = new List<UserBet>();
-
+    [JsonIgnore]
     public virtual ICollection<UserCard> UserCards { get; set; } = new List<UserCard>();
-
+    [JsonIgnore]
     public virtual UserDetail? UserDetail { get; set; }
 }
