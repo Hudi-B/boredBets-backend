@@ -26,9 +26,8 @@ namespace boredBets.Repositories
             {
                 var raceid = await context.Races.FirstOrDefaultAsync(x => x.Id == participantDto.RaceId);
                 var horseid = await context.Horses.FirstOrDefaultAsync(x => x.Id == participantDto.HorseId);
-                var jockeyid = await context.Jockeys.FirstOrDefaultAsync(x => x.Id == participantDto.JockeyId);
 
-                if (raceid == null && horseid == null && jockeyid == null)
+                if (raceid == null && horseid == null)
                 {
                     throw new Exception();
                 }
