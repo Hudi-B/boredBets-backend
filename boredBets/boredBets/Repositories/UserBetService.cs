@@ -43,11 +43,14 @@ namespace boredBets.Repositories
 
         public async Task<UserBet> Post(UserBetCreateDto userBetCreateDto)
         {
+            var existingParticipant = await _context.Participants
+                                                                 .FirstOrDefaultAsync(x => x.RaceId == userBetCreateDto.RaceId && x.HorseId == userBetCreateDto.HorseId);
+
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userBetCreateDto.UserId);
             var horse = await _context.Horses.FirstOrDefaultAsync(x => x.Id == userBetCreateDto.HorseId);
             var race = await _context.Races.FirstOrDefaultAsync(x => x.Id == userBetCreateDto.RaceId);
 
-            if (user == null || horse == null || race == null)
+            if (user == null || horse == null || race == null || existingParticipant == null)
             {
                 return null;
             }
