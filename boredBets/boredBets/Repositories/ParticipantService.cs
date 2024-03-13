@@ -24,8 +24,18 @@ namespace boredBets.Repositories
         {
             try
             {
+                var existingParticipant = await context.Participants
+                                                                    .FirstOrDefaultAsync(x => x.RaceId == participantDto.RaceId && x.HorseId == participantDto.HorseId);
+
+                if (existingParticipant != null)
+                {
+                    throw new Exception("The horse is already participating in the race.");
+                }
+
                 var raceid = await context.Races.FirstOrDefaultAsync(x => x.Id == participantDto.RaceId);
                 var horseid = await context.Horses.FirstOrDefaultAsync(x => x.Id == participantDto.HorseId);
+
+                
 
                 if (raceid == null && horseid == null)
                 {
