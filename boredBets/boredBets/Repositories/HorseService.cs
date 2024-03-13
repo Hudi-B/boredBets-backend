@@ -17,30 +17,58 @@ namespace boredBets.Repositories
 
         public async Task<object> DeleteHorseAndJockeyBy(Guid Id)
         {
-            var id = await _context.Horses.FirstOrDefaultAsync(x => x.Id == Id);
+            var horse = await _context.Horses
+                .Include(h => h.Participants)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == Id);
+
 
             var searchInUserBet = await _context.UserBets.FirstOrDefaultAsync(x => x.HorseId == Id);
 
-            
-
-
-            if (id == null && searchInUserBet == null) 
+            if (horse == null)
             {
                 return null;
             }
 
-            _context.Horses.Remove(id);
-            _context.Participants.Remove(null);
-            await _context.SaveChangesAsync();
+            var participants = horse?.Participants.ToList();
+
+            if (participants != null && participants.Any())
+            {
+                _context.Participants.RemoveRange(participants);
+                await _context.SaveChangesAsync(); // Save changes for the first deletion
+
+                // Detach the entities to prevent further tracking issues
+                foreach (var participant in participants)
+                {
+                    _context.Entry(participant).State = EntityState.Detached;
+                }
+            }
+
+            // Detach the horse entity before making changes
+            _context.Entry(horse).State = EntityState.Detached;
+
+            // Load the horse again after the first deletion
+            horse = await _context.Horses
+                .Include(h => h.Participants)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == Id);
+
+            if (horse != null)
+            {
+                _context.Horses.Remove(horse);
+                await _context.SaveChangesAsync();
+            }
 
             var result = new
             {
-                Horse = id,
+                Horse = horse,
                 UserBet = searchInUserBet,
             };
 
             return result;
         }
+
+
 
         public async Task<IEnumerable<Horse>> GetAllHorse()
         {
