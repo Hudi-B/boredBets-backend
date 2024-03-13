@@ -21,13 +21,16 @@ namespace boredBets.Repositories
 
             var searchInUserBet = await _context.UserBets.FirstOrDefaultAsync(x => x.HorseId == Id);
 
+            
+
+
             if (id == null && searchInUserBet == null) 
             {
                 return null;
             }
 
             _context.Horses.Remove(id);
-            _context.UserBets.Remove(searchInUserBet);
+            _context.Participants.Remove(null);
             await _context.SaveChangesAsync();
 
             var result = new
