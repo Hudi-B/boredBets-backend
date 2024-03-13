@@ -38,5 +38,16 @@ namespace boredBets.Controllers
             }
             return Ok(result);
         }
+
+        [HttpPut("UpdateUserDetailByUserId")]
+        public async Task<ActionResult<UserDetail>> UpdateUserDetailByUserId(Guid UserId, UserDetailUpdateDto updateDto)
+        {
+            var result = await _userDetail.UpdateUserDetailByUserId(UserId, updateDto);
+            if(result == null) 
+            { 
+                return  NotFound(); 
+            }
+            return Ok(result);
+        }
     }
 }

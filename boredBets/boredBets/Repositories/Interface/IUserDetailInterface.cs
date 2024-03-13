@@ -7,5 +7,6 @@ namespace boredBets.Repositories.Interface
     {
         Task<UserDetail> Post(Guid Id,UserDetailCreateDto userDetailCreateDto);
         Task<UserDetail> GetUserDetailByUserId(Guid UserId);
+        Task<UserDetail> UpdateUserDetailByUserId(Guid UserId, UserDetailUpdateDto userDetailUpdateDto);
     }
 }

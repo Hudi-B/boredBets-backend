@@ -67,6 +67,24 @@ namespace boredBets.Repositories
             }
         }
 
+        public async Task<UserDetail> UpdateUserDetailByUserId(Guid UserId, UserDetailUpdateDto userDetailUpdateDto)
+        {
+            var existingUserDetail = await _context.UserDetails.FirstOrDefaultAsync(x => x.UserId == UserId);
 
+            if (existingUserDetail == null)
+            {
+                return null;
+            }
+
+            existingUserDetail.Fullname = userDetailUpdateDto.Fullname;
+            existingUserDetail.Address = userDetailUpdateDto.Address;
+            existingUserDetail.IsPrivate = userDetailUpdateDto.IsPrivate;
+            existingUserDetail.BirthDate = userDetailUpdateDto.BirthDate;
+
+           
+            await _context.SaveChangesAsync();
+
+            return existingUserDetail;
+        }
     }
 }
