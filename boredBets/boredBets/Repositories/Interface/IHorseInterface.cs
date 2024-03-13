@@ -9,7 +9,7 @@ namespace boredBets.Repositories.Interface
         Task<IEnumerable<Horse>> GetAllHorse();
 
         Task<Horse> GetHorseById(Guid HorseId);
-        Task<object> DeleteHorseAndJockeyBy(Guid Id);
+        Task<object> DeleteHorseAndJockeyByHorseId(Guid Id);
 
     }
 }

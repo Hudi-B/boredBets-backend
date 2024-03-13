@@ -19,8 +19,11 @@ namespace boredBets.Repositories
         {
             var horse = await _context.Horses
                 .Include(h => h.Participants)
+                .Include(j => j.Jockey)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == Id);
+
+            var jockey = await _context.Jockeys.FirstOrDefaultAsync(x => x.Id == horse.JockeyId);
 
 
             var searchInUserBet = await _context.UserBets.FirstOrDefaultAsync(x => x.HorseId == Id);
@@ -56,6 +59,7 @@ namespace boredBets.Repositories
             if (horse != null)
             {
                 _context.Horses.Remove(horse);
+                _context.Jockeys.Remove(jockey);
                 await _context.SaveChangesAsync();
             }
 
