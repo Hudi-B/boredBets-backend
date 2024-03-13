@@ -106,6 +106,8 @@ namespace boredBets.Repositories
         {
             try
             {
+                Guid RaceId = Guid.NewGuid();
+
                 var track = await _context.Tracks.FirstOrDefaultAsync(x => x.Id == raceCreateDto.TrackId);
 
                 if (track == null)
@@ -116,7 +118,7 @@ namespace boredBets.Repositories
 
                 var race = new Race
                 {
-                    Id = Guid.NewGuid(),
+                    Id = RaceId,
                     Weather = raceCreateDto.Weather,
                     TrackId = raceCreateDto.TrackId,
                     RaceTime = raceCreateDto.RaceTime,
@@ -199,19 +201,26 @@ namespace boredBets.Repositories
             }
         }
 
-        public async Task<Race> DeleteRaceById(Guid Id)
+        public async Task<object> DeleteRaceById(Guid Id)
         {
-            var id = await _context.Races.FirstOrDefaultAsync(x => x.Id == Id);
+            var race = await _context.Races.FirstOrDefaultAsync(x => x.Id == Id);
 
-            if (id == null) 
-            { 
+            if (race == null)
+            {
                 return null; 
             }
 
-            _context.Races.Remove(id);
+
+            _context.Races.Remove(race);
             await _context.SaveChangesAsync();
 
-            return id;
+            var result = new
+            {
+                race
+            };
+
+            return result;
         }
+
     }
 }
