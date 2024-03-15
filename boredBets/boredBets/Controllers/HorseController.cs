@@ -28,13 +28,13 @@ namespace boredBets.Controllers
         }
 
         [HttpGet("GetAllHorses")]
-        public async Task<ActionResult<Horse>> GetAllHorse() 
+        public async Task<ActionResult<HorseContentDto>> GetAllHorse() 
         {
             return StatusCode(201, await horseInterface.GetAllHorse());
         }
 
         [HttpGet("GetHorseById")]
-        public async Task<ActionResult<Horse>> GetHorseById(Guid HorseId)
+        public async Task<ActionResult<HorseContentDto>> GetHorseById(Guid HorseId)
         {
             var result = await horseInterface.GetHorseById(HorseId);
 

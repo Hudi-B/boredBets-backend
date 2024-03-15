@@ -8,11 +8,11 @@ public partial class Horse
 {
     public Guid Id { get; set; }
 
-    public string? Name { get; set; }
+    public string Name { get; set; }
 
-    public int? Age { get; set; }
+    public int Age { get; set; }
 
-    public bool? Stallion { get; set; }
+    public bool Stallion { get; set; }
 
     public Guid? JockeyId { get; set; }
     [JsonIgnore]

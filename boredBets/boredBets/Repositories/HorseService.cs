@@ -15,7 +15,7 @@ namespace boredBets.Repositories
             _context = context;
         }
 
-        public async Task<object> DeleteHorseAndJockeyBy(Guid Id)
+        public async Task<object> DeleteHorseAndJockeyByHorseId(Guid Id)
         {
             var horse = await _context.Horses
                 .Include(h => h.Participants)
@@ -74,14 +74,27 @@ namespace boredBets.Repositories
 
 
 
-        public async Task<IEnumerable<Horse>> GetAllHorse()
+        public async Task<IEnumerable<HorseContentDto>> GetAllHorse()
         {
-            return await _context.Horses.ToListAsync();
+            return await _context.Horses
+                .Select(h => new HorseContentDto(
+                    h.Id,
+                    h.Name,
+                    h.Age,
+                    h.Stallion))
+                .ToListAsync();
         }
 
-        public async Task<Horse> GetHorseById(Guid HorseId)
+        public async Task<HorseContentDto> GetHorseById(Guid HorseId)
         {
-            var horse = await _context.Horses.FirstOrDefaultAsync(x=>x.Id==HorseId);
+            var horse = await _context.Horses
+                                            .Where(h => h.Id == HorseId)
+                                            .Select(h => new HorseContentDto(
+                                                h.Id,
+                                                h.Name,
+                                                h.Age,
+                                                h.Stallion))
+                                            .FirstOrDefaultAsync();
 
             if (horse == null)
             {
