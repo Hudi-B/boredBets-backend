@@ -71,10 +71,10 @@ namespace boredBets.Repositories
             return BCrypt.Net.BCrypt.Verify(enteredPassword, storedPassword);
         }
 
-        public async Task<IEnumerable<User>> GetByUserId(Guid id)
+        public async Task<IEnumerable<User>> GetByUserId(Guid UserId)
         {
             var users = await _context.Users
-                .Where(u => u.Id == id)
+                .Where(u => u.Id == UserId)
                 .Select(u => new User
                 {
                     Id = u.Id,
@@ -114,6 +114,8 @@ namespace boredBets.Repositories
             {
                 Id = userId,
                 Email = userCreateDto.Email,
+                Username = userCreateDto.Username,
+                Wallet = 0,
                 Admin = false,
                 Password = hashedpassword,
                 Created = DateTime.UtcNow,
@@ -175,31 +177,7 @@ namespace boredBets.Repositories
             return response;
         }
 
-        /*public async Task<IEnumerable<User>> GetByRole(string Role)
-        {
-            try
-            {
-                var userRole = await _context.Users
-                                                    .Where(x => x.Role == Role)
-                                                    .ToListAsync();
-                if (userRole == null)
-                {
-                    new Exception("No user has this role or the role doesn't exist");
-                }
-                return userRole;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Error: {e.Message}");
-
-                if (e.InnerException != null)
-                {
-                    Console.WriteLine($"Inner Exception: {e.InnerException.Message}");
-                }
-
-                throw;
-            }
-        }*/
+        
 
         public async Task<IEnumerable<User>> GetAllUser()
         {
@@ -220,10 +198,10 @@ namespace boredBets.Repositories
             return result;
         }
 
-        public async Task<object> GetNewAccessToken(Guid id, string refreshtoken)
+        public async Task<object> GetNewAccessToken(Guid UserId, string refreshtoken)
         {
             var right_token = await _context.Users
-                                                  .FirstOrDefaultAsync(x => x.RefreshToken == refreshtoken && x.Id == id);
+                                                  .FirstOrDefaultAsync(x => x.RefreshToken == refreshtoken && x.Id == UserId);
 
             if (right_token == null)
             {
@@ -249,5 +227,43 @@ namespace boredBets.Repositories
 
             return userid;
         }
+
+        public async Task<UserWalletDto> GetWalletByUserId(Guid UserId)
+        {
+            var wallet = await _context.Users
+                                       .Where(u => u.Id == UserId)
+                                       .Select(u => new UserWalletDto(
+                                           u.Wallet))
+                                       .FirstOrDefaultAsync();
+
+            if (wallet == null)
+            {
+                return null;
+            }
+
+            return wallet;
+        }
+
+        public async Task<UserWalletDto> UpdateWalletByUserId(Guid UserId,UserWalletDto wallet)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == UserId);
+
+            if (user == null)
+            {
+                return null;
+            }
+            if (user.Wallet<wallet.Wallet)
+            {
+                user.Wallet = wallet.Wallet;
+
+                await _context.SaveChangesAsync();
+
+                return new UserWalletDto(user.Wallet);
+            }
+            return null;
+
+            
+        }
+
     }
 }

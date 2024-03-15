@@ -57,9 +57,9 @@ namespace boredBets.Controllers
         }
 
         [HttpGet("GetByUserId")]
-        public async Task<ActionResult<User>> GetByUserId(Guid id) 
+        public async Task<ActionResult<User>> GetByUserId(Guid UserId) 
         {
-            var result = await userInterface.GetByUserId(id);
+            var result = await userInterface.GetByUserId(UserId);
 
             if (result == null)
             {
@@ -69,9 +69,9 @@ namespace boredBets.Controllers
         }
 
         [HttpGet("GetNewAccessToken")]
-        public async Task<ActionResult<User>> GetNewAccessToken(Guid id, string refreshtoken) 
+        public async Task<ActionResult<User>> GetNewAccessToken(Guid UserId, string refreshtoken) 
         {
-            var result =await userInterface.GetNewAccessToken(id, refreshtoken);
+            var result =await userInterface.GetNewAccessToken(UserId, refreshtoken);
 
             if (result == null)
             {
@@ -80,20 +80,34 @@ namespace boredBets.Controllers
             return Ok(result);
         }
 
-        /*[HttpGet("GetByRole")]
-        public async Task<ActionResult<User>> GetByRole(string Role)
+        [HttpGet("GetWalletByUserId")]
+        public async Task<ActionResult<User>> GetWalletByUserId(Guid UserId)
         {
-            if (Role == null) { return BadRequest(); }
-            else
+            var result = await userInterface.GetWalletByUserId(UserId);
+
+            if (result == null)
             {
-                return StatusCode(201, await userInterface.GetByRole(Role));
+                return NotFound();
             }
-        }*/
+            return Ok(result);
+        }
+
+        [HttpPut("UpdateWalletByUserId")]
+        public async Task<ActionResult<UserWalletDto>> UpdateWalletByUserId(Guid UserId, UserWalletDto wallet)
+        {
+            var result = await userInterface.UpdateWalletByUserId(UserId,wallet);
+
+            if (result == null)
+            {
+                return NotFound("User not found or value was lower than initial value");
+            }
+            return Ok(result);
+        }
 
         [HttpDelete("DeleteUserById")]
-        public async Task<ActionResult<User>> DeleteUserById(Guid Id)
+        public async Task<ActionResult<User>> DeleteUserById(Guid UserId)
         {
-            var result = await userInterface.DeleteUserById(Id);
+            var result = await userInterface.DeleteUserById(UserId);
 
             if (result == null)
             {

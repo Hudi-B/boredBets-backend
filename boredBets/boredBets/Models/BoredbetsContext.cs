@@ -64,7 +64,7 @@ public partial class BoredbetsContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
-            .UseCollation("utf8mb4_0900_ai_ci")
+            .UseCollation("utf8mb4_hungarian_ci")
             .HasCharSet("utf8mb4");
 
         modelBuilder.Entity<Horse>(entity =>
@@ -75,14 +75,11 @@ public partial class BoredbetsContext : DbContext
 
             entity.HasIndex(e => e.JockeyId, "fk_horses_jockey");
 
-            entity.Property(e => e.Id)
-                .HasColumnName("id")
-                .UseCollation("ascii_general_ci")
-                .HasCharSet("ascii");
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Age).HasColumnName("age");
             entity.Property(e => e.JockeyId).HasColumnName("jockey_id");
             entity.Property(e => e.Name)
-                .HasMaxLength(255)
+                .HasMaxLength(64)
                 .HasColumnName("name");
             entity.Property(e => e.Stallion).HasColumnName("stallion");
 
@@ -101,7 +98,7 @@ public partial class BoredbetsContext : DbContext
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Male).HasColumnName("male");
             entity.Property(e => e.Name)
-                .HasMaxLength(255)
+                .HasMaxLength(32)
                 .HasColumnName("name");
             entity.Property(e => e.Quality).HasColumnName("quality");
         });
@@ -116,25 +113,18 @@ public partial class BoredbetsContext : DbContext
 
             entity.HasIndex(e => e.RaceId, "race_id");
 
-            entity.Property(e => e.Id)
-                .UseCollation("ascii_general_ci")
-                .HasCharSet("ascii");
-            entity.Property(e => e.HorseId)
-                .HasColumnName("horse_id")
-                .UseCollation("ascii_general_ci")
-                .HasCharSet("ascii");
+            entity.Property(e => e.HorseId).HasColumnName("horse_id");
             entity.Property(e => e.Placement).HasColumnName("placement");
-            entity.Property(e => e.RaceId)
-                .HasColumnName("race_id")
-                .UseCollation("ascii_general_ci")
-                .HasCharSet("ascii");
+            entity.Property(e => e.RaceId).HasColumnName("race_id");
 
             entity.HasOne(d => d.Horse).WithMany(p => p.Participants)
                 .HasForeignKey(d => d.HorseId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("participant_ibfk_2");
 
             entity.HasOne(d => d.Race).WithMany(p => p.Participants)
                 .HasForeignKey(d => d.RaceId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("participant_ibfk_1");
         });
 
@@ -146,20 +136,14 @@ public partial class BoredbetsContext : DbContext
 
             entity.HasIndex(e => e.TrackId, "track_id");
 
-            entity.Property(e => e.Id)
-                .HasColumnName("id")
-                .UseCollation("ascii_general_ci")
-                .HasCharSet("ascii");
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.RaceScheduled)
                 .HasColumnType("datetime")
                 .HasColumnName("race_scheduled");
             entity.Property(e => e.RaceTime).HasColumnName("race_time");
-            entity.Property(e => e.TrackId)
-                .HasColumnName("track_id")
-                .UseCollation("ascii_general_ci")
-                .HasCharSet("ascii");
+            entity.Property(e => e.TrackId).HasColumnName("track_id");
             entity.Property(e => e.Weather)
-                .HasMaxLength(255)
+                .HasMaxLength(32)
                 .HasColumnName("weather");
 
             entity.HasOne(d => d.Track).WithMany(p => p.Races)
@@ -173,19 +157,16 @@ public partial class BoredbetsContext : DbContext
 
             entity.ToTable("tracks");
 
-            entity.Property(e => e.Id)
-                .HasColumnName("id")
-                .UseCollation("ascii_general_ci")
-                .HasCharSet("ascii");
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Address)
-                .HasMaxLength(100)
+                .HasMaxLength(124)
                 .HasColumnName("address");
             entity.Property(e => e.Country)
-                .HasMaxLength(255)
+                .HasMaxLength(124)
                 .HasColumnName("country");
             entity.Property(e => e.Length).HasColumnName("length");
             entity.Property(e => e.Name)
-                .HasMaxLength(255)
+                .HasMaxLength(124)
                 .HasColumnName("name");
         });
 
@@ -195,10 +176,7 @@ public partial class BoredbetsContext : DbContext
 
             entity.ToTable("users");
 
-            entity.Property(e => e.Id)
-                .HasColumnName("id")
-                .UseCollation("ascii_general_ci")
-                .HasCharSet("ascii");
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Admin).HasColumnName("admin");
             entity.Property(e => e.Created)
                 .HasMaxLength(6)
@@ -212,6 +190,10 @@ public partial class BoredbetsContext : DbContext
             entity.Property(e => e.RefreshToken)
                 .HasMaxLength(255)
                 .HasColumnName("refresh_token");
+            entity.Property(e => e.Username)
+                .HasMaxLength(20)
+                .HasColumnName("username");
+            entity.Property(e => e.Wallet).HasColumnName("wallet");
         });
 
         modelBuilder.Entity<UserBet>(entity =>
@@ -226,29 +208,19 @@ public partial class BoredbetsContext : DbContext
 
             entity.HasIndex(e => e.RaceId, "race_id1");
 
-            entity.Property(e => e.Id)
-                .UseCollation("ascii_general_ci")
-                .HasCharSet("ascii");
             entity.Property(e => e.BetAmount).HasColumnName("bet_amount");
-            entity.Property(e => e.HorseId)
-                .HasColumnName("horse_id")
-                .UseCollation("ascii_general_ci")
-                .HasCharSet("ascii");
-            entity.Property(e => e.RaceId)
-                .HasColumnName("race_id")
-                .UseCollation("ascii_general_ci")
-                .HasCharSet("ascii");
-            entity.Property(e => e.UserId)
-                .HasColumnName("user_id")
-                .UseCollation("ascii_general_ci")
-                .HasCharSet("ascii");
+            entity.Property(e => e.HorseId).HasColumnName("horse_id");
+            entity.Property(e => e.RaceId).HasColumnName("race_id");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
 
             entity.HasOne(d => d.Horse).WithMany(p => p.UserBets)
                 .HasForeignKey(d => d.HorseId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("user_bets_ibfk_2");
 
             entity.HasOne(d => d.Race).WithMany(p => p.UserBets)
                 .HasForeignKey(d => d.RaceId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("user_bets_ibfk_1");
 
             entity.HasOne(d => d.User).WithMany(p => p.UserBets)
@@ -279,10 +251,7 @@ public partial class BoredbetsContext : DbContext
             entity.Property(e => e.ExpYear)
                 .HasMaxLength(3)
                 .HasColumnName("exp_year");
-            entity.Property(e => e.UserId)
-                .HasColumnName("user_id")
-                .UseCollation("ascii_general_ci")
-                .HasCharSet("ascii");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
 
             entity.HasOne(d => d.User).WithMany(p => p.UserCards)
                 .HasForeignKey(d => d.UserId)
@@ -297,9 +266,7 @@ public partial class BoredbetsContext : DbContext
 
             entity.Property(e => e.UserId)
                 .ValueGeneratedOnAdd()
-                .HasColumnName("user_id")
-                .UseCollation("ascii_general_ci")
-                .HasCharSet("ascii");
+                .HasColumnName("user_id");
             entity.Property(e => e.Address)
                 .HasMaxLength(255)
                 .HasColumnName("address");
