@@ -13,7 +13,7 @@ public partial class UserBet
 
     public Guid? HorseId { get; set; }
 
-    public float? BetAmount { get; set; }
+    public int BetAmount { get; set; }
 
     public virtual Horse? Horse { get; set; }
 

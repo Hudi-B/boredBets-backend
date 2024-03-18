@@ -26,6 +26,8 @@ public partial class BoredbetsContext : DbContext
 
     public virtual DbSet<Track> Tracks { get; set; }
 
+    public virtual DbSet<Transaction> Transactions { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
     public virtual DbSet<UserBet> UserBets { get; set; }
@@ -168,6 +170,23 @@ public partial class BoredbetsContext : DbContext
             entity.Property(e => e.Name)
                 .HasMaxLength(124)
                 .HasColumnName("name");
+        });
+
+        modelBuilder.Entity<Transaction>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("transaction");
+
+            entity.HasIndex(e => e.UserId, "user_id_UNIQUE").IsUnique();
+
+            entity.Property(e => e.Bet).HasColumnName("bet");
+            entity.Property(e => e.BetOutcome).HasColumnName("bet_outcome");
+            entity.Property(e => e.Created)
+                .HasColumnType("datetime")
+                .HasColumnName("created");
+            entity.Property(e => e.Deposit).HasColumnName("deposit");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
         });
 
         modelBuilder.Entity<User>(entity =>

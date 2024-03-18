@@ -46,24 +46,43 @@ namespace boredBets.Repositories
             var existingParticipant = await _context.Participants
                                                                  .FirstOrDefaultAsync(x => x.RaceId == userBetCreateDto.RaceId && x.HorseId == userBetCreateDto.HorseId);
 
+
+            var userCard = await _context.UserCards.FirstOrDefaultAsync(x => x.UserId == userBetCreateDto.UserId);
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userBetCreateDto.UserId);
             var horse = await _context.Horses.FirstOrDefaultAsync(x => x.Id == userBetCreateDto.HorseId);
             var race = await _context.Races.FirstOrDefaultAsync(x => x.Id == userBetCreateDto.RaceId);
 
-            if (user == null || horse == null || race == null || existingParticipant == null)
+
+            if (user == null || horse == null || race == null || existingParticipant == null || userCard.CreditcardNum == null)
             {
                 return null;
             }
 
-            Guid id = new Guid();
+            
             var userbet = new UserBet
             {
-                Id = id,
+                Id = Guid.NewGuid(),
                 UserId = userBetCreateDto.UserId,
                 RaceId = userBetCreateDto.RaceId,
                 HorseId = userBetCreateDto.HorseId,
                 BetAmount = userBetCreateDto.BetAmount
             };
+
+            int totalDeposit = await _context.UserBets
+                                           .Where(x => x.UserId == userBetCreateDto.UserId)
+                                           .SumAsync(x => x.BetAmount);
+
+            var transaction = new Transaction 
+            {
+                UserId = userBetCreateDto.UserId,
+                Deposit = totalDeposit+userBetCreateDto.BetAmount,
+                Bet = userBetCreateDto.BetAmount,
+                //BetOutcome = how to 
+                Created = DateTime.UtcNow,
+                
+            };
+
+            await _context.Transactions.AddAsync(transaction);
 
             await _context.UserBets.AddAsync(userbet);
             await _context.SaveChangesAsync();
