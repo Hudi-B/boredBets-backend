@@ -7,7 +7,7 @@ namespace boredBets.Repositories.Interface
     public interface IUserInterface
     {
         Task<User> Register(UserCreateDto userCreateDto);
-        Task<object> Login(UserCreateDto userCreateDto);
+        Task<object> Login(UserLoginDto userLoginDto);
         Task<object> GetNewAccessToken(Guid UserId, string refreshtoken);
         Task<IEnumerable<User>> GetAllUser();
         Task<IEnumerable<User>> GetByUserId(Guid UserId);
