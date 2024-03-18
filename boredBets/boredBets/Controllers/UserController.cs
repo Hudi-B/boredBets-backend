@@ -32,9 +32,9 @@ namespace boredBets.Controllers
         }
 
         [HttpPost("UserLogin")]
-        public async Task<ActionResult<string>> Login(UserCreateDto userCreateDto)
+        public async Task<ActionResult<string>> Login(UserLoginDto userLoginDto)
         {
-            var result = await userInterface.Login(userCreateDto);
+            var result = await userInterface.Login(userLoginDto);
 
             if (result == null)
             {

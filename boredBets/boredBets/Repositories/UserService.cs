@@ -145,15 +145,15 @@ namespace boredBets.Repositories
             return user;//only id
         }
 
-        public async Task<object> Login(UserCreateDto userCreateDto) //login
+        public async Task<object> Login(UserLoginDto userLoginDto) //login
         {
             var user = await _context.Users
                                           .Include(x => x.UserCards)
                                           .Include(x => x.UserDetail)
                                           .Include(x => x.UserBets)
-                                          .FirstOrDefaultAsync(x => x.Email == userCreateDto.Email);
+                                          .FirstOrDefaultAsync(x => x.Email == userLoginDto.EmailOrUsername ||x.Username==userLoginDto.EmailOrUsername);
 
-            if (user == null || !VerifyHashedPassword(userCreateDto.Password, user.Password))
+            if (user == null || !VerifyHashedPassword(userLoginDto.Password, user.Password))
             {
                 return null;
             }
