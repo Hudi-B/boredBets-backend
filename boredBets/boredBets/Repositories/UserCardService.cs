@@ -61,7 +61,8 @@ namespace boredBets.Repositories
                 Cvc = userCardCreateDto.Cvc,
                 ExpMonth = userCardCreateDto.ExpMonth,
                 ExpYear = userCardCreateDto.ExpYear,
-                CardName = userCardCreateDto.CardName,
+                CardName = !string.IsNullOrEmpty(userCardCreateDto.CardName) ? userCardCreateDto.CardName : "CreditCard",
+                CardHoldername = userCardCreateDto.CardHoldername,
                 UserId = userCardCreateDto.UserId
             };
 

@@ -99,11 +99,16 @@ namespace boredBets.Repositories
 
         public async Task<User> Register(UserCreateDto userCreateDto) //register
         {
-            var emailexist = await _context.Users.FirstOrDefaultAsync(x => x.Email == userCreateDto.Email);
+            var emailExist = await _context.Users.FirstOrDefaultAsync(x => x.Email == userCreateDto.Email);
+            var usernameExist = await _context.Users.FirstOrDefaultAsync(x => x.Username == userCreateDto.Username);
 
-            if (emailexist != null)
+            if (emailExist != null)
             {
                 throw new InvalidOperationException("User with this email already exists");
+            }
+            if (usernameExist != null)
+            {
+                throw new InvalidOperationException("User with this name already exists");
             }
 
             string hashedpassword = HashPassword(userCreateDto.Password);

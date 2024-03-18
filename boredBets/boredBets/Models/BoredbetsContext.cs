@@ -258,8 +258,12 @@ public partial class BoredbetsContext : DbContext
             entity.Property(e => e.CreditcardNum)
                 .HasMaxLength(17)
                 .HasColumnName("creditcard_num");
+            entity.Property(e => e.CardHoldername)
+                .HasMaxLength(25)
+                .HasColumnName("card_holdername");
             entity.Property(e => e.CardName)
-                .HasMaxLength(60)
+                .HasMaxLength(25)
+                .HasDefaultValueSql("'CreditCard'")
                 .HasColumnName("card_name");
             entity.Property(e => e.Cvc)
                 .HasMaxLength(4)

@@ -17,5 +17,7 @@ public partial class UserCard
 
     public Guid UserId { get; set; }
 
+    public string? CardHoldername { get; set; }
+
     public virtual User User { get; set; } = null!;
 }
