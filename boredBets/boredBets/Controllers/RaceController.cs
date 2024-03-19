@@ -4,6 +4,7 @@ using boredBets.Repositories.Interface;
 using boredBets.Repositories.Viewmodels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace boredBets.Controllers
 {
@@ -12,10 +13,12 @@ namespace boredBets.Controllers
     public class RaceController : ControllerBase
     {
         private readonly IRaceInterface _raceInterface;
+        private readonly BoredbetsContext _context;
 
-        public RaceController(IRaceInterface raceInterface)
+        public RaceController(IRaceInterface raceInterface, BoredbetsContext context)
         {
             _raceInterface = raceInterface;
+            _context = context;
         }
 
         [HttpPost("RacePost")]
@@ -71,6 +74,47 @@ namespace boredBets.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("GenerateRaces")]
+        public async Task<ActionResult<int>> GenerateRace(RaceGenerate generate) 
+        {
+            var freeHorses = await _context.Horses
+                                                  .Take(20) 
+                                                  .ToListAsync();
+
+            if (freeHorses.Count >= 20) 
+            {
+                var trackIdExist = _context.Tracks.FirstOrDefaultAsync(x => x.Id == generate.TrackId);
+
+                if (trackIdExist==null)
+                {
+                    return BadRequest("Track doesn't exist");
+                }
+
+                Guid raceId = Guid.NewGuid();
+
+                var race = new Race
+                {
+                    Id = raceId,
+                    //RaceTime = noidea
+                    RaceScheduled = DateTime.UtcNow,
+                    //Weather = in dto??
+                    TrackId = generate.TrackId,
+
+                };
+
+                var participate = new Participant
+                {
+                    Id = Guid.NewGuid(),
+                    RaceId = raceId,
+                    //HorseId = huhh lost contact with earth
+                    Placement = 0 // I ON KNOE 
+                };
+            }
+            return BadRequest("Not enough horse");//we could use generate horse here GenerateHorse(20-freeHorses.Count)
+
+        }
+        
 
     }
 }
