@@ -106,6 +106,7 @@ namespace boredBets.Repositories
             {
                 throw new InvalidOperationException("User with this email already exists");
             }
+
             if (usernameExist != null)
             {
                 throw new InvalidOperationException("User with this name already exists");
@@ -156,7 +157,7 @@ namespace boredBets.Repositories
                                           .Include(x => x.UserCards)
                                           .Include(x => x.UserDetail)
                                           .Include(x => x.UserBets)
-                                          .FirstOrDefaultAsync(x => x.Email == userLoginDto.EmailOrUsername ||x.Username==userLoginDto.EmailOrUsername);
+                                          .FirstOrDefaultAsync(x => x.Email == userLoginDto.EmailOrUsername || x.Username==userLoginDto.EmailOrUsername);
 
             if (user == null || !VerifyHashedPassword(userLoginDto.Password, user.Password))
             {
@@ -176,6 +177,7 @@ namespace boredBets.Repositories
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
                 UserId = user.Id,
+                Wallet = user.Wallet,
                 Admin=user.Admin,
             };
 
