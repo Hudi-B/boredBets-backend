@@ -71,29 +71,27 @@ namespace boredBets.Repositories
             return BCrypt.Net.BCrypt.Verify(enteredPassword, storedPassword);
         }
 
-        public async Task<IEnumerable<User>> GetByUserId(Guid UserId)
+        public async Task<object> GetByUserId(Guid UserId)
         {
             var users = await _context.Users
-                .Where(u => u.Id == UserId)
-                .Select(u => new User
-                {
-                    Id = u.Id,
-                    Email = u.Email,
-                    Admin = u.Admin,
-                    Created = u.Created,
-
-                    UserDetail = !u.UserDetail.IsPrivate
-                        ? u.UserDetail
-                        : new UserDetail { IsPrivate = u.UserDetail.IsPrivate }
-                })
-                .ToListAsync();
+                .FirstOrDefaultAsync(u => u.Id == UserId);
+                
 
             if (users == null ) 
             {
                 return null;
             }
 
-            return users;
+            var result = new
+            {
+                Id=UserId,
+                Email = users.Email,
+                Wallet = users.Wallet,
+                Admin= users.Admin,
+                Created = users.Created,
+            };
+
+            return result;
         }
 
 

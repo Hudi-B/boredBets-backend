@@ -10,7 +10,7 @@ namespace boredBets.Repositories.Interface
         Task<object> Login(UserLoginDto userLoginDto);
         Task<object> GetNewAccessToken(Guid UserId, string refreshtoken);
         Task<IEnumerable<User>> GetAllUser();
-        Task<IEnumerable<User>> GetByUserId(Guid UserId);
+        Task<object> GetByUserId(Guid UserId);
         Task<User> DeleteUserById(Guid id);
         Task<UserWalletDto> GetWalletByUserId(Guid UserId);
         Task<UserWalletDto> UpdateWalletByUserId(Guid UserId,UserWalletDto wallet);
