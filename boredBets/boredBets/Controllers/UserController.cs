@@ -116,5 +116,22 @@ namespace boredBets.Controllers
 
             return Ok(result);
         }
+
+        [HttpPut("UpdateUsernameByUserId")]
+        public async Task<ActionResult<User>> UpdateUsernameByUserId(Guid UserId, UsernameDto username)
+        {
+            var result = await userInterface.UpdateUsernameByUserId(UserId,username);
+
+            if (result == "0")
+            {
+               return NoContent();
+            }
+            else if (result== "1")
+            {
+               return Conflict("Username already exists");
+            }
+
+            return Ok();
+        }
     }
 }

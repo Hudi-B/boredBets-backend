@@ -218,9 +218,9 @@ namespace boredBets.Repositories
             return new { AccessToken = new_accesstoken };
         }
 
-        public async Task<User> DeleteUserById(Guid id)
+        public async Task<User> DeleteUserById(Guid UserId)
         {
-            var userid = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+            var userid = await _context.Users.FirstOrDefaultAsync(x => x.Id == UserId);
 
             if (userid == null)
             {
@@ -270,5 +270,27 @@ namespace boredBets.Repositories
             
         }
 
+        public async Task<object> UpdateUsernameByUserId(Guid UserId, UsernameDto username)
+        {
+            var userName= await _context.Users.FirstOrDefaultAsync(x => x.Id == UserId);
+
+            if (username.Username == "") 
+            {
+                return "0";
+            }
+
+            var usernameExisting = await _context.Users.Where(x => x.Username == username.Username).ToListAsync();
+
+            if (usernameExisting.Any()) 
+            {
+                return "1";
+            }
+
+
+            userName.Username = username.Username;
+            await _context.SaveChangesAsync();
+
+            return null;
+        }
     }
 }
