@@ -8,6 +8,7 @@ namespace boredBets.Repositories.Interface
     {
         Task<User> Register(UserCreateDto userCreateDto);
         Task<object> Login(UserLoginDto userLoginDto);
+        Task<object> UserLoginByRefreshToken(string RefreshToken);
         Task<object> GetNewAccessToken(Guid UserId, string refreshtoken);
         Task<IEnumerable<User>> GetAllUser();
         Task<object> UpdateUsernameByUserId(Guid UserId, UsernameDto username);

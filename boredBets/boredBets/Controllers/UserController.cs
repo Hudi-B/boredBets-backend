@@ -43,6 +43,18 @@ namespace boredBets.Controllers
             return Ok(result);
         }
 
+        [HttpPost("UserLoginByRefreshToken")]
+        public async Task<ActionResult<object>> UserLoginByRefreshToken(string RefreshToken)
+        {
+            var result = await userInterface.UserLoginByRefreshToken(RefreshToken);
+
+            if (result == "0")
+            {
+                return Unauthorized();
+            }
+            return Ok(result);
+        }
+
         [Authorize]
         [HttpGet("GetAllUsers")]
         public async Task<ActionResult<User>> GetAllUser() 

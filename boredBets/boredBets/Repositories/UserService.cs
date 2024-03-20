@@ -163,12 +163,11 @@ namespace boredBets.Repositories
             }
 
             var accessToken = GenerateAccessToken(user.Id.ToString());
-            var refreshToken = user.RefreshToken;
+            var refreshToken = GenerateRefreshToken(user.Id.ToString());
 
-            if (user.RefreshToken == null)
-            {
-                GenerateRefreshToken(user.Id.ToString());
-            }
+            user.RefreshToken = refreshToken;
+            await _context.SaveChangesAsync();
+
 
             var response = new
             {
@@ -291,6 +290,36 @@ namespace boredBets.Repositories
             await _context.SaveChangesAsync();
 
             return null;
+        }
+
+        public async Task<object> UserLoginByRefreshToken(string RefreshToken)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.RefreshToken == RefreshToken);
+
+            if (user == null) 
+            {
+                return "0";
+            }
+
+            var accessToken = GenerateAccessToken(user.Id.ToString());
+            var refreshToken = GenerateRefreshToken(user.Id.ToString());
+
+            user.RefreshToken = refreshToken;
+            await _context.SaveChangesAsync();
+
+
+            var response = new
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+                UserId = user.Id,
+                Wallet = user.Wallet,
+                Admin = user.Admin,
+            };
+
+            return response;
+
+
         }
     }
 }
