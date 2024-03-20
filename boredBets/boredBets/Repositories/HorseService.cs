@@ -1,6 +1,8 @@
 ﻿using boredBets.Models;
 using boredBets.Models.Dtos;
 using boredBets.Repositories.Interface;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.CompilerServices;
 
@@ -15,61 +17,36 @@ namespace boredBets.Repositories
             _context = context;
         }
 
-        public async Task<object> DeleteHorseAndJockeyByHorseId(Guid Id)
+        public async Task<string> DeleteHorseAndJockeyByHorseId(Guid Id)
         {
-            var horse = await _context.Horses
-                .Include(h => h.Participants)
-                .Include(j => j.Jockey)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == Id);
-
-            var jockey = await _context.Jockeys.FirstOrDefaultAsync(x => x.Id == horse.JockeyId);
-
-
-            var searchInUserBet = await _context.UserBets.FirstOrDefaultAsync(x => x.HorseId == Id);
+            var horse = await _context.Horses.FirstOrDefaultAsync(x => x.Id == Id);
 
             if (horse == null)
             {
-                return null;
+                return "0";
             }
 
-            var participants = horse?.Participants.ToList();
+            var jockey = await _context.Jockeys.FirstOrDefaultAsync(x => x.Id == horse.JockeyId);
 
-            if (participants != null && participants.Any())
+            if (jockey == null)
             {
-                _context.Participants.RemoveRange(participants);
-                await _context.SaveChangesAsync(); // Save changes for the first deletion
-
-                // Detach the entities to prevent further tracking issues
-                foreach (var participant in participants)
-                {
-                    _context.Entry(participant).State = EntityState.Detached;
-                }
+                return "1"; 
             }
 
-            // Detach the horse entity before making changes
-            _context.Entry(horse).State = EntityState.Detached;
+            var searchInUserBets = await _context.UserBets
+                                                          .Where(x => x.HorseId == Id)
+                                                          .ToListAsync();
 
-            // Load the horse again after the first deletion
-            horse = await _context.Horses
-                .Include(h => h.Participants)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == Id);
-
-            if (horse != null)
+            if (searchInUserBets != null) 
             {
-                _context.Horses.Remove(horse);
-                _context.Jockeys.Remove(jockey);
-                await _context.SaveChangesAsync();
+                _context.UserBets.RemoveRange(searchInUserBets);
             }
 
-            var result = new
-            {
-                Horse = horse,
-                UserBet = searchInUserBet,
-            };
+            _context.Horses.Remove(horse);
+            _context.Jockeys.Remove(jockey);
+            _context.SaveChanges();
 
-            return result;
+            return "Success";
         }
 
 
