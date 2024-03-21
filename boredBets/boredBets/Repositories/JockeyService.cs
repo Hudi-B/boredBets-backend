@@ -31,6 +31,76 @@ namespace boredBets.Repositories
             return jockey;
         }
 
+        public async Task<object> GetJockeyDetailByJockeyId(Guid JockeyId)
+        {
+            var jockey = await _context.Jockeys.FirstOrDefaultAsync(x=>x.Id == JockeyId);
+
+            if (jockey == null)
+            {
+                return "0";
+            }
+
+            var jockeyHasHorse = await _context.Horses.FirstOrDefaultAsync(x => x.JockeyId == jockey.Id);
+
+            if (jockeyHasHorse == null)
+            {
+                var jockeyWithoutHorse = new {
+                    Id = jockey.Id,
+                    Name = jockey.Name,
+                    IsMale = jockey.Male,
+                    HorseId = jockeyHasHorse.Id,
+                    HorseName = jockeyHasHorse.Name,
+                };
+            }
+
+            var jockeyParicipate = await _context.Participants.AnyAsync(x => x.HorseId == jockeyHasHorse.Id);
+
+            if (jockeyParicipate == false) 
+            {
+                var jockeyNeverRaced = new
+                {
+                    Id = jockey.Id,
+                    Name = jockey.Name,
+                    IsMale = jockey.Male,
+                    HorseId = jockeyHasHorse.Id,
+                    HorseName = jockeyHasHorse.Name,
+                };
+                return jockeyNeverRaced;
+            }
+
+            var jockeyParticipate = await _context.Participants
+                                      .Where(x => x.HorseId == jockeyHasHorse.Id)
+                                      .Select(x => new { x.RaceId })
+                                      .FirstOrDefaultAsync();
+
+            var raceSchedulesPast = await _context.Races
+                                                    .Where(x => x.RaceScheduled < DateTime.UtcNow)
+                                                    .ToListAsync();
+
+            var raceSchedulesFuture = await _context.Races
+                                                    .Where(x => x.RaceScheduled > DateTime.UtcNow)
+                                                    .ToListAsync();
+
+
+
+
+
+            var result = new
+            {
+                Id = jockey.Id,
+                Name = jockey.Name,
+                IsMale = jockey.Male,
+                HorseId = jockeyHasHorse.Id,
+                HorseName = jockeyHasHorse.Name,
+                Next3Races = raceSchedulesFuture.Take(3),
+                Past3Races = raceSchedulesPast.Take(3),
+                LifeTimeMatches = raceSchedulesPast.Count()
+
+            };
+
+            return result;
+        }
+
         public async Task<Jockey> Post(JockeyCreateDto jockeyCreateDto)
         {
             var jockeys = new Jockey

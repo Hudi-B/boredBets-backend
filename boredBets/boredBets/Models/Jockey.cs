@@ -11,7 +11,7 @@ public partial class Jockey
 
     public int? Quality { get; set; }
 
-    public bool? Male { get; set; }
+    public bool Male { get; set; }
 
     public virtual ICollection<Horse> Horses { get; set; } = new List<Horse>();
 }

@@ -45,6 +45,18 @@ namespace boredBets.Controllers
             return result;
         }
 
+        [HttpGet("GetJockeyDetailByJockeyId")]
+        public async Task<ActionResult<object>> GetJockeyDetailByJockeyId(Guid JockeyId)
+        {
+            var result = await jockeyInterface.GetJockeyDetailByJockeyId(JockeyId);
+
+            if (result == "0")
+            {
+                NotFound("Jockey not found");
+            }
+            return Ok(result);
+        }
+
         [HttpPost("GenerateJockey")]
         public async Task<ActionResult> GenerateJockey(int quantity)
         {

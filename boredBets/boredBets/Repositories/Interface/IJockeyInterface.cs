@@ -8,5 +8,6 @@ namespace boredBets.Repositories.Interface
         Task<Jockey> Post(JockeyCreateDto jockeyCreateDto);
         Task<IEnumerable<Jockey>> GetAllJockey();
         Task<Jockey> GetJockeyById(Guid JockeyId);
+        Task<object> GetJockeyDetailByJockeyId(Guid JockeyId);
     }
 }
