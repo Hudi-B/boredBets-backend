@@ -67,6 +67,17 @@ namespace boredBets.Controllers
             }
             return Ok(result);
         }
+        [HttpGet("GetUserDetailsByUserId")]
+        public async Task<object> GetUserDetailsByUserId(Guid UserId) 
+        {
+            var result = await userInterface.GetUserDetailsByUserId(UserId);
+
+            if (result == "0") 
+            {
+                return NotFound("User not found");
+            }
+            return Ok(result);
+        }
 
         [HttpGet("GetByUserId")]
         public async Task<ActionResult<User>> GetByUserId(Guid UserId) 
@@ -145,5 +156,6 @@ namespace boredBets.Controllers
 
             return Ok();
         }
+
     }
 }

@@ -11,6 +11,7 @@ namespace boredBets.Repositories.Interface
         Task<object> UserLoginByRefreshToken(string RefreshToken);
         Task<object> GetNewAccessToken(Guid UserId, string refreshtoken);
         Task<IEnumerable<User>> GetAllUser();
+        Task<object> GetUserDetailsByUserId(Guid UserId);
         Task<object> UpdateUsernameByUserId(Guid UserId, UsernameDto username);
         Task<object> GetByUserId(Guid UserId);
         Task<User> DeleteUserById(Guid UserId);

@@ -321,5 +321,41 @@ namespace boredBets.Repositories
 
 
         }
+
+        public async Task<object> GetUserDetails(Guid UserId)
+        {
+            var user = await  _context.Users.FirstOrDefaultAsync(x => x.Id == UserId);
+
+            if (user == null) 
+            {
+                return "0";
+            }
+
+            var userDetail = await _context.UserDetails.FirstOrDefaultAsync(x => x.UserId == UserId);
+
+            if (userDetail.IsPrivate == true) 
+            {
+                var privateResult = new {
+                    userDetail.User.Username,
+                    userDetail.User.Created,
+                    userDetail.User.Admin,
+                    userDetail.IsPrivate,
+                };
+
+                return privateResult;
+            }
+
+            var userAlltimeBets = _context.UserBets.Count(x=>x.UserId==UserId);
+
+            var result = new {
+                Fullname=userDetail.Fullname,
+                Birthdate=userDetail.BirthDate,
+                Wallet=userDetail.User.Wallet,
+                AllTimeBets=userAlltimeBets,
+                //WonBets = WIP
+            };
+
+            return result;
+        }
     }
 }
