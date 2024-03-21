@@ -81,6 +81,58 @@ namespace boredBets.Repositories
             return horse;
         }
 
+        public async Task<object> GetHorseDetailByHorseId(Guid HorseId)
+        {
+            var horse = await _context.Horses.FirstOrDefaultAsync(x => x.Id == HorseId);
+
+            if (horse == null)
+            {
+                return "0";
+            }
+            var jockeyName = await _context.Jockeys
+                                    .Where(j => j.Id == horse.JockeyId)
+                                    .Select(j => j.Name)
+                                    .FirstOrDefaultAsync();
+
+            var horseParicipate = await _context.Participants.AnyAsync(x => x.HorseId == horse.Id);
+
+            if (horseParicipate == false)
+            {
+                var horseNeverRaced = new
+                {
+                    Id = horse.Id,
+                    Name = horse.Name,
+                    Age = horse.Age,
+                    JockeyId = horse.JockeyId,
+                    JockeyName = jockeyName
+                };
+                return horseNeverRaced;
+            }
+
+            var raceSchedulesPast = await _context.Races
+                                                    .Where(x => x.RaceScheduled < DateTime.UtcNow && horseParicipate)
+                                                    .ToListAsync();
+
+            var raceSchedulesFuture = await _context.Races
+                                                    .Where(x => x.RaceScheduled > DateTime.UtcNow && horseParicipate)
+                                                    .ToListAsync();
+
+            var result = new
+            {
+                Id = horse.Id,
+                Name = horse.Name,
+                Age = horse.Age,
+                JockeyId = horse.JockeyId,
+                JockeyName = jockeyName,
+                Next3Races = raceSchedulesFuture.Take(3),
+                Past3Races = raceSchedulesPast.Take(3),
+                LifeTimeMatches = raceSchedulesPast.Count()
+                //AvaragePlacement = WIP
+            };
+
+            return result;
+        }
+
         public async Task<Horse> Post(HorseCreateDto horseCreateDto)
         {
             var horses = new Horse

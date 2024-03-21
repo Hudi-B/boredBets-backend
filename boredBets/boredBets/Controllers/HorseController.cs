@@ -46,6 +46,18 @@ namespace boredBets.Controllers
             return result;
         }
 
+        [HttpGet("GetHorseDetailByHorseId")]
+        public async Task<ActionResult<object>> GetHorseDetailByHorseId(Guid HorseId)
+        {
+            var result = await horseInterface.GetHorseDetailByHorseId(HorseId);
+
+            if (result == "0")
+            {
+                NotFound("Horse not found");
+            }
+            return Ok(result);
+        }
+
         [HttpDelete("DeleteHorseAndJockeyByHorseId")]
         public async Task<ActionResult<Horse>> DeleteHorseAndJockeyByHorseId(Guid Id) 
         {

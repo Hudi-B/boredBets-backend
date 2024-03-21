@@ -10,6 +10,6 @@ namespace boredBets.Repositories.Interface
 
         Task<HorseContentDto> GetHorseById(Guid HorseId);
         Task<string> DeleteHorseAndJockeyByHorseId(Guid Id);
-
+        Task<object> GetHorseDetailByHorseId(Guid HorseId);
     }
 }
