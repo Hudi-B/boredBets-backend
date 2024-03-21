@@ -68,17 +68,13 @@ namespace boredBets.Repositories
                 return jockeyNeverRaced;
             }
 
-            var jockeyParticipate = await _context.Participants
-                                      .Where(x => x.HorseId == jockeyHasHorse.Id)
-                                      .Select(x => new { x.RaceId })
-                                      .FirstOrDefaultAsync();
 
             var raceSchedulesPast = await _context.Races
-                                                    .Where(x => x.RaceScheduled < DateTime.UtcNow)
+                                                    .Where(x => x.RaceScheduled < DateTime.UtcNow && jockeyParicipate)
                                                     .ToListAsync();
 
             var raceSchedulesFuture = await _context.Races
-                                                    .Where(x => x.RaceScheduled > DateTime.UtcNow)
+                                                    .Where(x => x.RaceScheduled > DateTime.UtcNow && jockeyParicipate)
                                                     .ToListAsync();
 
 
