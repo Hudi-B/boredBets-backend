@@ -322,7 +322,7 @@ namespace boredBets.Repositories
 
         }
 
-        public async Task<object> GetUserDetails(Guid UserId)
+        public async Task<object> GetUserDetailsByUserId(Guid UserId)
         {
             var user = await  _context.Users.FirstOrDefaultAsync(x => x.Id == UserId);
 
@@ -331,7 +331,7 @@ namespace boredBets.Repositories
                 return "0";
             }
 
-            var userDetail = await _context.UserDetails.FirstOrDefaultAsync(x => x.UserId == UserId);
+            var userDetail = await _context.UserDetails.FirstOrDefaultAsync(x => x.UserId == user.Id);
 
             if (userDetail.IsPrivate == true) 
             {
@@ -345,7 +345,7 @@ namespace boredBets.Repositories
                 return privateResult;
             }
 
-            var userAlltimeBets = _context.UserBets.Count(x=>x.UserId==UserId);
+            var userAlltimeBets = _context.UserBets.Count(x=>x.UserId==user.Id);
 
             var result = new {
                 Fullname=userDetail.Fullname,
@@ -357,5 +357,7 @@ namespace boredBets.Repositories
 
             return result;
         }
+
+        
     }
 }
