@@ -18,7 +18,6 @@ namespace boredBets.Repositories
         {
             var tracks = new Track
             {
-                Id = Guid.NewGuid(),
                 Name = trackCreateDto.Name,
                 Country = trackCreateDto.Country,
                 Length = trackCreateDto.Length,

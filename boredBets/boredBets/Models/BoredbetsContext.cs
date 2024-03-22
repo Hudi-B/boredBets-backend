@@ -63,6 +63,7 @@ public partial class BoredbetsContext : DbContext
         }
 
     }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
@@ -150,7 +151,7 @@ public partial class BoredbetsContext : DbContext
 
             entity.HasOne(d => d.Track).WithMany(p => p.Races)
                 .HasForeignKey(d => d.TrackId)
-                .HasConstraintName("races_ibfk_1");
+                .HasConstraintName("track_id");
         });
 
         modelBuilder.Entity<Track>(entity =>
@@ -178,7 +179,7 @@ public partial class BoredbetsContext : DbContext
 
             entity.ToTable("transaction");
 
-            entity.HasIndex(e => e.UserId, "user_id_UNIQUE").IsUnique();
+            entity.HasIndex(e => e.Id, "Id_UNIQUE").IsUnique();
 
             entity.Property(e => e.Bet).HasColumnName("bet");
             entity.Property(e => e.BetOutcome).HasColumnName("bet_outcome");
@@ -256,7 +257,7 @@ public partial class BoredbetsContext : DbContext
             entity.HasIndex(e => e.UserId, "IX_user_cards_user_id");
 
             entity.Property(e => e.CreditcardNum)
-                .HasMaxLength(17)
+                .HasMaxLength(20)
                 .HasColumnName("creditcard_num");
             entity.Property(e => e.CardHoldername)
                 .HasMaxLength(25)

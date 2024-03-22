@@ -5,7 +5,7 @@ namespace boredBets.Models;
 
 public partial class Track
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
 
     public string? Name { get; set; }
 

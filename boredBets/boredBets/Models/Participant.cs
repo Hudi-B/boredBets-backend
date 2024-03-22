@@ -7,9 +7,9 @@ public partial class Participant
 {
     public Guid Id { get; set; }
 
-    public Guid RaceId { get; set; }
+    public Guid? RaceId { get; set; }
 
-    public Guid HorseId { get; set; }
+    public Guid? HorseId { get; set; }
 
     public int? Placement { get; set; }
 
