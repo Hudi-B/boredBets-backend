@@ -76,45 +76,77 @@ namespace boredBets.Controllers
         }
 
         [HttpGet("GenerateRaces")]
-        public async Task<ActionResult<int>> GenerateRace(RaceGenerate generate) 
+        public async Task<ActionResult<int>> GenerateRace(int quantity)
         {
-            var freeHorses = await _context.Horses
-                                                  .Take(20) 
-                                                  .ToListAsync();
+            DateTime oneDayAgo = DateTime.UtcNow.AddDays(-1);
 
-            if (freeHorses.Count >= 20) 
+            var horsesWithoutRecentRaces = await _context.Horses
+                .Where(h => !h.Participants.Any(p => p.Race.RaceScheduled >= oneDayAgo))
+                .Take(20)
+                .ToListAsync();
+
+            Random rnd = new Random();
+
+            if (horsesWithoutRecentRaces.Count() < 20)
             {
-                var trackIdExist = _context.Tracks.FirstOrDefaultAsync(x => x.Id == generate.TrackId);
+                return BadRequest("Not enough free horses");
+            }
 
-                if (trackIdExist==null)
-                {
-                    return BadRequest("Track doesn't exist");
-                }
+            List<string> Tracks = new List<string>();
 
+            #region ReadFile
+            string staticData = AppDomain.CurrentDomain.BaseDirectory.ToString() + "../../../staticData/";
+            StreamReader sr = new StreamReader(staticData + "trackNames.txt");
+            while (!sr.EndOfStream)
+            {
+                Tracks.Add(sr.ReadLine());
+            }
+            sr.Close();
+            #endregion
+
+            for (int i = 0; i < quantity; i++)
+            {
                 Guid raceId = Guid.NewGuid();
+
+                var trackname =Tracks[rnd.Next(Tracks.Count)];
+                var track = await _context.Tracks.FirstOrDefaultAsync(x => x.Name == trackname);
 
                 var race = new Race
                 {
                     Id = raceId,
-                    //RaceTime = noidea
-                    RaceScheduled = DateTime.UtcNow,
-                    //Weather = in dto??
-                    TrackId = generate.TrackId,
-
+                    RaceTime = rnd.Next(1, 11),
+                    RaceScheduled = DateTime.UtcNow.AddMinutes(5),
+                    TrackId = track.Id
                 };
 
-                var participate = new Participant
+                for (int j = 0; j < 20; j++)
                 {
-                    Id = Guid.NewGuid(),
-                    RaceId = raceId,
-                    //HorseId = huhh lost contact with earth
-                    Placement = 0 // I ON KNOE 
-                };
-            }
-            return BadRequest("Not enough horse");//we could use generate horse here GenerateHorse(20-freeHorses.Count)
+                    var selectedHorseIndex = rnd.Next(horsesWithoutRecentRaces.Count);
+                    var selectedHorse = horsesWithoutRecentRaces[selectedHorseIndex];
 
+                    var participate = new Participant
+                    {
+                        Id = Guid.NewGuid(),
+                        RaceId = raceId,
+                        HorseId = selectedHorse.Id,
+                        Placement = 0
+                    };
+
+                    horsesWithoutRecentRaces.RemoveAt(selectedHorseIndex);
+
+
+                    _context.Participants.Add(participate);
+                }
+
+                _context.Races.Add(race);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok(quantity + " races generated successfully");
         }
-        
+
+
 
     }
 }
