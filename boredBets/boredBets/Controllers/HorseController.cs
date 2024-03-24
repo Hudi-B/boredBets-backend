@@ -88,6 +88,7 @@ namespace boredBets.Controllers
                 {
                     List<string> maleHorseName = new List<string>();
                     List<string> femaleHorseName = new List<string>();
+                    List<string> Countries = new List<string>();
 
                     #region ReadFile
 
@@ -105,6 +106,12 @@ namespace boredBets.Controllers
                     {
                         femaleHorseName.Add(sr.ReadLine());
                     }
+                    sr = new StreamReader(staticData + "countries.txt");
+                    while (!sr.EndOfStream)
+                    {
+                        Countries.Add(sr.ReadLine());
+                    }
+                    sr.Close();
                     #endregion
 
                     Random random = new Random();
@@ -125,6 +132,7 @@ namespace boredBets.Controllers
                             Id = Guid.NewGuid(),
                             Name = name,
                             Age = random.Next(4) + 2,
+                            Country = Countries[random.Next(Countries.Count())],
                             Stallion = male,
                             JockeyId = freeJockeys.ToList()[i]
                         };
