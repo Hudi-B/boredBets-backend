@@ -47,6 +47,7 @@ namespace boredBets.Repositories
                 var jockeyWithoutHorse = new {
                     Id = jockey.Id,
                     Name = jockey.Name,
+                    Country = jockey.Country,
                     IsMale = jockey.Male,
                     HorseId = jockeyHasHorse.Id,
                     HorseName = jockeyHasHorse.Name,
@@ -61,6 +62,7 @@ namespace boredBets.Repositories
                 {
                     Id = jockey.Id,
                     Name = jockey.Name,
+                    Country = jockey.Country,
                     IsMale = jockey.Male,
                     HorseId = jockeyHasHorse.Id,
                     HorseName = jockeyHasHorse.Name,
@@ -85,6 +87,7 @@ namespace boredBets.Repositories
             {
                 Id = jockey.Id,
                 Name = jockey.Name,
+                Country = jockey.Country,
                 IsMale = jockey.Male,
                 HorseId = jockeyHasHorse.Id,
                 HorseName = jockeyHasHorse.Name,
