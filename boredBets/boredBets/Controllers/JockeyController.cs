@@ -70,6 +70,8 @@ namespace boredBets.Controllers
                 List<string> maleMiddleNames = new List<string>();
                 List<string> femaleMiddleNames = new List<string>();
 
+                List<string> Countries = new List<string>();
+
                 #region ReadFile
                 string staticData = AppDomain.CurrentDomain.BaseDirectory.ToString() + "../../../staticData/";
 
@@ -103,6 +105,11 @@ namespace boredBets.Controllers
                 {
                     femaleMiddleNames.Add(sr.ReadLine());
                 }
+                sr = new StreamReader(staticData + "countries.txt");
+                while (!sr.EndOfStream)
+                {
+                    Countries.Add(sr.ReadLine());
+                }
                 sr.Close();
                 #endregion
 
@@ -133,6 +140,8 @@ namespace boredBets.Controllers
                     {
                         Id = Guid.NewGuid(),
                         Name = name,
+                        Country = Countries[random.Next(Countries.Count())],
+                        Age = random.Next(24, 38),
                         Quality = random.Next(10) + 1,
                         Male = male
                     };
