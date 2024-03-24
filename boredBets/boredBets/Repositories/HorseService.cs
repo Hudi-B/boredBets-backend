@@ -102,6 +102,8 @@ namespace boredBets.Repositories
                 {
                     Id = horse.Id,
                     Name = horse.Name,
+                    Stallion = horse.Stallion,
+                    Country= horse.Country,
                     Age = horse.Age,
                     JockeyId = horse.JockeyId,
                     JockeyName = jockeyName
@@ -121,6 +123,8 @@ namespace boredBets.Repositories
             {
                 Id = horse.Id,
                 Name = horse.Name,
+                Stallion = horse.Stallion,
+                Country = horse.Country,
                 Age = horse.Age,
                 JockeyId = horse.JockeyId,
                 JockeyName = jockeyName,
