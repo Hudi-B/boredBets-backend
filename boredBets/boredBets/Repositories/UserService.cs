@@ -173,7 +173,7 @@ namespace boredBets.Repositories
             {
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
-                UserId = user.Id,
+                Id = user.Id,
                 Wallet = user.Wallet,
                 Admin=user.Admin,
             };
@@ -312,7 +312,7 @@ namespace boredBets.Repositories
             {
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
-                UserId = user.Id,
+                Id = user.Id,
                 Wallet = user.Wallet,
                 Admin = user.Admin,
             };
