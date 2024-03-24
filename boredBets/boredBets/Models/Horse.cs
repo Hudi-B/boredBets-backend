@@ -11,6 +11,8 @@ public partial class Horse
 
     public int Age { get; set; }
 
+    public string? Country { get; set; }
+
     public bool Stallion { get; set; }
 
     public Guid? JockeyId { get; set; }

@@ -119,7 +119,7 @@ namespace boredBets.Repositories
                 var race = new Race
                 {
                     Id = RaceId,
-                    Weather = raceCreateDto.Weather,
+                    //Weather = raceCreateDto.Weather,
                     TrackId = raceCreateDto.TrackId,
                     RaceTime = raceCreateDto.RaceTime,
                     RaceScheduled= raceCreateDto.RaceScheduled,
@@ -182,7 +182,7 @@ namespace boredBets.Repositories
                         Id = race != null ? race.Id : Guid.Empty,
                         Country = t.Country,
                         Length = race != null ? t.Length : 0,
-                        Weather = race.Weather,
+                        //Weather = race.Weather,
                     })
                     .ToListAsync();
 

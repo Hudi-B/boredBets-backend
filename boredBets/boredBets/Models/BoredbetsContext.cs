@@ -37,11 +37,9 @@ public partial class BoredbetsContext : DbContext
     public virtual DbSet<UserDetail> UserDetails { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-
     {
 
         if (!optionsBuilder.IsConfigured)
-
         {
 
             IConfigurationRoot configuration = new ConfigurationBuilder()
@@ -52,11 +50,7 @@ public partial class BoredbetsContext : DbContext
 
                 .Build();
 
-
-
             string connectionString = configuration.GetConnectionString("YourConnectionString");
-
-
 
             optionsBuilder.UseMySql(connectionString, Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.4.28-mariadb"));
 
@@ -80,6 +74,9 @@ public partial class BoredbetsContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Age).HasColumnName("age");
+            entity.Property(e => e.Country)
+                .HasMaxLength(64)
+                .HasColumnName("country");
             entity.Property(e => e.JockeyId).HasColumnName("jockey_id");
             entity.Property(e => e.Name)
                 .HasMaxLength(64)
@@ -99,6 +96,10 @@ public partial class BoredbetsContext : DbContext
             entity.ToTable("jockey");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Age).HasColumnName("age");
+            entity.Property(e => e.Country)
+                .HasMaxLength(64)
+                .HasColumnName("country");
             entity.Property(e => e.Male).HasColumnName("male");
             entity.Property(e => e.Name)
                 .HasMaxLength(32)
@@ -144,10 +145,8 @@ public partial class BoredbetsContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("race_scheduled");
             entity.Property(e => e.RaceTime).HasColumnName("race_time");
+            entity.Property(e => e.Rain).HasColumnName("rain");
             entity.Property(e => e.TrackId).HasColumnName("track_id");
-            entity.Property(e => e.Weather)
-                .HasMaxLength(32)
-                .HasColumnName("weather");
 
             entity.HasOne(d => d.Track).WithMany(p => p.Races)
                 .HasForeignKey(d => d.TrackId)
