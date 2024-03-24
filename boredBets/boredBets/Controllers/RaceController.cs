@@ -82,14 +82,15 @@ namespace boredBets.Controllers
 
             var horsesWithoutRecentRaces = await _context.Horses
                 .Where(h => !h.Participants.Any(p => p.Race.RaceScheduled >= oneDayAgo))
-                .Take(20)
                 .ToListAsync();
 
-            Random rnd = new Random();
 
-            if (horsesWithoutRecentRaces.Count() < 20)
+            Random rnd = new Random();
+            int rainValue = rnd.Next(2);
+
+            if (horsesWithoutRecentRaces.Count() < quantity*20)
             {
-                return BadRequest("Not enough free horses");
+                return BadRequest($"Not enough free horses. You need {(quantity*20)-horsesWithoutRecentRaces.Count()}");
             }
 
             List<string> Tracks = new List<string>();
@@ -114,8 +115,9 @@ namespace boredBets.Controllers
                 var race = new Race
                 {
                     Id = raceId,
-                    RaceTime = rnd.Next(1, 11),
+                    RaceTime = rnd.Next(3, 11),
                     RaceScheduled = DateTime.UtcNow.AddMinutes(5),
+                    Rain = Convert.ToBoolean(rainValue),
                     TrackId = track.Id
                 };
 
@@ -145,8 +147,5 @@ namespace boredBets.Controllers
 
             return Ok(quantity + " races generated successfully");
         }
-
-
-
     }
 }

@@ -11,7 +11,7 @@ public partial class Race
 
     public DateTime RaceScheduled { get; set; }
 
-    public bool? Rain { get; set; }
+    public bool Rain { get; set; }
 
     public int? TrackId { get; set; }
 
