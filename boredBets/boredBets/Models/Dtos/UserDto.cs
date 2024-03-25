@@ -7,4 +7,5 @@
 
     public record UsernameDto(string Username);
     public record UserEmailDto(string Email);
+    public record UserPasswordDto(string Password);
 }

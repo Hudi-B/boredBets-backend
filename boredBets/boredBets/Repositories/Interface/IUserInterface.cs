@@ -18,5 +18,6 @@ namespace boredBets.Repositories.Interface
         Task<UserWalletDto> GetWalletByUserId(Guid UserId);
         Task<UserWalletDto> UpdateWalletByUserId(Guid UserId,UserWalletDto wallet);
         Task<string> UpdateEmailByUserId(Guid UserId, UserEmailDto emailDto);
+        Task<string> UpdatePasswordByUserId(Guid UserId, UserPasswordDto passwordDto);
     }
 }

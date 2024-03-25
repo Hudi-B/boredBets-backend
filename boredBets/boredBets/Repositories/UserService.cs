@@ -372,5 +372,18 @@ namespace boredBets.Repositories
             return "Success";
         }
 
+        public async Task<string> UpdatePasswordByUserId(Guid UserId, UserPasswordDto passwordDto)
+        {
+            var userExist = await _context.Users.FirstOrDefaultAsync(x => x.Id == UserId);
+            if (userExist == null)
+            {
+                return "0";
+            }
+            string hashedpassword = HashPassword(passwordDto.Password);
+            userExist.Password = hashedpassword;
+            await _context.SaveChangesAsync();
+
+            return "Success";
+        }
     }
 }
