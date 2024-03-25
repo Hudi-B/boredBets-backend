@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualBasic;
 using System.Collections.Immutable;
 using System.Diagnostics.Metrics;
 using System.IdentityModel.Tokens.Jwt;
@@ -358,6 +359,18 @@ namespace boredBets.Repositories
             return result;
         }
 
-        
+        public async Task<string> UpdateEmailByUserId(Guid UserId, UserEmailDto emailDto)
+        {
+            var userExist = await _context.Users.FirstOrDefaultAsync(x => x.Id == UserId);
+            if (userExist == null) 
+            {
+                return "0";
+            }
+            userExist.Email = emailDto.Email;
+
+            await _context.SaveChangesAsync();
+            return "Success";
+        }
+
     }
 }

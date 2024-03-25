@@ -4,6 +4,7 @@ using boredBets.Repositories.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace boredBets.Controllers
@@ -127,6 +128,35 @@ namespace boredBets.Controllers
             return Ok(result);
         }
 
+        [HttpPut("UpdateEmailByUserId")]
+        public async Task<ActionResult<string>> UpdateEmailByUserId(Guid UserId,UserEmailDto emailDto) 
+        {
+            var result = await userInterface.UpdateEmailByUserId(UserId, emailDto);
+
+            if (result == "0")
+            {
+                return NotFound("User not found");
+            }
+            return Ok(result);
+        }
+
+        [HttpPut("UpdateUsernameByUserId")]
+        public async Task<ActionResult<User>> UpdateUsernameByUserId(Guid UserId, UsernameDto username)
+        {
+            var result = await userInterface.UpdateUsernameByUserId(UserId, username);
+
+            if (result == "0")
+            {
+                return NoContent();
+            }
+            else if (result == "1")
+            {
+                return Conflict("Username already exists");
+            }
+
+            return Ok();
+        }
+
         [HttpDelete("DeleteUserById")]
         public async Task<ActionResult<User>> DeleteUserById(Guid UserId)
         {
@@ -139,23 +169,5 @@ namespace boredBets.Controllers
 
             return Ok(result);
         }
-
-        [HttpPut("UpdateUsernameByUserId")]
-        public async Task<ActionResult<User>> UpdateUsernameByUserId(Guid UserId, UsernameDto username)
-        {
-            var result = await userInterface.UpdateUsernameByUserId(UserId,username);
-
-            if (result == "0")
-            {
-               return NoContent();
-            }
-            else if (result== "1")
-            {
-               return Conflict("Username already exists");
-            }
-
-            return Ok();
-        }
-
     }
 }

@@ -398,8 +398,11 @@ FodyWeavers.xsd
 *.sln.iml
 
 #Custom
-boredBets/boredBets/appsettings.json
-
 boredBets/boredBets/Properties/serviceDependencies.boredBetsAPI - Web Deploy1.json
 boredBets/boredBets/Properties/ServiceDependencies/boredBetsAPI - Web Deploy1/apis1.arm.json
 boredBets/boredBets/Properties/ServiceDependencies/boredBetsAPI - Web Deploy1/profile.arm.json
+boredBets/boredBets/Properties/serviceDependencies.boredBetsApiDev - Web Deploy.json
+boredBets/boredBets/Properties/ServiceDependencies/boredBetsApiDev - Web Deploy/apis1.arm.json
+boredBets/boredBets/Properties/ServiceDependencies/boredBetsApiDev - Web Deploy/profile.arm.json
+
+boredBets/boredBets/appsettings.json

@@ -6,4 +6,5 @@
     public record UserWalletDto(int Wallet);
 
     public record UsernameDto(string Username);
+    public record UserEmailDto(string Email);
 }
