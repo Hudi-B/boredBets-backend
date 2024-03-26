@@ -14,17 +14,30 @@ namespace boredBets.Repositories
             _context = context;
         }
 
-        public async Task<UserDetail> GetUserDetailByUserId(Guid UserId)
+        public async Task<object> GetUserDetailByUserId(Guid UserId)
         {
             var userDetail = await _context.UserDetails.FirstOrDefaultAsync(x => x.UserId == UserId);
 
-            if (userDetail == null) 
-            { 
-                return null; 
+            if (userDetail == null)
+            {
+                return "0";  
             }
 
-            return userDetail;
+            var user = await _context.Users
+                                     .FirstOrDefaultAsync(x => x.Id == UserId);
+
+            var result = new
+            {
+                UserId = userDetail.UserId,
+                Email = user.Email,
+                FullName = userDetail.Fullname,
+                BirthDate = userDetail.BirthDate,
+                Address = userDetail.Address,
+            };
+
+            return result;
         }
+
 
         public async Task<UserDetail> Post(Guid UserId, UserDetailCreateDto userDetailCreateDto)
         {

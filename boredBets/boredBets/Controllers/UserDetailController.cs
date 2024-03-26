@@ -32,7 +32,7 @@ namespace boredBets.Controllers
         public async Task<ActionResult<UserDetail>> GetUserDetailByUserId(Guid UserId)
         {
             var result = await _userDetail.GetUserDetailByUserId(UserId);
-            if (result == null) 
+            if (result == "0") 
             {
                 return NotFound();
             }
