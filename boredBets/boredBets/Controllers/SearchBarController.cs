@@ -23,7 +23,7 @@ namespace boredBets.Controllers
                 this.jockeys = jockeys;
             }
 
-            public List<object> GetPaginatedAllData(int page, int perPage)
+            public (List<object>, int) GetPaginatedAllData(int page, int perPage)
             {
                 var allData = new List<object>();
 
@@ -31,8 +31,10 @@ namespace boredBets.Controllers
                 allData.AddRange(users.Select(u => new { Type = "User", Data = new UserData(u.Id, u.Username) }));
                 allData.AddRange(jockeys.Select(j => new { Type = "Jockey", Data = new JockeyData(j.Id, j.Name, j.Male, j.Horses.Any()) }));
 
-                int startIndex = (page - 1) * perPage;
+                int totalCount = allData.Count;
+                int totalPages = (int)Math.Ceiling((double)totalCount / perPage);
 
+                int startIndex = (page - 1) * perPage;
 
                 allData = allData.OrderBy(item =>
                 {
@@ -41,7 +43,8 @@ namespace boredBets.Controllers
                 }).ToList();
 
                 var search = allData.Skip(startIndex).Take(perPage).ToList();
-                return search;
+
+                return (search, totalPages);
             }
 
         }
@@ -54,16 +57,22 @@ namespace boredBets.Controllers
 
         [HttpGet]
         public async Task<ActionResult> Get(int page = 1, int perPage = 60)
-        { 
+        {
             AllData allData = new AllData(
                 await _context.Horses.ToListAsync(),
                 await _context.Users.ToListAsync(),
                 await _context.Jockeys.ToListAsync()
-                );
+            );
 
-            var paginatedData = allData.GetPaginatedAllData(page, perPage);
+            var (paginatedData, maxPage) = allData.GetPaginatedAllData(page, perPage);
 
-            return Ok(paginatedData);
+            var result = new
+            {
+                Search = paginatedData,
+                MaxPage = maxPage
+            };
+
+            return Ok(result);
         }
     }
 
