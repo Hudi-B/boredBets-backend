@@ -406,3 +406,4 @@ boredBets/boredBets/Properties/ServiceDependencies/boredBetsApiDev - Web Deploy/
 boredBets/boredBets/Properties/ServiceDependencies/boredBetsApiDev - Web Deploy/profile.arm.json
 
 boredBets/boredBets/appsettings.json
+boredBets/boredBets/appsettings.Development.json

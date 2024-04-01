@@ -105,12 +105,13 @@ namespace boredBets.Controllers
             sr.Close();
             #endregion
 
+
+
+            var trackz = await _context.Tracks.ToListAsync();
+            int maxTrakc = trackz.Count();
             for (int i = 0; i < quantity; i++)
             {
                 Guid raceId = Guid.NewGuid();
-
-                var trackname =Tracks[rnd.Next(Tracks.Count)];
-                var track = await _context.Tracks.FirstOrDefaultAsync(x => x.Name == trackname);
 
                 var race = new Race
                 {
@@ -118,7 +119,7 @@ namespace boredBets.Controllers
                     RaceTime = rnd.Next(3, 11),
                     RaceScheduled = DateTime.UtcNow.AddMinutes(5),
                     Rain = Convert.ToBoolean(rainValue),
-                    TrackId = track.Id
+                    TrackId = trackz[rnd.Next()].Id
                 };
 
                 for (int j = 0; j < 20; j++)
