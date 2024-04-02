@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace boredBets.Controllers
 {
@@ -47,6 +48,7 @@ namespace boredBets.Controllers
                 return (search, totalPages);
             }
 
+
         }
         private readonly BoredbetsContext _context;
 
@@ -74,6 +76,64 @@ namespace boredBets.Controllers
 
             return Ok(result);
         }
+
+
+
+        public class JockeyFilters
+        {
+            public bool FirstFilter { get; set; }
+            public bool SecondFilter { get; set; }
+            public bool ThirdFilter { get; set; }
+            public bool ForthfFilter { get; set; }
+        }
+
+
+
+
+        [HttpPost]
+        public async Task<ActionResult> Post(JockeyFilters filters, string filteredGroup)
+        {
+
+            switch (filteredGroup)
+            {
+                case "Jockey":
+                    var Jockeys = await _context.Jockeys.ToListAsync();
+
+                    var filtered = Jockeys;
+
+                    if (filters.FirstFilter != filters.SecondFilter)
+                    {
+                        filtered = filtered.Where(e => e.Male == filters.FirstFilter).ToList();
+                    }
+                    if (filters.ThirdFilter != filters.ForthfFilter)
+                    {
+                        filtered = filtered.Where(e => e.Horses.Any() == filters.ThirdFilter).ToList();
+             
+                    }
+                    return Ok(filtered);
+
+                //case "Horse":
+                //    var horseFilters = (HorseFilters)filters; // Cast filters to HorseFilters class
+                //                                              // Handle horse filter logic here
+                //                                              // Example: Check minAge, maxAge, stallion, mare, etc.
+                //    break;
+
+                //case "User":
+                //    var userFilters = (UserFilters)filters; // Cast filters to UserFilters class
+                //                                            // Handle user filter logic here
+                //                                            // Example: Check private, public, female, male, etc.
+                //    break;
+
+                default:
+                    // Handle unknown filter group (optional)
+                    break;
+            }
+            // Return the result
+            return Ok("asd");
+        }
+
+
+
     }
 
     internal record HorseData(Guid Id, string? Name, bool Stallion);
