@@ -191,7 +191,7 @@ namespace boredBets.Controllers
         {
             AllData allData = new AllData(
                 await _context.Horses.ToListAsync(),
-                await _context.Users.ToListAsync(),
+                await _context.Users.Include(e => e.UserDetail).ToListAsync(),
                 await _context.Jockeys.ToListAsync()
             );
 
