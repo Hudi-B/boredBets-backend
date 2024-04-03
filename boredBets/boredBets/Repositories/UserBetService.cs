@@ -43,17 +43,22 @@ namespace boredBets.Repositories
 
         public async Task<UserBet> Post(UserBetCreateDto userBetCreateDto)
         {
-            var existingParticipant = await _context.Participants
-                                                                 .FirstOrDefaultAsync(x => x.RaceId == userBetCreateDto.RaceId && x.HorseId == userBetCreateDto.HorseId);
+            var existingParticipant = await _context.Participants.FirstOrDefaultAsync(x =>
+                                                                                            x.RaceId == userBetCreateDto.RaceId &&
+                                                                                            (x.HorseId == userBetCreateDto.First ||
+                                                                                             x.HorseId == userBetCreateDto.Second ||
+                                                                                             x.HorseId == userBetCreateDto.Third ||
+                                                                                             x.HorseId == userBetCreateDto.Fourth ||
+                                                                                             x.HorseId == userBetCreateDto.Fifth));
+
 
 
             var userCard = await _context.UserCards.FirstOrDefaultAsync(x => x.UserId == userBetCreateDto.UserId);
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userBetCreateDto.UserId);
-            var horse = await _context.Horses.FirstOrDefaultAsync(x => x.Id == userBetCreateDto.HorseId);
             var race = await _context.Races.FirstOrDefaultAsync(x => x.Id == userBetCreateDto.RaceId);
 
 
-            if (user == null || horse == null || race == null || existingParticipant == null || userCard.CreditcardNum == null)
+            if (user == null ||race == null || existingParticipant == null || userCard.CreditcardNum == null)
             {
                 return null;
             }
@@ -64,8 +69,13 @@ namespace boredBets.Repositories
                 Id = Guid.NewGuid(),
                 UserId = userBetCreateDto.UserId,
                 RaceId = userBetCreateDto.RaceId,
-                HorseId = userBetCreateDto.HorseId,
-                BetAmount = userBetCreateDto.BetAmount
+                First = userBetCreateDto.First,
+                Second = userBetCreateDto.Second,
+                Third = userBetCreateDto.Third,
+                Fourth = userBetCreateDto.Fourth,
+                Fifth = userBetCreateDto.Fifth,
+                BetAmount = userBetCreateDto.BetAmount,
+                BetTypeId = userBetCreateDto.BetTypeId,
             };
 
             int totalDeposit = await _context.UserBets
