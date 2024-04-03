@@ -16,7 +16,6 @@ namespace boredBets
             var builder = WebApplication.CreateBuilder(args);
             var configuration = builder.Configuration;
 
-            // Add services to the container.
             builder.Services.AddDbContext<BoredbetsContext>();
             builder.Services.AddScoped<IHorseInterface, HorseService>();
             builder.Services.AddScoped<IJockeyInterface, JockeyService>();
@@ -31,7 +30,7 @@ namespace boredBets
             builder.Services.AddControllers();
             builder.Services.AddControllers().AddNewtonsoftJson();
 
-            
+
 
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
