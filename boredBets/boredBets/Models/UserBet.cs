@@ -11,11 +11,21 @@ public partial class UserBet
 
     public Guid? RaceId { get; set; }
 
-    public Guid? HorseId { get; set; }
+    public Guid? First { get; set; }
+
+    public Guid? Second { get; set; }
+
+    public Guid? Third { get; set; }
+
+    public Guid? Fourth { get; set; }
+
+    public Guid? Fifth { get; set; }
 
     public int BetAmount { get; set; }
 
-    public virtual Horse? Horse { get; set; }
+    public int BetTypeId { get; set; }
+
+    public virtual BetType? BetType { get; set; }
 
     public virtual Race? Race { get; set; }
 

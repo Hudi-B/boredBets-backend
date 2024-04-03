@@ -9,7 +9,7 @@ public partial class Jockey
 
     public string? Name { get; set; }
 
-    public int? Quality { get; set; }
+    public int Quality { get; set; }
 
     public string? Country { get; set; }
 

@@ -20,6 +20,4 @@ public partial class Horse
     public virtual Jockey? Jockey { get; set; }
 
     public virtual ICollection<Participant> Participants { get; set; } = new List<Participant>();
-
-    public virtual ICollection<UserBet> UserBets { get; set; } = new List<UserBet>();
 }

@@ -15,7 +15,7 @@ public partial class User
 
     public string? RefreshToken { get; set; }
 
-    public bool? Admin { get; set; }
+    public bool Admin { get; set; }
 
     public string? Username { get; set; }
 
