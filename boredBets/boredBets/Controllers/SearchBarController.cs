@@ -80,7 +80,7 @@ namespace boredBets.Controllers
                             }).ToList();
                         }
 
-                        if (filters.JockeyFilter.HasHorse != filters.JockeyFilter.HasNoHorse)
+                        if (filters.JockeyFilter.hashorse != filters.JockeyFilter.hasnohorse)
                         {
                             allData = allData.Where(entry =>
                             {
@@ -88,7 +88,7 @@ namespace boredBets.Controllers
                                 if (dataProperty != null)
                                 {
                                     var dataValue = dataProperty.GetValue(entry);
-                                    if (dataValue is JockeyData data && data.HasHorse == filters.JockeyFilter.HasHorse)
+                                    if (dataValue is JockeyData data && data.hashorse == filters.JockeyFilter.hashorse)
                                         return true;
                                 }
                                 return false;
@@ -212,8 +212,8 @@ namespace boredBets.Controllers
         {
             public bool Male { get; set; }
             public bool Female { get; set; }
-            public bool HasHorse { get; set; }
-            public bool HasNoHorse { get; set; }
+            public bool hashorse { get; set; }
+            public bool hasnohorse { get; set; }
         }
         public class HorseFilter
         {
@@ -264,5 +264,5 @@ namespace boredBets.Controllers
 
     internal record UserData(Guid Id, string? Name, bool isPrivate);
 
-    internal record JockeyData(Guid Id, string? Name, bool Male, bool HasHorse);
+    internal record JockeyData(Guid Id, string? Name, bool Male, bool hashorse);
 }
