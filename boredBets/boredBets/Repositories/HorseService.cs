@@ -30,24 +30,41 @@ namespace boredBets.Repositories
 
             if (jockey == null)
             {
-                return "1"; 
+                return "1";
             }
 
-            var searchInUserBets = await _context.UserBets
-                                                          .Where(x => x.HorseId == Id)
-                                                          .ToListAsync();
+            // Delete related user bets
+            var userBetsToDelete = await _context.UserBets
+                .Where(x => x.First == Id || x.Second == Id || x.Third == Id || x.Fourth == Id || x.Fifth == Id)
+                .ToListAsync();
 
-            if (searchInUserBets != null) 
+            _context.UserBets.RemoveRange(userBetsToDelete);
+
+            // Delete related participant
+            var participantToDelete = await _context.Participants.FirstOrDefaultAsync(x => x.HorseId == horse.Id);
+
+            if (participantToDelete != null)
             {
-                _context.UserBets.RemoveRange(searchInUserBets);
+                _context.Participants.Remove(participantToDelete);
             }
 
+            // Delete horse and jockey
             _context.Horses.Remove(horse);
             _context.Jockeys.Remove(jockey);
-            _context.SaveChanges();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                // Handle concurrency exception (optional)
+                return "ConcurrencyException";
+            }
 
             return "Success";
         }
+
 
 
 
