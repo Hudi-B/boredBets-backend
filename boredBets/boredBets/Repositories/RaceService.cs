@@ -34,7 +34,8 @@ namespace boredBets.Repositories
                 {
                     Id = r.Id,
                     RaceScheduled = r.RaceScheduled,
-                    Name = r.Track.Name 
+                    Name = r.Track.Name ,
+                    Country = r.Track.Country ,
                 })
                 .ToListAsync();
 
@@ -72,7 +73,8 @@ namespace boredBets.Repositories
                 {
                     Id = r.Id,
                     RaceScheduled = r.RaceScheduled,
-                    Name = r.Track.Name
+                    Name = r.Track.Name,
+                    Country = r.Track.Country,
                 })
                 .ToListAsync();
 
