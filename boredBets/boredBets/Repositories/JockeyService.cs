@@ -16,7 +16,9 @@ namespace boredBets.Repositories
 
         public async Task<IEnumerable<Jockey>> GetAllJockey()
         {
-            return await _context.Jockeys.ToListAsync();
+            return await _context.Jockeys
+                                        .Include(h => h.Horses)
+                                        .ToListAsync();
         }
 
         public async Task<Jockey> GetJockeyById(Guid JockeyId)
