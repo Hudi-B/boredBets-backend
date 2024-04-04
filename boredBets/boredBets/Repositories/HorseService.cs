@@ -54,9 +54,6 @@ namespace boredBets.Repositories
             return "Success";
         }
 
-
-
-
         public async Task<IEnumerable<HorseContentDto>> GetAllHorse()
         {
             return await _context.Horses

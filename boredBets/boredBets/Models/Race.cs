@@ -13,7 +13,7 @@ public partial class Race
 
     public bool Rain { get; set; }
 
-    public int TrackId { get; set; }
+    public int? TrackId { get; set; }
 
     public virtual ICollection<Participant> Participants { get; set; } = new List<Participant>();
 
