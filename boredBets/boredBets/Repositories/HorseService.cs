@@ -17,7 +17,7 @@ namespace boredBets.Repositories
             _context = context;
         }
 
-        public async Task<string> DeleteHorseAndJockeyByHorseId(Guid Id)
+        public async Task<string> DeleteHorseById(Guid Id)
         {
             var horse = await _context.Horses.FirstOrDefaultAsync(x => x.Id == Id);
 
@@ -33,34 +33,23 @@ namespace boredBets.Repositories
                 return "1";
             }
 
-            // Delete related user bets
-            var userBetsToDelete = await _context.UserBets
-                .Where(x => x.First == Id || x.Second == Id || x.Third == Id || x.Fourth == Id || x.Fifth == Id)
-                .ToListAsync();
-
-            _context.UserBets.RemoveRange(userBetsToDelete);
-
-            // Delete related participant
             var participantToDelete = await _context.Participants.FirstOrDefaultAsync(x => x.HorseId == horse.Id);
 
             if (participantToDelete != null)
             {
                 _context.Participants.Remove(participantToDelete);
             }
+            await _context.SaveChangesAsync();//To make the trigger work
 
-            // Delete horse and jockey
+            var userBetsToDelete = await _context.UserBets
+                .Where(x => x.First == Id || x.Second == Id || x.Third == Id || x.Fourth == Id || x.Fifth == Id)
+                .ToListAsync();
+
+            _context.UserBets.RemoveRange(userBetsToDelete);
+
             _context.Horses.Remove(horse);
-            _context.Jockeys.Remove(jockey);
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                // Handle concurrency exception (optional)
-                return "ConcurrencyException";
-            }
+            await _context.SaveChangesAsync();
 
             return "Success";
         }
