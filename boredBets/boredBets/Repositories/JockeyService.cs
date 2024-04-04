@@ -33,7 +33,7 @@ namespace boredBets.Repositories
 
         public async Task<object> GetJockeyDetailByJockeyId(Guid JockeyId)
         {
-            var jockey = await _context.Jockeys.FirstOrDefaultAsync(x=>x.Id == JockeyId);
+            var jockey = await _context.Jockeys.FirstOrDefaultAsync(x => x.Id == JockeyId);
 
             if (jockey == null)
             {
@@ -44,44 +44,33 @@ namespace boredBets.Repositories
 
             if (jockeyHasHorse == null)
             {
-                var jockeyWithoutHorse = new {
-                    Id = jockey.Id,
-                    Name = jockey.Name,
-                    Country = jockey.Country,
-                    IsMale = jockey.Male,
-                    HorseId = jockeyHasHorse.Id,
-                    HorseName = jockeyHasHorse.Name,
-                };
-            }
-
-            var jockeyParicipate = await _context.Participants.AnyAsync(x => x.HorseId == jockeyHasHorse.Id);
-
-            if (jockeyParicipate == false) 
-            {
-                var jockeyNeverRaced = new
+                var jockeyWithoutHorse = new
                 {
                     Id = jockey.Id,
                     Name = jockey.Name,
                     Country = jockey.Country,
                     IsMale = jockey.Male,
-                    HorseId = jockeyHasHorse.Id,
-                    HorseName = jockeyHasHorse.Name,
+                    HorseId = (Guid?)null,
+                    HorseName = (string)null,
+                    Next3Races = new List<Race>(), // Initialize with empty list
+                    Past3Races = new List<Race>(), // Initialize with empty list
+                    LifeTimeMatches = 0
                 };
-                return jockeyNeverRaced;
+                return jockeyWithoutHorse;
             }
 
+            var jockeyParticipate = await _context.Participants
+                .Where(p => p.HorseId == jockeyHasHorse.Id)
+                .Select(p => p.RaceId)
+                .ToListAsync();
 
             var raceSchedulesPast = await _context.Races
-                                                    .Where(x => x.RaceScheduled < DateTime.UtcNow && jockeyParicipate)
-                                                    .ToListAsync();
+                .Where(x => jockeyParticipate.Contains(x.Id) && x.RaceScheduled < DateTime.UtcNow)
+                .ToListAsync();
 
             var raceSchedulesFuture = await _context.Races
-                                                    .Where(x => x.RaceScheduled > DateTime.UtcNow && jockeyParicipate)
-                                                    .ToListAsync();
-
-
-
-
+                .Where(x => jockeyParticipate.Contains(x.Id) && x.RaceScheduled > DateTime.UtcNow)
+                .ToListAsync();
 
             var result = new
             {
@@ -91,10 +80,9 @@ namespace boredBets.Repositories
                 IsMale = jockey.Male,
                 HorseId = jockeyHasHorse.Id,
                 HorseName = jockeyHasHorse.Name,
-                Next3Races = raceSchedulesFuture.Take(3),
-                Past3Races = raceSchedulesPast.Take(3),
-                LifeTimeMatches = raceSchedulesPast.Count()
-
+                Next3Races = raceSchedulesFuture.Take(3).ToList(), // Convert to list
+                Past3Races = raceSchedulesPast.Take(3).ToList(), // Convert to list
+                LifeTimeMatches = jockeyParticipate.Count
             };
 
             return result;
