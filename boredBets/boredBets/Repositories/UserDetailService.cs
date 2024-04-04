@@ -31,6 +31,8 @@ namespace boredBets.Repositories
                 UserId = userDetail.UserId,
                 Email = user.Email,
                 FullName = userDetail.Fullname,
+                PhoneNumber = userDetail.PhoneNum,
+                Username = user.Username,
                 BirthDate = userDetail.BirthDate,
                 Address = userDetail.Address,
             };
@@ -57,6 +59,7 @@ namespace boredBets.Repositories
                     {
                         UserId = Guid.NewGuid(),
                         Fullname = userDetailCreateDto.Fullname,
+                        PhoneNum = userDetailCreateDto.PhoneNum,
                         Address = userDetailCreateDto.Address,
                         IsPrivate = userDetailCreateDto.IsPrivate,
                         BirthDate = userDetailCreateDto.BirthDate,
@@ -68,6 +71,7 @@ namespace boredBets.Repositories
                 else
                 {
                     userDetail.Fullname = userDetailCreateDto.Fullname;
+                    userDetail.PhoneNum = userDetailCreateDto.PhoneNum;
                     userDetail.Address = userDetailCreateDto.Address;
                     userDetail.IsPrivate = userDetailCreateDto.IsPrivate;
                     userDetail.BirthDate = userDetailCreateDto.BirthDate;
@@ -90,6 +94,7 @@ namespace boredBets.Repositories
             }
 
             existingUserDetail.Fullname = userDetailUpdateDto.Fullname;
+            existingUserDetail.PhoneNum = userDetailUpdateDto.PhoneNum;
             existingUserDetail.Address = userDetailUpdateDto.Address;
             existingUserDetail.IsPrivate = userDetailUpdateDto.IsPrivate;
             existingUserDetail.BirthDate = userDetailUpdateDto.BirthDate;
