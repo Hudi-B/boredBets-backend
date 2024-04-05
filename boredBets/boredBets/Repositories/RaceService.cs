@@ -2,6 +2,7 @@
 using boredBets.Models.Dtos;
 using boredBets.Repositories.Interface;
 using boredBets.Repositories.Viewmodels;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 
 namespace boredBets.Repositories
@@ -24,7 +25,7 @@ namespace boredBets.Repositories
 
         public async Task<IEnumerable<AllHappendRaceViewModel>> GetAllFutureRaces()
         {
-            DateTime now = DateTime.Now;
+            DateTime now = DateTime.UtcNow;
 
             var allFutureRaces = await _context.Races
                 .Include(r => r.Track)
@@ -39,11 +40,13 @@ namespace boredBets.Repositories
                 })
                 .ToListAsync();
 
-            return allFutureRaces;
+            var OrderedList = allFutureRaces.OrderByDescending(r => r.RaceScheduled);
+
+            return OrderedList.Reverse();
         }
         public async Task<IEnumerable<FiveRaceViewModel>> GetFutureRaces()
         {
-            DateTime now = DateTime.Now;
+            DateTime now = DateTime.UtcNow;
 
             var futureRaces = await _context.Races
                 .Include(r => r.Track)
@@ -59,12 +62,14 @@ namespace boredBets.Repositories
                 })
                 .ToListAsync();
 
-            return futureRaces;
+            var OrderedList = futureRaces.OrderByDescending (r => r.RaceScheduled);
+
+            return OrderedList.Reverse();
         }
 
         public async Task<IEnumerable<AllHappendRaceViewModel>> GetAllHappendRaces()
         {
-            DateTime now = DateTime.Now;
+            DateTime now = DateTime.UtcNow;
 
             var allHappenedRaces = await _context.Races
                 .Include(r => r.Track)
@@ -78,12 +83,12 @@ namespace boredBets.Repositories
                 })
                 .ToListAsync();
 
-            return allHappenedRaces;
+            return allHappenedRaces.OrderByDescending(r => r.RaceScheduled);
         }
 
         public async Task<IEnumerable<FiveRaceViewModel>> GetAlreadyHappenedRaces()
         {
-            DateTime now = DateTime.Now;
+            DateTime now = DateTime.UtcNow;
 
             var alreadyHappenedRaces = await _context.Races
                 .Include(r => r.Track)
@@ -99,7 +104,7 @@ namespace boredBets.Repositories
                 })
                 .ToListAsync();
 
-            return alreadyHappenedRaces;
+            return alreadyHappenedRaces.OrderByDescending(r => r.RaceScheduled);
         }
 
         

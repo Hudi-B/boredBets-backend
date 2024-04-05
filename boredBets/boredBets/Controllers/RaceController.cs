@@ -129,7 +129,7 @@ namespace boredBets.Controllers
                 {
                     Id = raceId,
                     RaceTime = rnd.Next(3, 11),
-                    RaceScheduled = DateTime.UtcNow.AddMinutes(5*i+1),
+                    RaceScheduled = DateTime.UtcNow.AddMinutes(15),
                     Rain = Convert.ToBoolean(rainValue),
                     TrackId = trackz[rnd.Next(maxTrakc)].Id
                 };
