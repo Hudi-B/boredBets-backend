@@ -146,30 +146,25 @@ namespace boredBets.Repositories
             }
         }
 
-        public async Task<Race> GetByRaceId(Guid RaceId)
+        public async Task<object> GetByRaceId(Guid RaceId)
         {
-            try
-            {
-                var race = await _context.Races
-                                               .Include(x => x.Track)
+            var race = await _context.Races
+                                               .Include(x => x.Participants)
                                                .SingleOrDefaultAsync(x => x.Id.Equals(RaceId));
-                if (race == null)
-                {
-                    throw new Exception();
-                }
-                return race;
-            }
-            catch (Exception e)
+            if (race == null)
             {
-                Console.WriteLine($"Error: {e.Message}");
-
-                if (e.InnerException != null)
-                {
-                    Console.WriteLine($"Inner Exception: {e.InnerException.Message}");
-                }
-
-                throw new Exception("An error occurred while saving the entity changes.", e);
+                return "0";
             }
+
+
+
+            var result = new
+            {
+                RaceId = RaceId,
+                Horses = race.Participants
+            };
+
+            return race;
         }
 
         public async Task<IEnumerable<GetByCountryViewModel>> GetByCountry(string country)

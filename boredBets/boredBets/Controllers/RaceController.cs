@@ -53,7 +53,13 @@ namespace boredBets.Controllers
         [HttpGet("GetByRaceId")]
         public async Task<ActionResult<Race>> GetByRaceId(Guid Id)
         {
-            return StatusCode(201, await _raceInterface.GetByRaceId(Id));
+            var result = await _raceInterface.GetByRaceId(Id);
+
+            if (result == "0")
+            {
+                NotFound();
+            }
+            return Ok(result);
         }
 
         [HttpGet("GetByCountry")]
