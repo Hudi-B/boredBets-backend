@@ -6,7 +6,7 @@ namespace boredBets.Repositories.Interface
 {
     public interface IRaceInterface
     {
-        Task<Race> Post(RaceCreateDto raceCreateDto);
+        Task<object> Post(RaceCreateDto raceCreateDto);
         Task<IEnumerable<FiveRaceViewModel>> GetAlreadyHappenedRaces();
         Task<IEnumerable<FiveRaceViewModel>> GetFutureRaces();
         Task<IEnumerable<AllHappendRaceViewModel>> GetAllFutureRaces();

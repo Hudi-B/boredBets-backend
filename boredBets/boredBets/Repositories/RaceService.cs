@@ -104,46 +104,29 @@ namespace boredBets.Repositories
 
         
 
-        public async Task<Race> Post(RaceCreateDto raceCreateDto)
+        public async Task<object> Post(RaceCreateDto raceCreateDto)
         {
-            try
+            var track = await _context.Tracks.FirstOrDefaultAsync(x => x.Id == raceCreateDto.TrackId);
+
+            if (track == null)
             {
-                Guid RaceId = Guid.NewGuid();
-
-                var track = await _context.Tracks.FirstOrDefaultAsync(x => x.Id == raceCreateDto.TrackId);
-
-                if (track == null)
-                {
-                    throw new InvalidOperationException("Track not found.");
-                }
-
-
-                var race = new Race
-                {
-                    Id = RaceId,
-                    //Weather = raceCreateDto.Weather,
-                    TrackId = raceCreateDto.TrackId,
-                    RaceTime = raceCreateDto.RaceTime,
-                    RaceScheduled= raceCreateDto.RaceScheduled,
-                    
-                };
-
-                await _context.Races.AddAsync(race);
-                await _context.SaveChangesAsync();
-
-                return race;
+                return "0";
             }
-            catch (Exception e)
+
+            var race = new Race
             {
-                Console.WriteLine($"Error: {e.Message}");
+                Id = Guid.NewGuid(),
+                Rain = raceCreateDto.Rain,
+                TrackId = raceCreateDto.TrackId,
+                RaceTime = raceCreateDto.RaceTime,
+                RaceScheduled = raceCreateDto.RaceScheduled,
 
-                if (e.InnerException != null)
-                {
-                    Console.WriteLine($"Inner Exception: {e.InnerException.Message}");
-                }
+            };
 
-                throw new Exception("An error occurred while saving the entity changes.", e);
-            }
+            await _context.Races.AddAsync(race);
+            await _context.SaveChangesAsync();
+
+            return race;
         }
 
         public async Task<object> GetByRaceId(Guid RaceId)

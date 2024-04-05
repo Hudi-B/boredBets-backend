@@ -24,7 +24,13 @@ namespace boredBets.Controllers
         [HttpPost("RacePost")]
         public async Task<ActionResult<Race>> Post(RaceCreateDto raceCreateDto)
         {
-            return StatusCode(201, await _raceInterface.Post(raceCreateDto));
+            var result = await _raceInterface.Post(raceCreateDto);
+
+            if (result=="0")
+            {
+                NotFound("Track not found");
+            }
+            return Ok(result);
         }
 
         [HttpGet("GetFivePreviousRaces")]
@@ -57,7 +63,7 @@ namespace boredBets.Controllers
 
             if (result == "0")
             {
-                NotFound();
+                NotFound("Race not found");
             }
             return Ok(result);
         }
