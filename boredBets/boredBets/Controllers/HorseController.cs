@@ -13,14 +13,12 @@ namespace boredBets.Controllers
     public class HorseController : ControllerBase
     {
         private readonly IHorseInterface horseInterface;
-        private readonly IJockeyInterface jockeyInterface;
 
         private readonly BoredbetsContext _context;
 
-        public HorseController(IHorseInterface horseInterface, IJockeyInterface jockeyInterface, BoredbetsContext context)
+        public HorseController(IHorseInterface horseInterface, BoredbetsContext context)
         {
             this.horseInterface = horseInterface;
-            this.jockeyInterface = jockeyInterface;
             _context = context;
         }
 
@@ -81,36 +79,9 @@ namespace boredBets.Controllers
         [HttpPost("GenerateHorses")]
         public async Task<ActionResult<int>> GenerateHorse(int quantity)
         {
-            var freeJockeys =
-                from jockey in _context.Jockeys
-                where !_context.Horses.Any(horse => horse.JockeyId == jockey.Id)
-                select jockey.Id; //selects free jockey that are not connected to any horse
-
-            bool refreshList = false;
-
-            if (freeJockeys.Count() < quantity)
-            {
-                bool result = await jockeyInterface.GenerateJockey(quantity);
-                if (result)
-                {
-                    refreshList = true;
-                }
-                else
-                {
-                    return StatusCode(500, "An error occured during jockey generation");
-                }
-            }
-            if (refreshList)
-            {
-                freeJockeys =
-                    from jockey in _context.Jockeys
-                    where !_context.Horses.Any(horse => horse.JockeyId == jockey.Id)
-                    select jockey.Id;
-            }
-
             try
             {
-                bool result = await horseInterface.GenerateHorse(quantity, freeJockeys);
+                bool result = await horseInterface.GenerateHorse(quantity);
                 if (result) {
                     return StatusCode(201, "Succesfully generated " + quantity + " horse(s)");
                 }

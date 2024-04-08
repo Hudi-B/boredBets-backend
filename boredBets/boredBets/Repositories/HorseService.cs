@@ -10,10 +10,13 @@ namespace boredBets.Repositories
 {
     public class HorseService : IHorseInterface
     {
+        private readonly IJockeyInterface jockeyInterface;
+
         private readonly BoredbetsContext _context;
 
-        public HorseService(BoredbetsContext context)
+        public HorseService(IJockeyInterface jockeyInterface, BoredbetsContext context)
         {
+            this.jockeyInterface = jockeyInterface;
             _context = context;
         }
 
@@ -155,8 +158,32 @@ namespace boredBets.Repositories
             return horses;
         }
         
-        public async Task<bool> GenerateHorse(int quantity, IEnumerable<Guid> freeJockeys)
+        public async Task<bool> GenerateHorse(int quantity)
         {
+
+            var freeJockeys =
+                from jockey in _context.Jockeys
+                where !_context.Horses.Any(horse => horse.JockeyId == jockey.Id)
+                select jockey.Id; //selects free jockey that are not connected to any horse
+
+            bool refreshList = false;
+
+            if (freeJockeys.Count() < quantity)
+            {
+                refreshList = await jockeyInterface.GenerateJockey(quantity);
+                if (!refreshList)
+                {
+                    return false;
+                }
+            }
+            if (refreshList)
+            {
+                freeJockeys =
+                    from jockey in _context.Jockeys
+                    where !_context.Horses.Any(horse => horse.JockeyId == jockey.Id)
+                    select jockey.Id;
+            }
+
             List<string> maleHorseName = new List<string>();
             List<string> femaleHorseName = new List<string>();
             List<string> Countries = new List<string>();

@@ -13,11 +13,13 @@ namespace boredBets.Controllers
     public class RaceController : ControllerBase
     {
         private readonly IRaceInterface _raceInterface;
+        private readonly IHorseInterface _horseInterface;
         private readonly BoredbetsContext _context;
 
-        public RaceController(IRaceInterface raceInterface, BoredbetsContext context)
+        public RaceController(IRaceInterface raceInterface, IHorseInterface horseInterface, BoredbetsContext context)
         {
             _raceInterface = raceInterface;
+            _horseInterface = horseInterface;
             _context = context;
         }
 
@@ -96,13 +98,23 @@ namespace boredBets.Controllers
                 .Where(h => !h.Participants.Any(p => p.Race.RaceScheduled >= oneDayAgo))
                 .ToListAsync();
 
-
             Random rnd = new Random();
             int rainValue = rnd.Next(2);
-
-            if (horsesWithoutRecentRaces.Count() < quantity*20)
+            int neededHorse =  (quantity * 20) - horsesWithoutRecentRaces.Count();
+            bool refreshList = false;
+            if (neededHorse>0)
             {
-                return BadRequest($"Not enough free horses. You need {(quantity*20)-horsesWithoutRecentRaces.Count()}");
+                refreshList = await _horseInterface.GenerateHorse(neededHorse);
+                if (!refreshList)
+                {
+                    return StatusCode(500, "An error occured during jockey generation");
+                }
+            }
+            if (refreshList)
+            {
+                horsesWithoutRecentRaces = await _context.Horses
+                    .Where(h => !h.Participants.Any(p => p.Race.RaceScheduled >= oneDayAgo))
+                    .ToListAsync();
             }
 
             List<string> Tracks = new List<string>();
@@ -137,7 +149,7 @@ namespace boredBets.Controllers
 
                 for (int j = 0; j < 20; j++)
                 {
-                    var selectedHorseIndex = rnd.Next(horsesWithoutRecentRaces.Count);
+                    var selectedHorseIndex = rnd.Next(horsesWithoutRecentRaces.Count());
                     var selectedHorse = horsesWithoutRecentRaces[selectedHorseIndex];
 
                     var participate = new Participant
