@@ -9,5 +9,6 @@ namespace boredBets.Repositories.Interface
         Task<IEnumerable<Jockey>> GetAllJockey();
         Task<Jockey> GetJockeyById(Guid JockeyId);
         Task<object> GetJockeyDetailByJockeyId(Guid JockeyId);
+        Task<bool> GenerateJockey(int quantity);
     }
 }

@@ -4,6 +4,7 @@ using boredBets.Repositories.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Http.Headers;
 
 namespace boredBets.Controllers
 {
@@ -12,12 +13,14 @@ namespace boredBets.Controllers
     public class HorseController : ControllerBase
     {
         private readonly IHorseInterface horseInterface;
+        private readonly IJockeyInterface jockeyInterface;
 
         private readonly BoredbetsContext _context;
 
-        public HorseController(IHorseInterface horseInterface, BoredbetsContext context)
+        public HorseController(IHorseInterface horseInterface, IJockeyInterface jockeyInterface, BoredbetsContext context)
         {
             this.horseInterface = horseInterface;
+            this.jockeyInterface = jockeyInterface;
             _context = context;
         }
 
@@ -73,8 +76,9 @@ namespace boredBets.Controllers
             return Ok(result);
         }
 
-        [HttpPost("GenerateHorses")]
 
+
+        [HttpPost("GenerateHorses")]
         public async Task<ActionResult<int>> GenerateHorse(int quantity)
         {
             var freeJockeys =
@@ -82,81 +86,43 @@ namespace boredBets.Controllers
                 where !_context.Horses.Any(horse => horse.JockeyId == jockey.Id)
                 select jockey.Id; //selects free jockey that are not connected to any horse
 
-            if (freeJockeys.Count() >= quantity)
+            bool refreshList = false;
+
+            if (freeJockeys.Count() < quantity)
             {
-                try
+                bool result = await jockeyInterface.GenerateJockey(quantity);
+                if (result)
                 {
-                    List<string> maleHorseName = new List<string>();
-                    List<string> femaleHorseName = new List<string>();
-                    List<string> Countries = new List<string>();
-
-                    #region ReadFile
-
-
-                    string staticData = AppDomain.CurrentDomain.BaseDirectory.ToString() + "../../../staticData/";
-
-                    StreamReader sr;
-                    sr = new StreamReader(staticData + "maleHorses.txt");
-                    while (!sr.EndOfStream)
-                    {
-                        maleHorseName.Add(sr.ReadLine());
-                    }
-                    sr = new StreamReader(staticData + "femaleHorses.txt");
-                    while (!sr.EndOfStream)
-                    {
-                        femaleHorseName.Add(sr.ReadLine());
-                    }
-                    sr = new StreamReader(staticData + "countries.txt");
-                    while (!sr.EndOfStream)
-                    {
-                        Countries.Add(sr.ReadLine());
-                    }
-                    sr.Close();
-                    #endregion
-
-                    Random random = new Random();
-                    for (int i = 0; i < quantity; i++)
-                    {
-                        bool male = random.Next(2) == 0;
-                        string name;
-                        if (male)
-                        { 
-                            name = maleHorseName[random.Next(maleHorseName.Count())];
-                        }
-                        else
-                        {
-                            name = femaleHorseName[random.Next(femaleHorseName.Count())];
-                        }
-                        var newHorse = new Horse
-                        {
-                            Id = Guid.NewGuid(),
-                            Name = name,
-                            Age = random.Next(4) + 2,
-                            Country = Countries[random.Next(Countries.Count())],
-                            Stallion = male,
-                            JockeyId = freeJockeys.ToList()[i]
-                        };
-
-                        await _context.Horses.AddAsync(newHorse);
-                    }
-
-                    await _context.SaveChangesAsync();
-
-                    return StatusCode(201);
+                    refreshList = true;
                 }
-                catch (Exception ex)
+                else
                 {
-                    return StatusCode(500, ex);
+                    return StatusCode(500, "An error occured during jockey generation");
                 }
             }
-            else
+            if (refreshList)
             {
-                return StatusCode(500, "Jockey quantity not sufficient. Available jockeys: "+freeJockeys.Count());
+                freeJockeys =
+                    from jockey in _context.Jockeys
+                    where !_context.Horses.Any(horse => horse.JockeyId == jockey.Id)
+                    select jockey.Id;
             }
 
+            try
+            {
+                bool result = await horseInterface.GenerateHorse(quantity, freeJockeys);
+                if (result) {
+                    return StatusCode(201, "Succesfully generated " + quantity + " horse(s)");
+                }
+                else
+                {
+                    return StatusCode(501, "Unknown error occured");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(501, ex);
+            }
         }
-
-
-
     }
 }
