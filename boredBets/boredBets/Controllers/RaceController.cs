@@ -118,6 +118,7 @@ namespace boredBets.Controllers
             #endregion
 
 
+            var latestRace = _context.Races.FirstOrDefault(r => r.RaceScheduled > DateTime.UtcNow);
 
             var trackz = await _context.Tracks.ToListAsync();
             int maxTrakc = trackz.Count();
@@ -129,7 +130,7 @@ namespace boredBets.Controllers
                 {
                     Id = raceId,
                     RaceTime = rnd.Next(3, 11),
-                    RaceScheduled = DateTime.UtcNow.AddMinutes((i+1)*5),
+                    RaceScheduled = latestRace != null ? latestRace.RaceScheduled.AddMinutes((i+1)*5) :  DateTime.UtcNow.AddMinutes((i+1)*5),
                     Rain = Convert.ToBoolean(rainValue),
                     TrackId = trackz[rnd.Next(maxTrakc)].Id
                 };
