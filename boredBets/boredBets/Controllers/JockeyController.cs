@@ -60,102 +60,13 @@ namespace boredBets.Controllers
         [HttpPost("GenerateJockey")]
         public async Task<ActionResult> GenerateJockey(int quantity)
         {
-            try
+            bool result = await jockeyInterface.GenerateJockey(quantity);
+            if (result) 
             {
-                List<string> familyNames = new List<string>();
-
-                List<string> maleNames = new List<string>();
-                List<string> femaleNames = new List<string>();
-
-                List<string> maleMiddleNames = new List<string>();
-                List<string> femaleMiddleNames = new List<string>();
-
-                List<string> Countries = new List<string>();
-
-                #region ReadFile
-                string staticData = AppDomain.CurrentDomain.BaseDirectory.ToString() + "../../../staticData/";
-
-                StreamReader sr;
-                sr = new StreamReader(staticData + "familyNames.txt");
-                while (!sr.EndOfStream)
-                {
-                    familyNames.Add(sr.ReadLine());
-                }
-
-                sr = new StreamReader(staticData + "maleNames.txt");
-                while (!sr.EndOfStream)
-                {
-                    maleNames.Add(sr.ReadLine());
-                }
-
-                sr = new StreamReader(staticData + "femaleNames.txt");
-                while (!sr.EndOfStream)
-                {
-                    femaleNames.Add(sr.ReadLine());
-                }
-
-                sr = new StreamReader(staticData + "maleMiddleNames.txt");
-                while (!sr.EndOfStream)
-                {
-                    maleMiddleNames.Add(sr.ReadLine());
-                }
-
-                sr = new StreamReader(staticData + "femaleMiddleNames.txt");
-                while (!sr.EndOfStream)
-                {
-                    femaleMiddleNames.Add(sr.ReadLine());
-                }
-                sr = new StreamReader(staticData + "countries.txt");
-                while (!sr.EndOfStream)
-                {
-                    Countries.Add(sr.ReadLine());
-                }
-                sr.Close();
-                #endregion
-
-                Random random = new Random();
-                for (int i = 0; i < quantity; i++)
-                {
-                    bool male = random.Next(2) == 0;
-                    string name = familyNames[random.Next(familyNames.Count())];
-
-                    if (male)
-                    {
-                        if (random.Next(10) == 6)
-                        {
-                            name += " " + maleMiddleNames[random.Next(maleMiddleNames.Count())];
-                        }
-                        name += " " + maleNames[random.Next(maleNames.Count())];
-                    }
-                    else
-                    {
-                        if (random.Next(10) == 6)
-                        {
-                            name += " " + femaleMiddleNames[random.Next(femaleMiddleNames.Count())];
-                        }
-                        name += " " + femaleNames[random.Next(femaleNames.Count())];
-                    }
-
-                    var newJockey = new Jockey
-                    {
-                        Id = Guid.NewGuid(),
-                        Name = name,
-                        Country = Countries[random.Next(Countries.Count())],
-                        Age = random.Next(24, 38),
-                        Quality = random.Next(10) + 1,
-                        Male = male
-                    };
-
-                    await _context.Jockeys.AddAsync(newJockey);
-                }
-
-                await _context.SaveChangesAsync();
-
-                return StatusCode(201);
-            }
-            catch (Exception ex)
+                return Ok("Succesfully generated "+quantity+" jockey(s)");
+            }else 
             {
-                return StatusCode(500, ex);
+                return BadRequest("An error occured during jockey generation");
             }
         }
     }

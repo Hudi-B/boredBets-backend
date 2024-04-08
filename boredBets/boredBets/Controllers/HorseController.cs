@@ -13,12 +13,14 @@ namespace boredBets.Controllers
     public class HorseController : ControllerBase
     {
         private readonly IHorseInterface horseInterface;
+        private readonly IJockeyInterface jockeyInterface;
 
         private readonly BoredbetsContext _context;
 
-        public HorseController(IHorseInterface horseInterface, BoredbetsContext context)
+        public HorseController(IHorseInterface horseInterface, IJockeyInterface jockeyInterface, BoredbetsContext context)
         {
             this.horseInterface = horseInterface;
+            this.jockeyInterface = jockeyInterface;
             _context = context;
         }
 
@@ -77,7 +79,6 @@ namespace boredBets.Controllers
 
 
         [HttpPost("GenerateHorses")]
-
         public async Task<ActionResult<int>> GenerateHorse(int quantity)
         {
             var freeJockeys =
@@ -89,36 +90,14 @@ namespace boredBets.Controllers
 
             if (freeJockeys.Count() < quantity)
             {
-                using (var client = new HttpClient())
+                bool result = await jockeyInterface.GenerateJockey(quantity);
+                if (result)
                 {
-
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                    try
-                    {
-                        StringContent httpContent = new StringContent("");
-                        string fullUrl = $"https://boredbetsapidev.azurewebsites.net/api/Jockey/GenerateJockey?quantity=" + (quantity - freeJockeys.Count());
-                        HttpResponseMessage response = await client.PostAsync(fullUrl, httpContent);
-                        if (response.IsSuccessStatusCode)
-                        {
-                            string responseContent = await response.Content.ReadAsStringAsync();
-                            // Parse the responseContent to update your list
-                            refreshList = true;
-                        }
-                        else
-                        {
-                            return StatusCode(500,$"Error getting Jockeys: {response.StatusCode}");
-                        }
-                    }
-                    catch (HttpRequestException ex)
-                    {
-                        return StatusCode(500, "HTTP Request Error: {ex.Message}");
-                    }
-                    catch (Exception ex)
-                    {
-                        return StatusCode(500, $"General Exception: {ex.Message}");
-                    }
+                    refreshList = true;
+                }
+                else
+                {
+                    return StatusCode(500, "An error occured during jockey generation");
                 }
             }
             if (refreshList)
@@ -129,75 +108,20 @@ namespace boredBets.Controllers
                     select jockey.Id;
             }
 
-
             try
             {
-                List<string> maleHorseName = new List<string>();
-                List<string> femaleHorseName = new List<string>();
-                List<string> Countries = new List<string>();
-
-                #region ReadFile
-
-
-                string staticData = AppDomain.CurrentDomain.BaseDirectory.ToString() + "../../../staticData/";
-
-                StreamReader sr;
-                sr = new StreamReader(staticData + "maleHorses.txt");
-                while (!sr.EndOfStream)
-                {
-                    maleHorseName.Add(sr.ReadLine());
+                bool result = await horseInterface.GenerateHorse(quantity, freeJockeys);
+                if (result) {
+                    return StatusCode(201, "Succesfully generated " + quantity + " horse(s)");
                 }
-                sr = new StreamReader(staticData + "femaleHorses.txt");
-                while (!sr.EndOfStream)
+                else
                 {
-                    femaleHorseName.Add(sr.ReadLine());
+                    return StatusCode(501, "Unknown error occured");
                 }
-                sr = new StreamReader(staticData + "countries.txt");
-                while (!sr.EndOfStream)
-                {
-                    Countries.Add(sr.ReadLine());
-                }
-                sr.Close();
-                #endregion
-
-                Random random = new Random();
-                int maleHorseNameCount = maleHorseName.Count();
-                int femaleHorseNameCount = femaleHorseName.Count();
-                int countriesCount = Countries.Count();
-                var freeJockeyIds = freeJockeys.ToList();
-
-                for (int i = 0; i < quantity; i++)
-                {
-                    bool male = random.Next(2) == 0;
-                    string name;
-                    if (male)
-                    {
-                        name = maleHorseName[random.Next(maleHorseNameCount)];
-                    }
-                    else
-                    {
-                        name = femaleHorseName[random.Next(femaleHorseNameCount)];
-                    }
-                    var newHorse = new Horse
-                    {
-                        Id = Guid.NewGuid(),
-                        Name = name,
-                        Age = random.Next(4) + 2,
-                        Country = Countries[random.Next(countriesCount)],
-                        Stallion = male,
-                        JockeyId = freeJockeyIds[i]
-                    };
-
-                    await _context.Horses.AddAsync(newHorse);
-                }
-
-                await _context.SaveChangesAsync();
-
-                return StatusCode(201);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex);
+                return StatusCode(501, ex);
             }
         }
     }

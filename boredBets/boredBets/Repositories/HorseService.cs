@@ -155,5 +155,71 @@ namespace boredBets.Repositories
             return horses;
         }
         
+        public async Task<bool> GenerateHorse(int quantity, IQueryable<Guid> freeJockeys)
+        {
+            List<string> maleHorseName = new List<string>();
+            List<string> femaleHorseName = new List<string>();
+            List<string> Countries = new List<string>();
+
+            #region ReadFile
+
+            string staticData = AppDomain.CurrentDomain.BaseDirectory.ToString() + "../../../staticData/";
+
+            StreamReader sr;
+            sr = new StreamReader(staticData + "maleHorses.txt");
+            while (!sr.EndOfStream)
+            {
+                maleHorseName.Add(sr.ReadLine());
+            }
+            sr = new StreamReader(staticData + "femaleHorses.txt");
+            while (!sr.EndOfStream)
+            {
+                femaleHorseName.Add(sr.ReadLine());
+            }
+            sr = new StreamReader(staticData + "countries.txt");
+            while (!sr.EndOfStream)
+            {
+                Countries.Add(sr.ReadLine());
+            }
+            sr.Close();
+            #endregion
+
+            Random random = new Random();
+            int maleHorseNameCount = maleHorseName.Count();
+            int femaleHorseNameCount = femaleHorseName.Count();
+            int countriesCount = Countries.Count();
+            var freeJockeyIds = freeJockeys.ToList();
+
+            for (int i = 0; i < quantity; i++)
+            {
+                bool male = random.Next(2) == 0;
+                string name;
+                if (male)
+                {
+                    name = maleHorseName[random.Next(maleHorseNameCount)];
+                }
+                else
+                {
+                    name = femaleHorseName[random.Next(femaleHorseNameCount)];
+                }
+                var newHorse = new Horse
+                {
+                    Id = Guid.NewGuid(),
+                    Name = name,
+                    Age = random.Next(4) + 2,
+                    Country = Countries[random.Next(countriesCount)],
+                    Stallion = male,
+                    JockeyId = freeJockeyIds[i]
+                };
+
+                await _context.Horses.AddAsync(newHorse);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        
     }
 }
