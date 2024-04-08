@@ -78,16 +78,11 @@ namespace boredBets.Repositories
                 BetTypeId = userBetCreateDto.BetTypeId,
             };
 
-            int totalDeposit = await _context.UserBets
-                                           .Where(x => x.UserId == userBetCreateDto.UserId)
-                                           .SumAsync(x => x.BetAmount);
 
             var transaction = new Transaction 
             {
                 UserId = userBetCreateDto.UserId,
-                Deposit = totalDeposit+userBetCreateDto.BetAmount,
-                Bet = userBetCreateDto.BetAmount,
-                //BetOutcome = how to 
+                Deposit = userBetCreateDto.BetAmount,
                 Created = DateTime.UtcNow,
                 
             };
