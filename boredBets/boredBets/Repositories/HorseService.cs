@@ -155,7 +155,7 @@ namespace boredBets.Repositories
             return horses;
         }
         
-        public async Task<bool> GenerateHorse(int quantity, IQueryable<Guid> freeJockeys)
+        public async Task<bool> GenerateHorse(int quantity, IEnumerable<Guid> freeJockeys)
         {
             List<string> maleHorseName = new List<string>();
             List<string> femaleHorseName = new List<string>();
