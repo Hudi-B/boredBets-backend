@@ -121,9 +121,9 @@ namespace boredBets.Controllers
         {
             var result = await userInterface.UpdateWalletByUserId(UserId,wallet);
 
-            if (result == null)
+            if (result == "0")
             {
-                return NotFound("User not found or value was lower than initial value");
+                return NotFound("User not found");
             }
             return Ok(result);
         }
