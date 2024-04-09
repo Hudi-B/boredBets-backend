@@ -137,16 +137,49 @@ namespace boredBets.Repositories
 
         public async Task<object> GetByRaceId(Guid RaceId)
         {
-            var race = await _context.Races.Include(x => x.Participants)
-                                            .Include(x => x.Track)
-                                            .SingleOrDefaultAsync(x => x.Id.Equals(RaceId));
+            var race = await _context.Races
+                                     .Include(x => x.Track)
+                                     .SingleOrDefaultAsync(x => x.Id == RaceId);
+
             if (race == null)
             {
                 return "0";
             }
 
-            return race;
+            var horses = await _context.Participants
+                                        .Where(p => p.RaceId == RaceId)
+                                        .Join(_context.Horses,
+                                              participant => participant.HorseId,
+                                              horse => horse.Id,
+                                              (participant, horse) => new
+                                              {
+                                                  HorseId = horse.Id,
+                                                  HorseName = horse.Name,
+                                                  HorseAge = horse.Age,
+                                                  HorseCountry = horse.Country,
+                                                  HorseStallion = horse.Stallion,
+                                                  JockeyId = horse.JockeyId,
+                                                  JockeyName = horse.Jockey.Name,
+                                                  JockeyQuality = horse.Jockey.Quality,
+                                                  JockeyCountry = horse.Jockey.Country,
+                                                  JockeyMale = horse.Jockey.Male,
+                                                  JockeyAge = horse.Jockey.Age
+                                              })
+                                        .ToListAsync();
+
+            var result = new
+            {
+                RaceId = RaceId,
+                RaceTime = race.RaceTime,
+                RaceScheduled = race.RaceScheduled,
+                Rain = race.Rain,
+                TrackId = race.TrackId,
+                Horses = horses
+            };
+
+            return result;
         }
+
 
         public async Task<IEnumerable<GetByCountryViewModel>> GetByCountry(string country)
         {
