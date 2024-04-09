@@ -146,7 +146,7 @@ namespace boredBets.Repositories
                 return "0";
             }
 
-            var horses = await _context.Participants
+            var participants = await _context.Participants
                                         .Where(p => p.RaceId == RaceId)
                                         .Join(_context.Horses,
                                               participant => participant.HorseId,
@@ -173,8 +173,8 @@ namespace boredBets.Repositories
                 RaceTime = race.RaceTime,
                 RaceScheduled = race.RaceScheduled,
                 Rain = race.Rain,
-                TrackId = race.TrackId,
-                Horses = horses
+                Track = race.Track,
+                Participants = participants
             };
 
             return result;
