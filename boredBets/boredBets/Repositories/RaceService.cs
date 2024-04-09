@@ -106,6 +106,7 @@ namespace boredBets.Repositories
 
             return alreadyHappenedRaces.OrderByDescending(r => r.RaceScheduled);
         }
+        
 
         
 
@@ -136,21 +137,13 @@ namespace boredBets.Repositories
 
         public async Task<object> GetByRaceId(Guid RaceId)
         {
-            var race = await _context.Races
-                                               .Include(x => x.Participants)
-                                               .SingleOrDefaultAsync(x => x.Id.Equals(RaceId));
+            var race = await _context.Races.Include(x => x.Participants)
+                                            .Include(x => x.Track)
+                                            .SingleOrDefaultAsync(x => x.Id.Equals(RaceId));
             if (race == null)
             {
                 return "0";
             }
-
-
-
-            var result = new
-            {
-                RaceId = RaceId,
-                Horses = race.Participants
-            };
 
             return race;
         }
