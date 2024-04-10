@@ -223,7 +223,7 @@ namespace boredBets.Repositories
             return new { AccessToken = new_accesstoken };
         }
 
-        public async Task<User> DeleteUserById(Guid UserId)
+        public async Task<object> DeleteUserById(Guid UserId)
         {
             var userid = await _context.Users.FirstOrDefaultAsync(x => x.Id == UserId);
 
@@ -235,7 +235,7 @@ namespace boredBets.Repositories
             _context.Users.Remove(userid);
             await _context.SaveChangesAsync();
 
-            return userid;
+            return "Success";
         }
 
         public async Task<UserWalletDto> GetWalletByUserId(Guid UserId)
