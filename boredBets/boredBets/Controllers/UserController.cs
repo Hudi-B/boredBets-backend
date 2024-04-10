@@ -25,10 +25,15 @@ namespace boredBets.Controllers
         {
             var result = await userInterface.Register(userCreateDto);
 
-            if (result==null)
+            switch (result)
             {
-                return Conflict();
+                case "0":
+                    return Conflict("User with this email already exists");
+                    
+                case "1":
+                    return Conflict("User with this Username already exists");
             }
+
             return Ok(result);
         }
 
