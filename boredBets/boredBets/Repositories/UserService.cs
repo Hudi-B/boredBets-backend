@@ -147,12 +147,7 @@ namespace boredBets.Repositories
             await _context.UserDetails.AddAsync(userDetails);
             await _context.SaveChangesAsync();
 
-            var result = new
-            {
-                UserId = userId,
-            };
-
-            return result;
+            return new {Id = user.Id };
         }
 
         public async Task<object> Login(UserLoginDto userLoginDto) //login
