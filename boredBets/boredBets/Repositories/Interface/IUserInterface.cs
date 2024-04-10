@@ -15,7 +15,7 @@ namespace boredBets.Repositories.Interface
         Task<object> UpdateUsernameByUserId(Guid UserId, UsernameDto username);
         Task<object> GetByUserId(Guid UserId);
         Task<object> DeleteUserById(Guid UserId);
-        Task<UserWalletDto> GetWalletByUserId(Guid UserId);
+        Task<object> GetWalletByUserId(Guid UserId);
         Task<object> UpdateWalletByUserId(Guid UserId,UserWalletDto wallet);
         Task<string> UpdateEmailByUserId(Guid UserId, UserEmailDto emailDto);
         Task<string> UpdatePasswordByUserId(Guid UserId, UserPasswordDto passwordDto);

@@ -238,20 +238,17 @@ namespace boredBets.Repositories
             return "Success";
         }
 
-        public async Task<UserWalletDto> GetWalletByUserId(Guid UserId)
+        public async Task<object> GetWalletByUserId(Guid UserId)
         {
-            var wallet = await _context.Users
-                                       .Where(u => u.Id == UserId)
-                                       .Select(u => new UserWalletDto(
-                                           u.Wallet))
-                                       .FirstOrDefaultAsync();
+            var wallet = await _context.Users.FirstOrDefaultAsync(x => x.Id == UserId);
 
             if (wallet == null)
             {
                 return null;
             }
 
-            return wallet;
+            
+            return new {wallet = wallet.Wallet};
         }
 
         public async Task<object> UpdateWalletByUserId(Guid UserId,UserWalletDto wallet)
