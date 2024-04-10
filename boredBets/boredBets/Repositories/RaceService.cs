@@ -183,9 +183,7 @@ namespace boredBets.Repositories
 
         public async Task<IEnumerable<GetByCountryViewModel>> GetByCountry(string country)
         {
-            try
-            {
-                var racecountries = await _context.Tracks
+             var racecountries = await _context.Tracks
                     .Include(t => t.Races)
                     .Where(t => t.Country == country)
                     .SelectMany(t => t.Races.DefaultIfEmpty(), (t, race) => new GetByCountryViewModel
@@ -193,23 +191,11 @@ namespace boredBets.Repositories
                         Id = race != null ? race.Id : Guid.Empty,
                         Country = t.Country,
                         Length = race != null ? t.Length : 0,
-                        //Weather = race.Weather,
+                        Rain = race.Rain
                     })
                     .ToListAsync();
 
-                return racecountries;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Error: {e.Message}");
-
-                if (e.InnerException != null)
-                {
-                    Console.WriteLine($"Inner Exception: {e.InnerException.Message}");
-                }
-
-                throw new Exception("An error occurred while retrieving the entity.", e);
-            }
+            return racecountries;
         }
 
         public async Task<object> DeleteRaceById(Guid Id)

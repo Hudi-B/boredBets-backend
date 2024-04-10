@@ -5,6 +5,6 @@
         public Guid Id { get; set; }
         public string? Country { get; set; }
         public float? Length { get; set; }
-        public string? Weather { get; set; }
+        public bool? Rain { get; set; }
     }
 }
