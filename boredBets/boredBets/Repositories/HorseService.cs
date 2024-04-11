@@ -233,7 +233,7 @@ namespace boredBets.Repositories
                 {
                     Id = Guid.NewGuid(),
                     Name = name,
-                    Age = random.Next(4) + 2,
+                    Age = random.Next(5) + 2,
                     Country = Countries[random.Next(countriesCount)],
                     Stallion = male,
                     JockeyId = freeJockeyIds[i]
