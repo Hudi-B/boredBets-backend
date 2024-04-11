@@ -58,7 +58,7 @@ namespace boredBets.Repositories
                     Id = r.Id,
                     RaceScheduled = r.RaceScheduled,
                     Country = r.Track.Country,
-                    Length = r.Track.Length,
+                    Track_Name = r.Track.Name,
                 })
                 .ToListAsync();
 
@@ -100,7 +100,7 @@ namespace boredBets.Repositories
                     Id = r.Id,
                     RaceScheduled = r.RaceScheduled,
                     Country = r.Track.Country,
-                    Length = r.Track.Length,
+                    Track_Name = r.Track.Name,
                 })
                 .ToListAsync();
 
