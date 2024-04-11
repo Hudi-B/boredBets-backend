@@ -173,5 +173,7 @@ namespace boredBets.Controllers
 
             return Ok(quantity + " races generated successfully");
         }
+        
+
     }
 }

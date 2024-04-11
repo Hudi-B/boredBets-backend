@@ -16,7 +16,8 @@ namespace boredBets
             var builder = WebApplication.CreateBuilder(args);
             var configuration = builder.Configuration;
 
-            builder.Services.AddDbContext<BoredbetsContext>();
+            builder.Services.AddDbContext<BoredbetsContext>(); 
+            builder.Services.AddScoped<IHeadsUpInterface, HeadsUpService>();
             builder.Services.AddScoped<IHorseInterface, HorseService>();
             builder.Services.AddScoped<IJockeyInterface, JockeyService>();
             builder.Services.AddScoped<ITrackInterface, TrackService>();
