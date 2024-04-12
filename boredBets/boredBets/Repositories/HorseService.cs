@@ -100,9 +100,14 @@ namespace boredBets.Repositories
                                     .Select(j => j.Name)
                                     .FirstOrDefaultAsync();
 
-            var horseParicipate = await _context.Participants.AnyAsync(x => x.HorseId == horse.Id);
+            var horseParticipate = await _context.Participants.AnyAsync(x => x.HorseId == horse.Id);
 
-            if (horseParicipate == false)
+            var horseParticipations = await _context.Participants
+            .Where(x => x.HorseId == horse.Id && x.Placement != null) // Filter out null placements
+            .Select(x => new { Placement = x.Placement }) // Select only the placement
+            .ToListAsync();
+
+            if (horseParticipate==false)
             {
                 var horseNeverRaced = new
                 {
@@ -112,17 +117,17 @@ namespace boredBets.Repositories
                     Country= horse.Country,
                     Age = horse.Age,
                     JockeyId = horse.JockeyId,
-                    JockeyName = jockeyName
+                    JockeyName = jockeyName,
                 };
                 return horseNeverRaced;
             }
 
             var raceSchedulesPast = await _context.Races
-                                                    .Where(x => x.RaceScheduled < DateTime.UtcNow && horseParicipate)
+                                                    .Where(x => x.RaceScheduled < DateTime.UtcNow && horseParticipate)
                                                     .ToListAsync();
 
             var raceSchedulesFuture = await _context.Races
-                                                    .Where(x => x.RaceScheduled > DateTime.UtcNow && horseParicipate)
+                                                    .Where(x => x.RaceScheduled > DateTime.UtcNow && horseParticipate)
                                                     .ToListAsync();
 
             var result = new
@@ -136,8 +141,8 @@ namespace boredBets.Repositories
                 JockeyName = jockeyName,
                 Next3Races = raceSchedulesFuture.Take(3),
                 Past3Races = raceSchedulesPast.Take(3),
-                LifeTimeMatches = raceSchedulesPast.Count()
-                //AvaragePlacement = WIP
+                RaceParticipatedIn = horseParticipations.Count(),
+                AvgPlacement = horseParticipations.Average(x => x.Placement),
             };
 
             return result;
