@@ -22,6 +22,7 @@ namespace boredBets.Controllers
         {
             try {
                 await headsUp.simulateRace();
+                await headsUp.checkRace();
             //handleBets()
             }
             catch {

@@ -9,21 +9,22 @@ namespace boredBets.Repositories
     public class HeadsUpService : IHeadsUpInterface
     {
         private readonly BoredbetsContext _context;
+        private readonly IRaceInterface raceInterface;
 
-        public HeadsUpService(BoredbetsContext context)
+        public HeadsUpService(BoredbetsContext context, IRaceInterface raceInterface)
         {
             _context = context;
+            this.raceInterface = raceInterface;
         }
+        #region Simulation of race
         public async Task simulateRace()
         {
             var racesToSimulate = await _context.Races
-                .Where(x => x.RaceScheduled <= DateTime.UtcNow && x.Participants.Any(y => y.Placement.HasValue))
+                .Where(x => x.RaceScheduled <= DateTime.UtcNow && x.Participants.Any(y => y.Placement==0))
                 .Include(x => x.Participants)
                     .ThenInclude(p => p.Horse)
                         .ThenInclude(p => p.Jockey)
                 .ToListAsync();
-
-
             var comparer = new CustomComparer();
             foreach (var race in racesToSimulate)
             {
@@ -88,6 +89,8 @@ namespace boredBets.Repositories
 
             return result;
         }
+
+
         public class Result
         {
             public Horse Horse { get; set; }
@@ -104,6 +107,17 @@ namespace boredBets.Repositories
                     return rnd.Next(2) == 0 ? -1 : 1;
 
                 return x.Chance.CompareTo(y.Chance);
+            }
+        }
+        #endregion
+
+
+        public async Task checkRace()
+        {
+            var futureRaces = await raceInterface.GetAllFutureRaces();
+            if (futureRaces.Count() < 20)
+            {
+                await raceInterface.GenerateRace(40);
             }
         }
 

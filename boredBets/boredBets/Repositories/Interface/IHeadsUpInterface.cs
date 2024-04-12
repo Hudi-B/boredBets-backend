@@ -6,5 +6,6 @@ namespace boredBets.Repositories.Interface
     public interface IHeadsUpInterface
     {
         Task simulateRace();
+        Task checkRace();
     }
 }

@@ -12,10 +12,12 @@ namespace boredBets.Repositories
     public class RaceService : IRaceInterface
     {
         private readonly BoredbetsContext _context;
+        private readonly IHorseInterface _horseInterface;
 
-        public RaceService(BoredbetsContext context)
+        public RaceService(BoredbetsContext context, IHorseInterface horseInterface)
         {
             _context = context;
+            _horseInterface = horseInterface;
         }
 
         public async Task<IEnumerable<Race>> Get()
@@ -219,5 +221,85 @@ namespace boredBets.Repositories
             return result;
         }
 
+        public async Task<bool> GenerateRace(int quantity)
+        {
+            DateTime oneDayAgo = DateTime.UtcNow.AddDays(-1);
+
+            var horsesWithoutRecentRaces = await _context.Horses.Where(h => !h.Participants.Any(p => p.Race.RaceScheduled >= oneDayAgo)).ToListAsync();
+
+            Random rnd = new Random();
+            int rainValue = rnd.Next(2);
+            int neededHorse = (quantity * 20) - horsesWithoutRecentRaces.Count();
+            bool refreshList = false;
+            if (neededHorse > 0)
+            {
+                refreshList = await _horseInterface.GenerateHorse(neededHorse);
+                if (!refreshList)
+                {
+                    return false;
+                }
+            }
+            if (refreshList)
+            {
+                horsesWithoutRecentRaces = await _context.Horses
+                    .Where(h => !h.Participants.Any(p => p.Race.RaceScheduled >= oneDayAgo))
+                    .ToListAsync();
+            }
+
+            List<string> Tracks = new List<string>();
+
+            #region ReadFile
+            string staticData = AppDomain.CurrentDomain.BaseDirectory.ToString() + "../../../staticData/";
+            StreamReader sr = new StreamReader(staticData + "trackNames.txt");
+            while (!sr.EndOfStream)
+            {
+                Tracks.Add(sr.ReadLine());
+            }
+            sr.Close();
+            #endregion
+
+
+            var latestRace = _context.Races.FirstOrDefault(r => r.RaceScheduled > DateTime.UtcNow);
+
+            var trackz = await _context.Tracks.ToListAsync();
+            int maxTrakc = trackz.Count();
+            for (int i = 0; i < quantity; i++)
+            {
+                Guid raceId = Guid.NewGuid();
+
+                var race = new Race
+                {
+                    Id = raceId,
+                    RaceTime = rnd.Next(3, 11),
+                    RaceScheduled = latestRace != null ? latestRace.RaceScheduled.AddMinutes((i + 1) * 5) : DateTime.UtcNow.AddMinutes((i + 1) * 5),
+                    Rain = Convert.ToBoolean(rainValue),
+                    TrackId = trackz[rnd.Next(maxTrakc)].Id
+                };
+
+                for (int j = 0; j < 20; j++)
+                {
+                    var selectedHorseIndex = rnd.Next(horsesWithoutRecentRaces.Count());
+                    var selectedHorse = horsesWithoutRecentRaces[selectedHorseIndex];
+
+                    var participate = new Participant
+                    {
+                        Id = Guid.NewGuid(),
+                        RaceId = raceId,
+                        HorseId = selectedHorse.Id,
+                        Placement = 0
+                    };
+
+                    horsesWithoutRecentRaces.RemoveAt(selectedHorseIndex);
+
+
+                    _context.Participants.Add(participate);
+                }
+
+                _context.Races.Add(race);
+            }
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }
