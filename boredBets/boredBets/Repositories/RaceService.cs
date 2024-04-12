@@ -223,9 +223,9 @@ namespace boredBets.Repositories
 
         public async Task<bool> GenerateRace(int quantity)
         {
-            DateTime oneDayAgo = DateTime.UtcNow.AddDays(-1);
+            DateTime fiveMinutesAgo = DateTime.UtcNow.AddMinutes(-5);
 
-            var horsesWithoutRecentRaces = await _context.Horses.Where(h => !h.Participants.Any(p => p.Race.RaceScheduled >= oneDayAgo)).ToListAsync();
+            var horsesWithoutRecentRaces = await _context.Horses.Where(h => !h.Participants.Any(p => p.Race.RaceScheduled >= fiveMinutesAgo)).ToListAsync();
 
             Random rnd = new Random();
             int rainValue = rnd.Next(2);
@@ -242,7 +242,7 @@ namespace boredBets.Repositories
             if (refreshList)
             {
                 horsesWithoutRecentRaces = await _context.Horses
-                    .Where(h => !h.Participants.Any(p => p.Race.RaceScheduled >= oneDayAgo))
+                    .Where(h => !h.Participants.Any(p => p.Race.RaceScheduled >= fiveMinutesAgo))
                     .ToListAsync();
             }
 
@@ -259,7 +259,11 @@ namespace boredBets.Repositories
             #endregion
 
 
-            var latestRace = _context.Races.FirstOrDefault(r => r.RaceScheduled > DateTime.UtcNow);
+            var latestRace = _context.Races
+                                            .Where(r => r.RaceScheduled > DateTime.UtcNow)
+                                            .OrderByDescending(r => r.RaceScheduled)
+                                            .FirstOrDefault();
+
 
             var trackz = await _context.Tracks.ToListAsync();
             int maxTrakc = trackz.Count();
@@ -271,7 +275,7 @@ namespace boredBets.Repositories
                 {
                     Id = raceId,
                     RaceTime = rnd.Next(3, 11),
-                    RaceScheduled = latestRace != null ? latestRace.RaceScheduled.AddMinutes((i + 1) * 5) : DateTime.UtcNow.AddMinutes((i + 1) * 5),
+                    RaceScheduled = latestRace != null ? latestRace.RaceScheduled.AddMinutes((i + 1) * 10) : DateTime.UtcNow.AddMinutes((i + 1) * 10),
                     Rain = Convert.ToBoolean(rainValue),
                     TrackId = trackz[rnd.Next(maxTrakc)].Id
                 };
@@ -300,6 +304,8 @@ namespace boredBets.Repositories
 
             await _context.SaveChangesAsync();
             return true;
+
+
         }
     }
 }
