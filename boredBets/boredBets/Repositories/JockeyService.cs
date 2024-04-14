@@ -2,6 +2,7 @@
 using boredBets.Models.Dtos;
 using boredBets.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 namespace boredBets.Repositories
 {
@@ -42,9 +43,38 @@ namespace boredBets.Repositories
                 return "0";
             }
 
-            var jockeyHasHorse = await _context.Horses.FirstOrDefaultAsync(x => x.JockeyId == jockey.Id);
+            var Participated = await _context.Participants.AnyAsync(x => x.Horse.JockeyId == JockeyId);
 
-            if (jockeyHasHorse == null)
+            var Placements = await _context.Participants
+                .Where(x => x.Horse.JockeyId == JockeyId && x.Placement != 0)
+                .Select(x => x.Placement)
+                .ToListAsync();
+
+            List<Race> raceSchedulesPast = null;
+            List<Race> raceSchedulesFuture = null;
+
+            if (Participated)
+            {
+                raceSchedulesPast = await _context.Races
+                    .Where(x => x.RaceScheduled < DateTime.UtcNow && x.Participants.Any(x => x.Horse.JockeyId == JockeyId))
+                    .Include(x => x.Track)
+                    .OrderBy(x => x.RaceScheduled)
+                    .Take(3)
+                    .ToListAsync();
+
+                raceSchedulesFuture = await _context.Races
+                    .Where(x => x.RaceScheduled > DateTime.UtcNow && x.Participants.Any(x => x.Horse.JockeyId == JockeyId))
+                    .Include(x => x.Track)
+                    .OrderByDescending(x => x.RaceScheduled)
+                    .Take(3)
+                    .ToListAsync();
+            }
+
+
+
+            var jockeysHorse = await _context.Horses.FirstOrDefaultAsync(x => x.JockeyId == jockey.Id);
+
+            if (jockeysHorse == null)
             {
                 var jockeyWithoutHorse = new
                 {
@@ -54,26 +84,14 @@ namespace boredBets.Repositories
                     Age = jockey.Age,
                     IsMale = jockey.Male,
                     HorseId = (Guid?)null,
-                    HorseName = (string)null,
-                    Next3Races = new List<Race>(), // Initialize with empty list
-                    Past3Races = new List<Race>(), // Initialize with empty list
-                    LifeTimeMatches = 0
+                    HorseName = (string?)null,
+                    Next3Races = raceSchedulesFuture,
+                    Past3Races = raceSchedulesPast,
+                    RaceParticipatedIn = Placements.Count(),
+                    AvgPlacement = Placements.Average(),
                 };
                 return jockeyWithoutHorse;
             }
-
-            var jockeyParticipate = await _context.Participants
-                .Where(p => p.HorseId == jockeyHasHorse.Id)
-                .Select(p => p.RaceId)
-                .ToListAsync();
-
-            var raceSchedulesPast = await _context.Races
-                .Where(x => jockeyParticipate.Contains(x.Id) && x.RaceScheduled < DateTime.UtcNow)
-                .ToListAsync();
-
-            var raceSchedulesFuture = await _context.Races
-                .Where(x => jockeyParticipate.Contains(x.Id) && x.RaceScheduled > DateTime.UtcNow)
-                .ToListAsync();
 
             var result = new
             {
@@ -82,11 +100,12 @@ namespace boredBets.Repositories
                 Country = jockey.Country,
                 Age = jockey.Age,
                 IsMale = jockey.Male,
-                HorseId = jockeyHasHorse.Id,
-                HorseName = jockeyHasHorse.Name,
-                Next3Races = raceSchedulesFuture.Take(3).ToList(), // Convert to list
-                Past3Races = raceSchedulesPast.Take(3).ToList(), // Convert to list
-                LifeTimeMatches = jockeyParticipate.Count
+                HorseId = jockeysHorse.Id,
+                HorseName = jockeysHorse.Name,
+                Next3Races = raceSchedulesFuture,
+                Past3Races = raceSchedulesPast,
+                RaceParticipatedIn = Placements.Count(),
+                AvgPlacement = Placements.Average(),
             };
 
             return result;
