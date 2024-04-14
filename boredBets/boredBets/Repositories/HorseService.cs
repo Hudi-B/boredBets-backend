@@ -89,47 +89,39 @@ namespace boredBets.Repositories
 
         public async Task<object> GetHorseDetailByHorseId(Guid HorseId)
         {
-            var horse = await _context.Horses.FirstOrDefaultAsync(x => x.Id == HorseId);
+            var horse = await _context.Horses.Include(x => x.Jockey).FirstOrDefaultAsync(x => x.Id == HorseId);
 
             if (horse == null)
             {
                 return "0";
             }
-            var jockeyName = await _context.Jockeys
-                                    .Where(j => j.Id == horse.JockeyId)
-                                    .Select(j => j.Name)
-                                    .FirstOrDefaultAsync();
 
             var horseParticipate = await _context.Participants.AnyAsync(x => x.HorseId == horse.Id);
 
             var horseParticipations = await _context.Participants
-            .Where(x => x.HorseId == horse.Id && x.Placement != null) // Filter out null placements
-            .Select(x => new { Placement = x.Placement }) // Select only the placement
-            .ToListAsync();
+                .Where(x => x.HorseId == horse.Id && x.Placement != 0)
+                .Select(x => x.Placement)
+                .ToListAsync();
 
-            if (horseParticipate==false)
+            List<Race> raceSchedulesPast = null;
+            List<Race> raceSchedulesFuture = null;
+
+            if (horseParticipate)
             {
-                var horseNeverRaced = new
-                {
-                    Id = horse.Id,
-                    Name = horse.Name,
-                    Stallion = horse.Stallion,
-                    Country= horse.Country,
-                    Age = horse.Age,
-                    JockeyId = horse.JockeyId,
-                    JockeyName = jockeyName,
-                };
-                return horseNeverRaced;
+                raceSchedulesPast = await _context.Races
+                    .Where(x => x.RaceScheduled < DateTime.UtcNow && x.Participants.Any(x => x.HorseId == horse.Id))
+                    .Include(x => x.Track)
+                    .OrderBy(x => x.RaceScheduled)
+                    .Take(3)
+                    .ToListAsync();
+
+                raceSchedulesFuture = await _context.Races
+                    .Where(x => x.RaceScheduled > DateTime.UtcNow && x.Participants.Any(x => x.HorseId == horse.Id))
+                    .Include(x => x.Track)
+                    .OrderByDescending(x => x.RaceScheduled) 
+                    .Take(3)
+                    .ToListAsync();
             }
-
-            var raceSchedulesPast = await _context.Races
-                                                    .Where(x => x.RaceScheduled < DateTime.UtcNow && horseParticipate)
-                                                    .ToListAsync();
-
-            var raceSchedulesFuture = await _context.Races
-                                                    .Where(x => x.RaceScheduled > DateTime.UtcNow && horseParticipate)
-                                                    .ToListAsync();
-
             var result = new
             {
                 Id = horse.Id,
@@ -137,12 +129,12 @@ namespace boredBets.Repositories
                 Stallion = horse.Stallion,
                 Country = horse.Country,
                 Age = horse.Age,
-                JockeyId = horse.JockeyId,
-                JockeyName = jockeyName,
-                Next3Races = raceSchedulesFuture.Take(3),
-                Past3Races = raceSchedulesPast.Take(3),
+                JockeyId = horse.Jockey.Id,
+                JockeyName = horse.Jockey.Name,
+                Next3Races = raceSchedulesFuture,
+                Past3Races = raceSchedulesPast,
                 RaceParticipatedIn = horseParticipations.Count(),
-                AvgPlacement = horseParticipations.Average(x => x.Placement),
+                AvgPlacement = horseParticipations.Average(),
             };
 
             return result;
