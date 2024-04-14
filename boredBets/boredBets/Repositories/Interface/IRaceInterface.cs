@@ -10,7 +10,7 @@ namespace boredBets.Repositories.Interface
         Task<IEnumerable<FiveRaceViewModel>> GetAlreadyHappenedRaces();
         Task<IEnumerable<FiveRaceViewModel>> GetFutureRaces();
         Task<IEnumerable<AllHappendRaceViewModel>> GetAllFutureRaces();
-        Task<IEnumerable<AllHappendRaceViewModel>> GetAllHappendRaces();
+        Task<object> GetAllHappendRaces(int page, int perPage);
 
         Task<object> GetByRaceId(Guid RaceId);
         Task<IEnumerable<GetByCountryViewModel>> GetByCountry(string Country);

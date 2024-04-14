@@ -42,9 +42,9 @@ namespace boredBets.Controllers
         }
 
         [HttpGet("GetAllHappendRaces")]
-        public async Task<ActionResult<Race>> GetAllHappendRaces()
+        public async Task<ActionResult<Race>> GetAllHappendRaces(int page = 1, int perPage = 10)
         {
-            return StatusCode(201, await _raceInterface.GetAllHappendRaces());
+            return StatusCode(201, await _raceInterface.GetAllHappendRaces(page,perPage));
         }
 
         [HttpGet("GetFiveFutureRaces")]

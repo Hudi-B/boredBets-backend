@@ -3,7 +3,9 @@ using boredBets.Models.Dtos;
 using boredBets.Repositories.Interface;
 using boredBets.Repositories.Viewmodels;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace boredBets.Repositories
 {
@@ -69,7 +71,7 @@ namespace boredBets.Repositories
             return OrderedList.Reverse();
         }
 
-        public async Task<IEnumerable<AllHappendRaceViewModel>> GetAllHappendRaces()
+        public async Task<object> GetAllHappendRaces(int page,int perPage)
         {
             DateTime now = DateTime.UtcNow;
 
@@ -85,7 +87,20 @@ namespace boredBets.Repositories
                 })
                 .ToListAsync();
 
-            return allHappenedRaces.OrderByDescending(r => r.RaceScheduled);
+            int totalCount = allHappenedRaces.Count;
+            int totalPages = (int)Math.Ceiling((double)totalCount / perPage);
+
+            int startIndex = (page - 1) * perPage;
+
+            var Search = allHappenedRaces.Skip(startIndex).Take(perPage).ToList();
+
+            var result = new
+            {
+                AllHappenedRaces = Search,
+                TotalPage = totalPages,
+            };
+
+            return result;
         }
 
         public async Task<IEnumerable<FiveRaceViewModel>> GetAlreadyHappenedRaces()
