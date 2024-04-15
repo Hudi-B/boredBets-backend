@@ -146,12 +146,23 @@ namespace boredBets.Controllers
         }
 
         [HttpPut("UpdatePasswordByUserId")]
-        public async Task<ActionResult<User>> UpdatePasswordByUserId(Guid UserId, UserPasswordDto passwordDto)
+        public async Task<ActionResult<User>> UpdatePasswordByUserId(Guid UserId, UserUpdatebyUserIdPassword passwordDto)
         {
             var result = await userInterface.UpdatePasswordByUserId(UserId, passwordDto);
             if (result == "0")
             {
                 return NotFound("User not found");
+            }
+            return Ok();
+        }
+
+        [HttpPut("UpdatePasswordByOldPassword")]
+        public async Task<ActionResult<User>> UpadatePasswordByOldPassword(Guid UserId, UserPasswordDto passwordDto)
+        {
+            var result = await userInterface.UpadatePasswordByOldPassword(UserId, passwordDto);
+            if (result == "0")
+            {
+                return Unauthorized();
             }
             return Ok();
         }

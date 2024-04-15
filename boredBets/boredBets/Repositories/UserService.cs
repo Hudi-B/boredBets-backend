@@ -366,7 +366,7 @@ namespace boredBets.Repositories
             return "Success";
         }
 
-        public async Task<string> UpdatePasswordByUserId(Guid UserId, UserPasswordDto passwordDto)
+        public async Task<string> UpdatePasswordByUserId(Guid UserId, UserUpdatebyUserIdPassword passwordDto)
         {
             var userExist = await _context.Users.FirstOrDefaultAsync(x => x.Id == UserId);
             if (userExist == null)
@@ -375,6 +375,23 @@ namespace boredBets.Repositories
             }
             string hashedpassword = HashPassword(passwordDto.Password);
             userExist.Password = hashedpassword;
+            await _context.SaveChangesAsync();
+
+            return "Success";
+        }
+
+        public async Task<string> UpadatePasswordByOldPassword(Guid UserId, UserPasswordDto passwordDto)
+        {
+            var userId = await _context.Users.FirstOrDefaultAsync(u=>u.Id==UserId);
+            var password = await _context.Users.FirstOrDefaultAsync(p => p.Password == passwordDto.oldPassword);
+
+            if (userId == null && password==null) 
+            {
+                return "0";
+            }
+
+            string hashedpassword = HashPassword(passwordDto.newPassword);
+            userId.Password = hashedpassword;
             await _context.SaveChangesAsync();
 
             return "Success";

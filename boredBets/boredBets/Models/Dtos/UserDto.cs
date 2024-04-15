@@ -7,5 +7,6 @@
 
     public record UsernameDto(string Username);
     public record UserEmailDto(string Email);
-    public record UserPasswordDto(string Password);
+    public record UserPasswordDto(string oldPassword, string newPassword);
+    public record UserUpdatebyUserIdPassword(string Password);
 }
