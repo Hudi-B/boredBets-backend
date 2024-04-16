@@ -11,9 +11,5 @@ public partial class Transaction
 
     public int Deposit { get; set; }
 
-    public int Bet { get; set; }
-
-    public int BetOutcome { get; set; }
-
     public DateTime Created { get; set; }
 }

@@ -40,10 +40,8 @@ public partial class BoredbetsContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-
         if (!optionsBuilder.IsConfigured)
         {
-
             IConfigurationRoot configuration = new ConfigurationBuilder()
 
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -52,7 +50,11 @@ public partial class BoredbetsContext : DbContext
 
                 .Build();
 
+
+
             string connectionString = configuration.GetConnectionString("YourConnectionString");
+
+
 
             optionsBuilder.UseMySql(connectionString, Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.4.28-mariadb"));
 
@@ -194,8 +196,6 @@ public partial class BoredbetsContext : DbContext
 
             entity.HasIndex(e => e.Id, "Id_UNIQUE").IsUnique();
 
-            entity.Property(e => e.Bet).HasColumnName("bet");
-            entity.Property(e => e.BetOutcome).HasColumnName("bet_outcome");
             entity.Property(e => e.Created)
                 .HasColumnType("datetime")
                 .HasColumnName("created");
