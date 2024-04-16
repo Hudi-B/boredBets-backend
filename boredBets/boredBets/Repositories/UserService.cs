@@ -383,9 +383,8 @@ namespace boredBets.Repositories
         public async Task<string> UpadatePasswordByOldPassword(Guid UserId, UserPasswordDto passwordDto)
         {
             var userId = await _context.Users.FirstOrDefaultAsync(u=>u.Id==UserId);
-            var password = await _context.Users.FirstOrDefaultAsync(p => p.Password == passwordDto.oldPassword);
 
-            if (userId == null && password==null) 
+            if (userId == null || !VerifyHashedPassword(passwordDto.oldPassword, userId.Password)) 
             {
                 return "0";
             }
