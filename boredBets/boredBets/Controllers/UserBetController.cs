@@ -3,6 +3,8 @@ using boredBets.Models.Dtos;
 using boredBets.Repositories.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace boredBets.Controllers
 {
@@ -22,9 +24,21 @@ namespace boredBets.Controllers
         {
             var result = await _userBetInterface.Post(userBetCreateDto);
 
-            if (result==null)
+            if (result == "0")
             {
-                return NotFound();
+                return Unauthorized("User already has a bet on this race");
+            }
+            else if (result == "1")
+            {
+                return NotFound("One of the horses isn't in the race");
+            }
+            else if (result == "2")
+            {
+                return NoContent();
+            }
+            else if (result == "3")
+            {
+                return Forbid("Not enough money to bet");
             }
             return Ok(result);
         }

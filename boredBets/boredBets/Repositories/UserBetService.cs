@@ -3,6 +3,7 @@ using boredBets.Models.Dtos;
 using boredBets.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
 using System.Net.Http.Headers;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography.X509Certificates;
 
 namespace boredBets.Repositories
@@ -41,29 +42,38 @@ namespace boredBets.Repositories
             return userBet;
         }
 
-        public async Task<UserBet> Post(UserBetCreateDto userBetCreateDto)
+        public async Task<object> Post(UserBetCreateDto userBetCreateDto)
         {
-            var existingParticipant = await _context.Participants.FirstOrDefaultAsync(x =>
-                                                                                            x.RaceId == userBetCreateDto.RaceId &&
-                                                                                            (x.HorseId == userBetCreateDto.First ||
-                                                                                             x.HorseId == userBetCreateDto.Second ||
-                                                                                             x.HorseId == userBetCreateDto.Third ||
-                                                                                             x.HorseId == userBetCreateDto.Fourth ||
-                                                                                             x.HorseId == userBetCreateDto.Fifth));
+            var horses = new List<Guid> { userBetCreateDto.First, userBetCreateDto.Second, userBetCreateDto.Third, userBetCreateDto.Fourth, userBetCreateDto.Fifth };
 
+            var missingParticipant = horses.FirstOrDefault(horseId =>
+                !_context.Participants.Any(x => x.RaceId == userBetCreateDto.RaceId && x.HorseId == horseId));
 
-
-            var userCard = await _context.UserCards.FirstOrDefaultAsync(x => x.UserId == userBetCreateDto.UserId);
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userBetCreateDto.UserId);
-            var race = await _context.Races.FirstOrDefaultAsync(x => x.Id == userBetCreateDto.RaceId);
-
-
-            if (user == null ||race == null || existingParticipant == null || userCard.CreditcardNum == null)
+            if (missingParticipant != Guid.Empty)
             {
-                return null;
+                return "1";
             }
 
-            
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userBetCreateDto.UserId);
+            var userBetted = await _context.UserBets.FirstOrDefaultAsync(u => u.UserId == user.Id && u.RaceId == userBetCreateDto.RaceId);
+            var usercard = await _context.UserCards.AnyAsync(u => u.UserId == user.Id);
+            var inTheFuture = await _context.Races.FirstOrDefaultAsync(x =>x.Id == userBetCreateDto.RaceId && x.RaceScheduled > DateTime.UtcNow.AddMinutes(2));
+
+            if (user == null || inTheFuture == null || !usercard)
+            {
+                return "2";
+            }
+
+            if (userBetted != null)
+            {
+                return "0";
+            }
+
+            if (userBetCreateDto.BetAmount > user.Wallet)
+            {
+                return "3";
+            }
+
             var userbet = new UserBet
             {
                 Id = Guid.NewGuid(),
@@ -92,7 +102,7 @@ namespace boredBets.Repositories
             await _context.UserBets.AddAsync(userbet);
             await _context.SaveChangesAsync();
 
-            return userbet;
+            return "Success";
         }
 
         public async Task<UserBet> DeleteUserBetById(Guid Id)
