@@ -177,10 +177,7 @@ namespace boredBets.Repositories
                                                   HorseStallion = horse.Stallion,
                                                   JockeyId = horse.JockeyId,
                                                   JockeyName = horse.Jockey.Name,
-                                                  JockeyQuality = horse.Jockey.Quality,
-                                                  JockeyCountry = horse.Jockey.Country,
-                                                  JockeyMale = horse.Jockey.Male,
-                                                  JockeyAge = horse.Jockey.Age
+                                                  placement = participant.Placement
                                               })
                                         .ToListAsync();
 

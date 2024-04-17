@@ -115,10 +115,11 @@ namespace boredBets.Repositories
         public async Task checkRace()
         {
             var futureRaces = await raceInterface.GetAllFutureRaces();
-            if (futureRaces.Count() < 20)
+            if (futureRaces.Count()  < 20)
             {
                 await raceInterface.GenerateRace(40);
             }
+            Console.Write("a");
         }
 
     }
