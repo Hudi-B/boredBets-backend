@@ -2,6 +2,7 @@
 using boredBets.Models.Dtos;
 using boredBets.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 
 namespace boredBets.Repositories
@@ -20,7 +21,7 @@ namespace boredBets.Repositories
         public async Task simulateRace()
         {
             var racesToSimulate = await _context.Races
-                .Where(x => x.RaceScheduled <= DateTime.UtcNow && x.Participants.Any(y => y.Placement==0))
+                .Where(x => x.RaceScheduled <= DateTime.UtcNow && x.Participants.Any(y => y.Placement==0))//do we have to check if the race is ended? if so then add the racetime minutes to the datetime.utcnow
                 .Include(x => x.Participants)
                     .ThenInclude(p => p.Horse)
                         .ThenInclude(p => p.Jockey)
@@ -110,6 +111,44 @@ namespace boredBets.Repositories
             }
         }
         #endregion
+
+        public async Task<object> userBetCalculation()
+        {
+            var raceEnded = await _context.Races
+                .Where(r => r.RaceScheduled <= DateTime.UtcNow)
+                .Include(r => r.Participants)
+                .Include(r => r.UserBets)
+                .ToListAsync();
+
+            foreach (var item in raceEnded)
+            {
+                var participants = item.Participants.OrderBy(p => p.Placement).Take(5).Select(p => p.HorseId).ToList();
+                var userBets = item.UserBets.ToList();
+
+                foreach (var userBet in userBets)
+                {
+                    var horses = new List<Guid> { userBet.First, userBet.Second, userBet.Third, userBet.Fourth, userBet.Fifth };
+                    bool isInOrder = horses.SequenceEqual(participants);
+                    int isWithoutOrder = horses.Intersect(participants).Count();
+
+                    if (isInOrder)
+                    {
+                        return "inorder";
+                    }
+                    switch (isWithoutOrder)
+                    {
+                        case 5:
+                            return "5withoutorder";
+                        case 4:
+                            return "4withoutorder";
+                        case 3:
+                            return "3withoutorder";
+                    }
+                }
+            }
+            return "nothing hit";
+        }
+
 
 
         public async Task checkRace()

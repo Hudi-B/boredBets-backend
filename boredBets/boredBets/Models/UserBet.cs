@@ -11,15 +11,15 @@ public partial class UserBet
 
     public Guid? RaceId { get; set; }
 
-    public Guid? First { get; set; }
+    public Guid First { get; set; }
 
-    public Guid? Second { get; set; }
+    public Guid Second { get; set; }
 
-    public Guid? Third { get; set; }
+    public Guid Third { get; set; }
 
-    public Guid? Fourth { get; set; }
+    public Guid Fourth { get; set; }
 
-    public Guid? Fifth { get; set; }
+    public Guid Fifth { get; set; }
 
     public int? BetAmount { get; set; }
 

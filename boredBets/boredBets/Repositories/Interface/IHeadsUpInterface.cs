@@ -7,5 +7,6 @@ namespace boredBets.Repositories.Interface
     {
         Task simulateRace();
         Task checkRace();
+        Task<object> userBetCalculation();
     }
 }
