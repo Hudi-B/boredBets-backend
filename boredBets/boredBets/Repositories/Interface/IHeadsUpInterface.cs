@@ -7,6 +7,8 @@ namespace boredBets.Repositories.Interface
     {
         Task simulateRace();
         Task checkRace();
-        Task<object> userBetCalculation();
+
+        Task<List<HeadsUpService.Result>> GetResults();
+        Task userBetCalculation(List<HeadsUpService.Result> result);
     }
 }

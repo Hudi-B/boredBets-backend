@@ -11,11 +11,13 @@ namespace boredBets.Repositories
     {
         private readonly BoredbetsContext _context;
         private readonly IRaceInterface raceInterface;
+        private List<Result> horses;
 
         public HeadsUpService(BoredbetsContext context, IRaceInterface raceInterface)
         {
             _context = context;
             this.raceInterface = raceInterface;
+            horses = new List<Result>();
         }
         #region Simulation of race
         public async Task simulateRace()
@@ -30,8 +32,7 @@ namespace boredBets.Repositories
             foreach (var race in racesToSimulate)
             {
                 var participant = race.Participants.ToList();
-
-                List<Result> horses = new List<Result>();
+                
                 foreach (var item in race.Participants)
                 {
                     horses.Add(horseChanceCalculate(item.Horse));
@@ -52,7 +53,7 @@ namespace boredBets.Repositories
         {
             Random rnd = new Random(); 
 
-            double chance = (rnd.Next(7)+6);
+            double chance = (rnd.Next(5)+8);
             chance += Convert.ToDouble(horse.Jockey.Quality - 5) ;
 
             if (horse.Stallion)
@@ -112,7 +113,7 @@ namespace boredBets.Repositories
         }
         #endregion
 
-        public async Task<object> userBetCalculation()
+        public async Task userBetCalculation(List<Result> horses)
         {
             var raceEnded = await _context.Races
                 .Where(r => r.RaceScheduled <= DateTime.UtcNow)
@@ -127,26 +128,46 @@ namespace boredBets.Repositories
 
                 foreach (var userBet in userBets)
                 {
-                    var horses = new List<Guid> { userBet.First, userBet.Second, userBet.Third, userBet.Fourth, userBet.Fifth };
-                    bool isInOrder = horses.SequenceEqual(participants);
-                    int isWithoutOrder = horses.Intersect(participants).Count();
+                    var bets = new List<Guid> { userBet.First, userBet.Second, userBet.Third, userBet.Fourth, userBet.Fifth };
+                    bool isInOrder = bets.SequenceEqual(participants);
+                    int isWithoutOrder = bets.Intersect(participants).Count();
 
+                    Dictionary<Horse,double> invertedChance = new Dictionary<Horse, double>(); 
+
+
+                    for (int i = 0; i < horses.Count; i++)
+                    {
+                        double inverted = Math.Round(2.5 / horses[i].Chance * 0.9, 2);
+                        invertedChance.Add(horses[i].Horse,inverted); 
+                        inverted = 0.0;
+                    }
+
+                    var bettedHorses = invertedChance.Where(kv => bets.Contains(kv.Key.Id)).ToList().OrderBy(rf=>rf.Value);
+                    double money = 0;
+                    await Console.Out.WriteLineAsync(   );
                     if (isInOrder)
                     {
-                        return "inorder";
+                        
+                        for (int i = 0; i < bettedHorses.Count(); i++)
+                        {
+                            money += userBet.BetAmount * (double)bettedHorses.ElementAt(i).Value;
+                        }
                     }
                     switch (isWithoutOrder)
                     {
                         case 5:
-                            return "5withoutorder";
+                            money += userBet.BetAmount * (bettedHorses.Min(rf => rf.Value) * 5);
+                            break;
                         case 4:
-                            return "4withoutorder";
+                            money += userBet.BetAmount * (bettedHorses.Min(rf => rf.Value) * 4);
+                            break;
                         case 3:
-                            return "3withoutorder";
+                            money += userBet.BetAmount * (bettedHorses.Min(rf => rf.Value) * 3);
+                            break;
                     }
                 }
             }
-            return "nothing hit";
+            await Console.Out.WriteLineAsync(   );
         }
 
 
@@ -161,5 +182,9 @@ namespace boredBets.Repositories
             Console.Write("a");
         }
 
+        public async Task<List<Result>> GetResults()
+        {
+            return horses;
+        }
     }
 }

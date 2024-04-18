@@ -2,6 +2,9 @@
 using boredBets.Models;
 using boredBets.Repositories.Interface;
 using Microsoft.AspNetCore.Mvc;
+using boredBets.Repositories;
+using System.Collections.Generic;
+using static boredBets.Repositories.HeadsUpService;
 
 namespace boredBets.Controllers
 {
@@ -23,7 +26,11 @@ namespace boredBets.Controllers
             try {
                 await headsUp.simulateRace();
                 await headsUp.checkRace();
-                await headsUp.userBetCalculation();
+
+                List<Result> raceResult = await headsUp.GetResults();
+
+                await headsUp.userBetCalculation(raceResult);
+                await Console.Out.WriteLineAsync(   );
             }
             catch {
             }

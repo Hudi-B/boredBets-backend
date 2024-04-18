@@ -21,7 +21,7 @@ public partial class UserBet
 
     public Guid Fifth { get; set; }
 
-    public int? BetAmount { get; set; }
+    public int BetAmount { get; set; }
 
     public int? BetTypeId { get; set; }
 
