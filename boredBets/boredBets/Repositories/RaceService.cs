@@ -189,7 +189,7 @@ namespace boredBets.Repositories
                 Rain = race.Rain,
                 Track = race.Track,
                 Participants = participants,
-                BetAble = race.RaceScheduled > DateTime.UtcNow.AddMinutes(2)
+                BetAble = race.RaceScheduled > DateTime.UtcNow.AddMinutes(5)
             };
 
             return result;
