@@ -288,7 +288,7 @@ namespace boredBets.Repositories
                 {
                     Id = raceId,
                     RaceTime = rnd.Next(3, 11),
-                    RaceScheduled = latestRace != null ? latestRace.RaceScheduled.AddMinutes((i + 1) * 10) : DateTime.UtcNow.AddMinutes((i + 1) * 10),
+                    RaceScheduled = latestRace != null ? latestRace.RaceScheduled.AddMinutes((i + 1) * rnd.Next(5,10)) : DateTime.UtcNow.AddMinutes((i + 1) * rnd.Next(5, 10)),
                     Rain = Convert.ToBoolean(rainValue),
                     TrackId = trackz[rnd.Next(maxTrakc)].Id
                 };
