@@ -52,7 +52,7 @@ namespace boredBets.Repositories
         {
             Random rnd = new Random(); 
 
-            double chance = (rnd.Next(5)+8);
+            double chance = (rnd.Next(7)+6);
             chance += Convert.ToDouble(horse.Jockey.Quality - 5) ;
 
             if (horse.Stallion)
