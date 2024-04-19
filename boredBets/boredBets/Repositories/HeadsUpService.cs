@@ -1,7 +1,9 @@
 ﻿using boredBets.Models;
 using boredBets.Models.Dtos;
 using boredBets.Repositories.Interface;
+using Microsoft.AspNetCore.SignalR.Protocol;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 
@@ -11,28 +13,30 @@ namespace boredBets.Repositories
     {
         private readonly BoredbetsContext _context;
         private readonly IRaceInterface raceInterface;
-        private List<Result> horses;
 
         public HeadsUpService(BoredbetsContext context, IRaceInterface raceInterface)
         {
             _context = context;
             this.raceInterface = raceInterface;
-            horses = new List<Result>();
         }
         #region Simulation of race
-        public async Task simulateRace()
+        public async Task<List<Result>> simulateRace()
         {
             var racesToSimulate = await _context.Races
-                .Where(x => x.RaceScheduled <= DateTime.UtcNow && x.Participants.Any(y => y.Placement==0))//do we have to check if the race is ended? if so then add the racetime minutes to the datetime.utcnow
+                .Where(x => x.RaceScheduled <= DateTime.UtcNow && x.Participants.Any(y => y.Placement==0))
                 .Include(x => x.Participants)
                     .ThenInclude(p => p.Horse)
                         .ThenInclude(p => p.Jockey)
                 .ToListAsync();
+
+            var allRaceResults = new List<Result>();
+
             var comparer = new CustomComparer();
             foreach (var race in racesToSimulate)
             {
-                var participant = race.Participants.ToList();
                 
+                var participant = race.Participants.ToList();
+                List<Result> horses = new List<Result>();
                 foreach (var item in race.Participants)
                 {
                     horses.Add(horseChanceCalculate(item.Horse));
@@ -45,9 +49,14 @@ namespace boredBets.Repositories
                 {
                     var oneHorse = participant.FirstOrDefault(x => x.Horse.Id == horses[i].Horse.Id);
                     oneHorse.Placement = i + 1;
-                    await _context.SaveChangesAsync();
                 }
+                allRaceResults.AddRange(horses);
+                await userBetCalculation(allRaceResults);
+                await _context.SaveChangesAsync();
+                
             }
+           
+            return allRaceResults;
         }
         public Result horseChanceCalculate(Horse horse)
         {
@@ -107,68 +116,91 @@ namespace boredBets.Repositories
             {
                 if (x.Chance == y.Chance)
                     return rnd.Next(2) == 0 ? -1 : 1;
-
                 return x.Chance.CompareTo(y.Chance);
             }
+
         }
         #endregion
 
-        public async Task userBetCalculation(List<Result> horses)
+        public async Task<object> userBetCalculation(List<Result> allRaceResults)
         {
-            var raceEnded = await _context.Races
+            var racesEnded = await _context.Races
                 .Where(r => r.RaceScheduled <= DateTime.UtcNow)
                 .Include(r => r.Participants)
                 .Include(r => r.UserBets)
                 .ToListAsync();
 
-            foreach (var item in raceEnded)
+            var winnerBets = new List<object>();
+
+            foreach (var race in racesEnded)
             {
-                var participants = item.Participants.OrderBy(p => p.Placement).Take(5).Select(p => p.HorseId).ToList();
-                var userBets = item.UserBets.ToList();
+                var participants = race.Participants.OrderBy(p => p.Placement).Take(5).Select(p => p.HorseId).ToList();
+                var userBets = race.UserBets.ToList();
 
-                foreach (var userBet in userBets)
+                if (userBets.Any())
                 {
-                    var bets = new List<Guid> { userBet.First, userBet.Second, userBet.Third, userBet.Fourth, userBet.Fifth };
-                    bool isInOrder = bets.SequenceEqual(participants);
-                    int isWithoutOrder = bets.Intersect(participants).Count();
+                    var invertedChance = new Dictionary<Guid, double>();
 
-                    Dictionary<Horse,double> invertedChance = new Dictionary<Horse, double>(); 
-
-
-                    for (int i = 0; i < horses.Count; i++)
+                    foreach (var result in allRaceResults)
                     {
-                        double inverted = Math.Round(2.5 / horses[i].Chance * 0.9, 2);
-                        invertedChance.Add(horses[i].Horse,inverted); 
-                        inverted = 0.0;
+                        double inverted = Math.Round(2.5 / result.Chance * 0.9, 2);
+                        invertedChance.Add(result.Horse.Id, inverted);
                     }
 
-                    var bettedHorses = invertedChance.Where(kv => bets.Contains(kv.Key.Id)).ToList().OrderBy(rf=>rf.Value);
-                    double money = 0;
-                    await Console.Out.WriteLineAsync(   );
-                    if (isInOrder)
+                    foreach (var userBet in userBets)
                     {
-                        
-                        for (int i = 0; i < bettedHorses.Count(); i++)
+                        var bets = new List<Guid> { userBet.First, userBet.Second, userBet.Third, userBet.Fourth, userBet.Fifth };
+                        bool isInOrder = bets.SequenceEqual(participants);
+                        int isWithoutOrder = bets.Intersect(participants).Count();
+
+                        var bettedHorses = invertedChance.Where(kv => bets.Contains(kv.Key)).OrderBy(rf => rf.Value);
+
+                        if (bettedHorses.Count() > 2)
                         {
-                            money += userBet.BetAmount * (double)bettedHorses.ElementAt(i).Value;
+                            double betMultiplier = 0;
+
+                            if (isInOrder)
+                            {
+                                for (int i = 0; i < bettedHorses.Count(); i++)
+                                {
+                                    betMultiplier += bettedHorses.ElementAt(i).Value;
+                                }
+                            }
+                            else
+                            {
+                                switch (isWithoutOrder)
+                                {
+                                    case 5:
+                                        betMultiplier = bettedHorses.Min(rf => rf.Value) * 5;
+                                        break;
+                                    case 4:
+                                        betMultiplier = bettedHorses.Min(rf => rf.Value) * 4;
+                                        break;
+                                    case 3:
+                                        betMultiplier = bettedHorses.Min(rf => rf.Value) * 3;
+                                        break;
+                                }
+                            }
+
+                            float moneyWon = userBet.BetAmount * (float)betMultiplier;
+                            userBet.User.Wallet += moneyWon;
+                            await _context.SaveChangesAsync();
+
+                            var betInfo = new
+                            {
+                                User = userBet.UserId,
+                                BetAmount = userBet.BetAmount,
+                                Winnings = moneyWon
+                            };
+                            winnerBets.Add(betInfo);
                         }
-                    }
-                    switch (isWithoutOrder)
-                    {
-                        case 5:
-                            money += userBet.BetAmount * (bettedHorses.Min(rf => rf.Value) * 5);
-                            break;
-                        case 4:
-                            money += userBet.BetAmount * (bettedHorses.Min(rf => rf.Value) * 4);
-                            break;
-                        case 3:
-                            money += userBet.BetAmount * (bettedHorses.Min(rf => rf.Value) * 3);
-                            break;
                     }
                 }
             }
             await Console.Out.WriteLineAsync(   );
+            return winnerBets;
         }
+
 
 
 
@@ -179,12 +211,11 @@ namespace boredBets.Repositories
             {
                 await raceInterface.GenerateRace(40);
             }
-            Console.Write("a");
         }
 
         public async Task<List<Result>> GetResults()
         {
-            return horses;
+            return simulateRace().Result;
         }
     }
 }

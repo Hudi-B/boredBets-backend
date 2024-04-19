@@ -23,19 +23,19 @@ namespace boredBets.Controllers
         [HttpGet("HeadsUp")]
         public async Task<ActionResult> Refresh()
         {
-            try {
-                await headsUp.simulateRace();
-                await headsUp.checkRace();
+            await headsUp.simulateRace();
+            await headsUp.checkRace();
 
-                List<Result> raceResult = await headsUp.GetResults();
+            List<Result> raceResult = await headsUp.GetResults();
 
-                await headsUp.userBetCalculation(raceResult);
-                await Console.Out.WriteLineAsync(   );
+            var result = await headsUp.userBetCalculation(raceResult);
+
+            if (result == "0")
+            {
+                return Ok("Bets doesn't match");
             }
-            catch {
-            }
-
-            return StatusCode(201);
+            await Console.Out.WriteLineAsync(   );
+            return Ok(result);
         }
     }
 }

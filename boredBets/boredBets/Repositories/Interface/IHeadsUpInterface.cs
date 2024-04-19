@@ -1,14 +1,15 @@
 ﻿using boredBets.Models;
 using boredBets.Models.Dtos;
+using static boredBets.Repositories.HeadsUpService;
 
 namespace boredBets.Repositories.Interface
 {
     public interface IHeadsUpInterface
     {
-        Task simulateRace();
+        Task<List<Result>> simulateRace();
         Task checkRace();
 
         Task<List<HeadsUpService.Result>> GetResults();
-        Task userBetCalculation(List<HeadsUpService.Result> result);
+        Task<object> userBetCalculation(List<HeadsUpService.Result> result);
     }
 }
