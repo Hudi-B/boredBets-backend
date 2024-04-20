@@ -184,6 +184,8 @@ namespace boredBets.Repositories
             List<string> maleHorseName = new List<string>();
             List<string> femaleHorseName = new List<string>();
             List<string> Countries = new List<string>();
+            List<string> adjectives = new List<string>();
+            List<string> objects = new List<string>();
 
             #region ReadFile
 
@@ -205,6 +207,16 @@ namespace boredBets.Repositories
             {
                 Countries.Add(sr.ReadLine());
             }
+            sr = new StreamReader(staticData + "adjectives.txt");
+            while (!sr.EndOfStream)
+            {
+                adjectives.Add(sr.ReadLine());
+            }
+            sr = new StreamReader(staticData + "objects.txt");
+            while (!sr.EndOfStream)
+            {
+                objects.Add(sr.ReadLine());
+            }
             sr.Close();
             #endregion
 
@@ -212,19 +224,34 @@ namespace boredBets.Repositories
             int maleHorseNameCount = maleHorseName.Count();
             int femaleHorseNameCount = femaleHorseName.Count();
             int countriesCount = Countries.Count();
+            int adjectivesCount = adjectives.Count();
+            int objectsCount = objects.Count();
+
             var freeJockeyIds = freeJockeys.ToList();
 
             for (int i = 0; i < quantity; i++)
             {
                 bool male = random.Next(2) == 0;
-                string name;
-                if (male)
+                string name="";
+
+                if (random.Next(10) != 0) // 1 out of 10 will not get a "first name"
                 {
-                    name = maleHorseName[random.Next(maleHorseNameCount)];
+                    name += adjectives[random.Next(adjectivesCount)]+" ";
                 }
-                else
+                if (random.Next(4) != 0) //3 out of 4 will get an object as its second name
                 {
-                    name = femaleHorseName[random.Next(femaleHorseNameCount)];
+                    name += objects[random.Next(objectsCount)];
+                }
+                else 
+                {
+                    if (male)
+                    {
+                        name += maleHorseName[random.Next(maleHorseNameCount)];
+                    }
+                    else
+                    {
+                        name += femaleHorseName[random.Next(femaleHorseNameCount)];
+                    }
                 }
                 var newHorse = new Horse
                 {
