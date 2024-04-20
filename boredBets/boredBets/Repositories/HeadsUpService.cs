@@ -51,11 +51,13 @@ namespace boredBets.Repositories
                     oneHorse.Placement = i + 1;
                 }
                 allRaceResults.AddRange(horses);
-                await userBetCalculation(allRaceResults);
+                
                 await _context.SaveChangesAsync();
                 
             }
-           
+
+            await userBetCalculation(allRaceResults);
+
             return allRaceResults;
         }
         public Result horseChanceCalculate(Horse horse)
@@ -124,13 +126,18 @@ namespace boredBets.Repositories
 
         public async Task<object> userBetCalculation(List<Result> allRaceResults)
         {
+            var winnerBets = new List<object>();
+            if (allRaceResults.Count()==0)
+            {
+                return winnerBets;
+            }
             var racesEnded = await _context.Races
                 .Where(r => r.RaceScheduled <= DateTime.UtcNow)
                 .Include(r => r.Participants)
                 .Include(r => r.UserBets)
                 .ToListAsync();
 
-            var winnerBets = new List<object>();
+            
 
             foreach (var race in racesEnded)
             {
@@ -154,7 +161,7 @@ namespace boredBets.Repositories
                         int isWithoutOrder = bets.Intersect(participants).Count();
 
                         var bettedHorses = invertedChance.Where(kv => bets.Contains(kv.Key)).OrderBy(rf => rf.Value);
-
+                        float moneyWon = 0;
                         if (bettedHorses.Count() > 2)
                         {
                             double betMultiplier = 0;
@@ -182,22 +189,28 @@ namespace boredBets.Repositories
                                 }
                             }
 
-                            float moneyWon = userBet.BetAmount * (float)betMultiplier;
-                            userBet.User.Wallet += moneyWon;
-                            await _context.SaveChangesAsync();
-
-                            var betInfo = new
+                            moneyWon = userBet.BetAmount * (float)betMultiplier;
+                            if (moneyWon > 0)
                             {
-                                User = userBet.UserId,
-                                BetAmount = userBet.BetAmount,
-                                Winnings = moneyWon
-                            };
-                            winnerBets.Add(betInfo);
+                                userBet.User.Wallet += moneyWon;
+                                await _context.SaveChangesAsync();
+                            }
+
+                            
+                            await Console.Out.WriteLineAsync();
                         }
+                        var betInfo = new
+                        {
+                            User = userBet.UserId,
+                            BetAmount = userBet.BetAmount,
+                            Winnings = moneyWon
+                        };
+                        winnerBets.Add(betInfo);
+                        await Console.Out.WriteLineAsync();
                     }
                 }
             }
-            await Console.Out.WriteLineAsync(   );
+            await Console.Out.WriteLineAsync();
             return winnerBets;
         }
 
