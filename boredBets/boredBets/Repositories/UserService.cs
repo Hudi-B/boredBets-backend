@@ -340,14 +340,14 @@ namespace boredBets.Repositories
                 return privateResult;
             }
 
-            var userAlltimeBets = _context.UserBets.Count(x=>x.UserId==user.Id);
+            var userAlltimeBets = _context.UserBets.Where(x=>x.UserId==user.Id).ToList();
 
             var result = new {
                 Fullname=userDetail.Fullname,
                 Birthdate=userDetail.BirthDate,
                 Wallet=userDetail.User.Wallet,
-                AllTimeBets=userAlltimeBets,
-                //WonBets = WIP
+                AllTimeBets=userAlltimeBets.Count(),
+                WonBets = userAlltimeBets.Count(e => e.BetAmount > 0),
             };
 
             return result;
