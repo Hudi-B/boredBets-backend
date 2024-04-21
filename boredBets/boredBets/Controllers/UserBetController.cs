@@ -24,11 +24,8 @@ namespace boredBets.Controllers
         {
             var result = await _userBetInterface.Post(userBetCreateDto);
 
-            if (result == "0")
-            {
-                return Unauthorized("User already has a bet on this race");
-            }
-            else if (result == "1")
+            
+            if (result == "1")
             {
                 return NotFound("One of the horses isn't in the race");
             }

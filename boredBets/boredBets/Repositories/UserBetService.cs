@@ -55,18 +55,12 @@ namespace boredBets.Repositories
             }
 
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userBetCreateDto.UserId);
-            var userBetted = await _context.UserBets.FirstOrDefaultAsync(u => u.UserId == user.Id && u.RaceId == userBetCreateDto.RaceId);
             var usercard = await _context.UserCards.AnyAsync(u => u.UserId == user.Id);
             var inTheFuture = await _context.Races.FirstOrDefaultAsync(x =>x.Id == userBetCreateDto.RaceId && x.RaceScheduled > DateTime.UtcNow.AddMinutes(5));
 
             if (user == null || inTheFuture == null || !usercard)
             {
                 return "2";
-            }
-
-            if (userBetted != null)
-            {
-                return "0";
             }
 
             if (userBetCreateDto.BetAmount > user.Wallet)
