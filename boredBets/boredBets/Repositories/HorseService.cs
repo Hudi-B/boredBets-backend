@@ -184,8 +184,8 @@ namespace boredBets.Repositories
             List<string> maleHorseName = new List<string>();
             List<string> femaleHorseName = new List<string>();
             List<string> Countries = new List<string>();
-            List<string> adjectives = new List<string>();
-            List<string> objects = new List<string>();
+            List<string> horseFirst = new List<string>();
+            List<string> horseSecond = new List<string>();
 
             #region ReadFile
 
@@ -210,12 +210,12 @@ namespace boredBets.Repositories
             sr = new StreamReader(staticData + "adjectives.txt");
             while (!sr.EndOfStream)
             {
-                adjectives.Add(sr.ReadLine());
+                horseFirst.Add(sr.ReadLine());
             }
             sr = new StreamReader(staticData + "objects.txt");
             while (!sr.EndOfStream)
             {
-                objects.Add(sr.ReadLine());
+                horseSecond.Add(sr.ReadLine());
             }
             sr.Close();
             #endregion
@@ -224,8 +224,8 @@ namespace boredBets.Repositories
             int maleHorseNameCount = maleHorseName.Count();
             int femaleHorseNameCount = femaleHorseName.Count();
             int countriesCount = Countries.Count();
-            int adjectivesCount = adjectives.Count();
-            int objectsCount = objects.Count();
+            int horseFirstCount = horseFirst.Count();
+            int horseSecondCount = horseSecond.Count();
 
             var freeJockeyIds = freeJockeys.ToList();
 
@@ -236,11 +236,14 @@ namespace boredBets.Repositories
 
                 if (random.Next(10) != 0) // 1 out of 10 will not get a "first name"
                 {
-                    name += adjectives[random.Next(adjectivesCount)]+" ";
+                    string originalString = horseFirst[random.Next(horseFirstCount)];
+                    string capitalizedString = char.ToUpper(originalString[0]) + originalString.Substring(1);
+
+                    name += capitalizedString + " ";
                 }
                 if (random.Next(4) != 0) //3 out of 4 will get an object as its second name
                 {
-                    name += objects[random.Next(objectsCount)];
+                    name += horseSecond[random.Next(horseSecondCount)];
                 }
                 else 
                 {
