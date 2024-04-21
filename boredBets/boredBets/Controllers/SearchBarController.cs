@@ -25,23 +25,14 @@ namespace boredBets.Controllers
                 this.jockeys = jockeys;
             }
 
-            public (List<object>, int) GetPaginatedAllData(int page, int perPage, string searchTerm)
+            public (List<object>, int) GetPaginatedAllData(int page, int perPage)
             {
+
                 var allData = new List<object>();
 
-                allData.AddRange(horses.Select(h => new { Type = "Horse", Data = new Search_Horse(h.Id, h.Name) }));
-                allData.AddRange(users.Select(u => new { Type = "User", Data = new Search_User(u.Id, u.Username)}));
-                allData.AddRange(jockeys.Select(j => new { Type = "Jockey", Data = new Search_Jockey(j.Id, j.Name)}));
-
-                // Filter based on search term
-                if (!string.IsNullOrWhiteSpace(searchTerm))
-                {
-                    allData = allData.Where(item =>
-                    {
-                        dynamic d = item;
-                        return d.Data.Name.ToString().ToLower().Contains(searchTerm.ToLower());
-                    }).ToList();
-                }
+                allData.AddRange(horses.Select(h => new { Type = "Horse", Data = new HorseData(h.Id, h.Name, h.Stallion, h.Age) }));
+                allData.AddRange(users.Select(u => new { Type = "User", Data = new UserData(u.Id, u.Username, u.UserDetail.IsPrivate.Equals(true)) }));
+                allData.AddRange(jockeys.Select(j => new { Type = "Jockey", Data = new JockeyData(j.Id, j.Name, j.Male, j.Horses.Any()) }));
 
                 int totalCount = allData.Count;
                 int totalPages = (int)Math.Ceiling((double)totalCount / perPage);
@@ -196,16 +187,15 @@ namespace boredBets.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Get(string searchTerm = "", int page = 1 )
+        public async Task<ActionResult> Get(int page = 1, int perPage = 60)
         {
-            int perPage = 50;
             AllData allData = new AllData(
                 await _context.Horses.ToListAsync(),
                 await _context.Users.Include(e => e.UserDetail).ToListAsync(),
                 await _context.Jockeys.ToListAsync()
             );
 
-            var (paginatedData, maxPage) = allData.GetPaginatedAllData(page, perPage, searchTerm);
+            var (paginatedData, maxPage) = allData.GetPaginatedAllData(page, perPage);
 
             var result = new
             {
