@@ -29,17 +29,77 @@ namespace boredBets.Repositories
             return id;
         }
 
-        public async Task<IEnumerable<UserBet>> GetAllUserBetsByUserId(Guid UserId)
+        public async Task<IEnumerable<UserBetWithHorsesAndTrack>> GetAllUserBetsByUserId(Guid userId)
         {
-            var userBet = await _context.UserBets
-                                                     .Where(x => x.UserId == UserId)
-                                                     .ToListAsync();
-            if (userBet == null)
+            var userBets = await _context.UserBets
+                                          .Where(x => x.UserId == userId)
+                                          .Include(x => x.Race)
+                                              .ThenInclude(race => race.Track)
+                                          .Include(x => x.Race)
+                                              .ThenInclude(race => race.Participants)
+                                              .ThenInclude(participant => participant.Horse)
+                                          .ToListAsync();
+
+            if (userBets == null || !userBets.Any())
             {
-                return null;
+                return Enumerable.Empty<UserBetWithHorsesAndTrack>();
             }
 
-            return userBet;
+            var userBetDetails = userBets.Select(userBet => new UserBetWithHorsesAndTrack
+            {
+                Id = userBet.Id,
+                UserId = userBet.UserId,
+                RaceId = userBet.RaceId,
+                First = userBet.First,
+                Second = userBet.Second,
+                Third = userBet.Third,
+                Fourth = userBet.Fourth,
+                Fifth = userBet.Fifth,
+                BetAmount = userBet.BetAmount,
+                BetTypeId = userBet.BetTypeId,
+                BetType = userBet.BetType,
+                TrackName = userBet.Race?.Track?.Name,
+                Horses = userBet.Race?.Participants
+                                    .Where(participant => participant.Horse != null &&
+                                                          (participant.Horse.Id == userBet.First ||
+                                                           participant.Horse.Id == userBet.Second ||
+                                                           participant.Horse.Id == userBet.Third ||
+                                                           participant.Horse.Id == userBet.Fourth ||
+                                                           participant.Horse.Id == userBet.Fifth))
+                                    .Select(participant => new HorseDetails
+                                    {
+                                        Id = participant.Horse.Id,
+                                        Name = participant.Horse.Name,
+                                        Stallion = participant.Horse.Stallion
+                                    })
+                                    .ToList()
+            }).ToList();
+
+            return userBetDetails;
+        }
+
+        public class UserBetWithHorsesAndTrack
+        {
+            public Guid Id { get; set; }
+            public Guid UserId { get; set; }
+            public Guid? RaceId { get; set; }
+            public Guid First { get; set; }
+            public Guid Second { get; set; }
+            public Guid Third { get; set; }
+            public Guid Fourth { get; set; }
+            public Guid Fifth { get; set; }
+            public int BetAmount { get; set; }
+            public int? BetTypeId { get; set; }
+            public BetType? BetType { get; set; }
+            public string TrackName { get; set; }
+            public List<HorseDetails> Horses { get; set; }
+        }
+
+        public class HorseDetails
+        {
+            public Guid Id { get; set; }
+            public string Name { get; set; }
+            public bool Stallion { get; set; }
         }
 
         public async Task<object> Post(UserBetCreateDto userBetCreateDto)
