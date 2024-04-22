@@ -9,7 +9,7 @@ public partial class UserBet
 
     public Guid UserId { get; set; }
 
-    public Guid? RaceId { get; set; }
+    public Guid RaceId { get; set; }
 
     public Guid First { get; set; }
 
@@ -23,7 +23,7 @@ public partial class UserBet
 
     public int BetAmount { get; set; }
 
-    public int? BetTypeId { get; set; }
+    public int BetTypeId { get; set; }
 
     public virtual BetType? BetType { get; set; }
 

@@ -30,6 +30,8 @@ public partial class BoredbetsContext : DbContext
 
     public virtual DbSet<Transaction> Transactions { get; set; }
 
+    public virtual DbSet<TransactionType> TransactionTypes { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
     public virtual DbSet<UserBet> UserBets { get; set; }
@@ -40,8 +42,10 @@ public partial class BoredbetsContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+
         if (!optionsBuilder.IsConfigured)
         {
+
             IConfigurationRoot configuration = new ConfigurationBuilder()
 
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -50,17 +54,14 @@ public partial class BoredbetsContext : DbContext
 
                 .Build();
 
-
-
             string connectionString = configuration.GetConnectionString("YourConnectionString");
-
-
 
             optionsBuilder.UseMySql(connectionString, Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.4.28-mariadb"));
 
         }
 
     }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -196,11 +197,31 @@ public partial class BoredbetsContext : DbContext
 
             entity.HasIndex(e => e.Id, "Id_UNIQUE").IsUnique();
 
+            entity.Property(e => e.Amount)
+                .HasPrecision(32, 2)
+                .HasColumnName("amount");
             entity.Property(e => e.Created)
                 .HasColumnType("datetime")
                 .HasColumnName("created");
-            entity.Property(e => e.Deposit).HasColumnName("deposit");
+            entity.Property(e => e.Detail).HasColumnName("detail");
+            entity.Property(e => e.TransactionType).HasColumnName("transaction_type");
             entity.Property(e => e.UserId).HasColumnName("user_id");
+        });
+
+        modelBuilder.Entity<TransactionType>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("transaction_types");
+
+            entity.HasIndex(e => e.Id, "id_UNIQUE").IsUnique();
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.TransactionType1)
+                .HasMaxLength(20)
+                .HasColumnName("transaction_type");
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -226,7 +247,9 @@ public partial class BoredbetsContext : DbContext
             entity.Property(e => e.Username)
                 .HasMaxLength(20)
                 .HasColumnName("username");
-            entity.Property(e => e.Wallet).HasColumnName("wallet");
+            entity.Property(e => e.Wallet)
+                .HasPrecision(32, 2)
+                .HasColumnName("wallet");
         });
 
         modelBuilder.Entity<UserBet>(entity =>
@@ -318,6 +341,9 @@ public partial class BoredbetsContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("fullname");
             entity.Property(e => e.PhoneNum).HasMaxLength(16);
+            entity.Property(e => e.Profit)
+                .HasPrecision(32, 2)
+                .HasDefaultValueSql("'0.00'");
 
             entity.HasOne(d => d.User).WithOne(p => p.UserDetail)
                 .HasForeignKey<UserDetail>(d => d.UserId)

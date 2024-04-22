@@ -9,7 +9,11 @@ public partial class Transaction
 
     public Guid UserId { get; set; }
 
-    public int Deposit { get; set; }
+    public decimal Amount { get; set; }
 
     public DateTime Created { get; set; }
+
+    public int TransactionType { get; set; }
+
+    public Guid Detail { get; set; }
 }

@@ -11,7 +11,7 @@ public partial class User
 
     public string? Password { get; set; }
 
-    public DateTime? Created { get; set; }
+    public DateTime Created { get; set; }
 
     public string? RefreshToken { get; set; }
 
