@@ -19,7 +19,7 @@ public partial class User
 
     public string? Username { get; set; }
 
-    public float Wallet { get; set; }
+    public decimal Wallet { get; set; }
 
     public virtual ICollection<UserBet> UserBets { get; set; } = new List<UserBet>();
 

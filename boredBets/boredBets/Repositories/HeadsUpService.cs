@@ -161,7 +161,7 @@ namespace boredBets.Repositories
                         int isWithoutOrder = bets.Intersect(participants).Count();
 
                         var bettedHorses = invertedChance.Where(kv => bets.Contains(kv.Key)).OrderBy(rf => rf.Value);
-                        float moneyWon = 0;
+                        decimal moneyWon = 0;
                         if (bettedHorses.Count() > 2)
                         {
                             double betMultiplier = 0;
@@ -189,7 +189,7 @@ namespace boredBets.Repositories
                                 }
                             }
 
-                            moneyWon = userBet.BetAmount * (float)betMultiplier;
+                            moneyWon = userBet.BetAmount * (decimal)betMultiplier;
                             if (moneyWon > 0)
                             {
                                 userBet.User.Wallet += moneyWon;
