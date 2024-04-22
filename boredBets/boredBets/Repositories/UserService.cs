@@ -249,13 +249,23 @@ namespace boredBets.Repositories
         public async Task<object> UpdateWalletByUserId(Guid UserId,UserWalletDto wallet)
         {
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == UserId);
+            var creditCard = _context.UserCards.FirstOrDefaultAsync(y => y.CreditcardNum == wallet.CreditCard);
 
-            if (user == null)
+            if (user == null && creditCard == null)
             {
                 return "0";
             }
             
             user.Wallet += wallet.Wallet;
+
+            var transaction = new Transaction
+            {
+                UserId = UserId,
+                Amount = wallet.Wallet,
+                Created = DateTime.UtcNow,
+                TransactionType = 0,
+                Detail = Guid.Parse(wallet.CreditCard)
+            };
 
             await _context.SaveChangesAsync();
 

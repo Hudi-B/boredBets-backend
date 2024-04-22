@@ -3,7 +3,7 @@
     public record UserCreateDto(string Email,string Username, string Password);
     public record UserLoginDto(string EmailOrUsername, string Password);
     public record UserDto(Guid Id,string Email, string Password,string Username, decimal Wallet, bool? Admin);
-    public record UserWalletDto(decimal Wallet);
+    public record UserWalletDto(string CreditCard, decimal Wallet);
 
     public record UsernameDto(string Username);
     public record UserEmailDto(string Email);
