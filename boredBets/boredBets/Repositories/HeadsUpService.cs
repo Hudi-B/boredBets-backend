@@ -188,13 +188,16 @@ namespace boredBets.Repositories
                                         break;
                                 }
                             }
-
+                            var Profit = new UserDetail().Profit;
                             moneyWon = userBet.BetAmount * (decimal)betMultiplier;
                             if (moneyWon > 0)
                             {
                                 userBet.User.Wallet += moneyWon;
+                                Profit += moneyWon;
                                 await _context.SaveChangesAsync();
                             }
+                            Profit-=userBet.BetAmount;
+                            await _context.SaveChangesAsync();
 
                             
                             await Console.Out.WriteLineAsync();
