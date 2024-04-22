@@ -142,13 +142,12 @@ namespace boredBets.Repositories
                 BetTypeId = userBetCreateDto.BetTypeId,
             };
 
-
             var transaction = new Transaction 
             {
                 UserId = userBetCreateDto.UserId,
-                Deposit = userBetCreateDto.BetAmount,
+                Amount = userBetCreateDto.BetAmount,
                 Created = DateTime.UtcNow,
-                
+                TransactionType = 2,
             };
 
             await _context.Transactions.AddAsync(transaction);
