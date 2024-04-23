@@ -22,6 +22,8 @@ public partial class BoredbetsContext : DbContext
 
     public virtual DbSet<Jockey> Jockeys { get; set; }
 
+    public virtual DbSet<Notification> Notifications { get; set; }
+
     public virtual DbSet<Participant> Participants { get; set; }
 
     public virtual DbSet<Race> Races { get; set; }
@@ -124,6 +126,26 @@ public partial class BoredbetsContext : DbContext
             entity.Property(e => e.Quality).HasColumnName("quality");
         });
 
+        modelBuilder.Entity<Notification>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("notifications");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Created)
+                .HasMaxLength(6)
+                .HasColumnName("created");
+            entity.Property(e => e.RaceDate)
+                .HasMaxLength(6)
+                .HasColumnName("race_date");
+            entity.Property(e => e.Seen).HasColumnName("seen");
+            entity.Property(e => e.Source)
+                .HasMaxLength(45)
+                .HasColumnName("source");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+        });
+
         modelBuilder.Entity<Participant>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
@@ -203,7 +225,9 @@ public partial class BoredbetsContext : DbContext
             entity.Property(e => e.Created)
                 .HasColumnType("datetime")
                 .HasColumnName("created");
-            entity.Property(e => e.Detail).HasColumnName("detail");
+            entity.Property(e => e.Detail)
+                .HasMaxLength(36)
+                .HasColumnName("detail");
             entity.Property(e => e.TransactionType).HasColumnName("transaction_type");
             entity.Property(e => e.UserId).HasColumnName("user_id");
         });

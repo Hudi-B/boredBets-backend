@@ -15,9 +15,9 @@ public partial class UserDetail
 
     public DateTime? BirthDate { get; set; }
 
-    public string PhoneNum { get; set; }
+    public string? PhoneNum { get; set; }
 
-    public decimal Profit { get; set; }
+    public decimal? Profit { get; set; }
 
     public virtual User User { get; set; } = null!;
 }

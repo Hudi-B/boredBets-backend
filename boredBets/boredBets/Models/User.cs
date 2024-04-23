@@ -11,15 +11,15 @@ public partial class User
 
     public string? Password { get; set; }
 
-    public DateTime Created { get; set; }
+    public DateTime? Created { get; set; }
 
     public string? RefreshToken { get; set; }
 
-    public bool Admin { get; set; }
+    public bool? Admin { get; set; }
 
     public string? Username { get; set; }
 
-    public decimal Wallet { get; set; }
+    public decimal? Wallet { get; set; }
 
     public virtual ICollection<UserBet> UserBets { get; set; } = new List<UserBet>();
 

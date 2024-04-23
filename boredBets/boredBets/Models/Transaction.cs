@@ -13,7 +13,7 @@ public partial class Transaction
 
     public DateTime Created { get; set; }
 
-    public int TransactionType { get; set; }
+    public int? TransactionType { get; set; }
 
-    public Guid Detail { get; set; }
+    public string? Detail { get; set; }
 }
