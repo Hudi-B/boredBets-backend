@@ -141,7 +141,8 @@ namespace boredBets.Repositories
                 Fullname = "-",
                 Address = "-",
                 IsPrivate = true,
-                BirthDate = null
+                BirthDate = DateTime.Parse("2000.01.01"),
+                PhoneNum = "-",
             };
 
             await _context.UserDetails.AddAsync(userDetails);
