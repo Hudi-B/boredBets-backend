@@ -250,7 +250,7 @@ namespace boredBets.Repositories
         public async Task<object> UpdateWalletByUserId(Guid UserId,UserWalletDto wallet)
         {
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == UserId);
-            var creditCard = _context.UserCards.FirstOrDefaultAsync(y => y.CreditcardNum == wallet.CreditCard);
+            var creditCard = await _context.UserCards.FirstOrDefaultAsync(y => y.CreditcardNum == wallet.CreditCard);
 
             if (user == null && creditCard == null)
             {
@@ -264,15 +264,17 @@ namespace boredBets.Repositories
                 UserId = UserId,
                 Amount = wallet.Wallet,
                 Created = DateTime.UtcNow,
-                Detail = Guid.Parse(wallet.CreditCard)
+                Detail = wallet.CreditCard
             };
 
-            if (wallet.Wallet>0)
+            if (wallet.Wallet > 0)
             {
                 transaction.TransactionType = 0;
                 await _context.SaveChangesAsync();
             }
             transaction.TransactionType = 1;
+            await _context.Transactions.AddAsync(transaction);
+
             await _context.SaveChangesAsync();
 
             return "Success";
