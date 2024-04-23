@@ -159,6 +159,7 @@ namespace boredBets.Repositories
                         var bets = new List<Guid> { userBet.First, userBet.Second, userBet.Third, userBet.Fourth, userBet.Fifth };
                         bool isInOrder = bets.SequenceEqual(participants);
                         int isWithoutOrder = bets.Intersect(participants).Count();
+                        var user = _context.Users.FirstOrDefault(u => u.Id == userBet.UserId);
 
                         var bettedHorses = invertedChance.Where(kv => bets.Contains(kv.Key)).OrderBy(rf => rf.Value);
                         decimal moneyWon = 0;
@@ -192,7 +193,7 @@ namespace boredBets.Repositories
                             moneyWon = userBet.BetAmount * (decimal)betMultiplier;
                             if (moneyWon > 0)
                             {
-                                userBet.User.Wallet += moneyWon;
+                                user.Wallet += moneyWon;
                                 Profit += moneyWon;
                                 await _context.SaveChangesAsync();
                             }
