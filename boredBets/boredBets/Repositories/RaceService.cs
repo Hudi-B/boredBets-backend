@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using static boredBets.Repositories.HeadsUpService;
+using System.Collections.Generic;
 
 namespace boredBets.Repositories
 {
@@ -337,6 +339,8 @@ namespace boredBets.Repositories
 
             var raceSimulateService = _serviceLocator.GetService<IHeadsUpInterface>();
             await raceSimulateService.simulateRace();
+            var userbetCalculation = _serviceLocator.GetService<IHeadsUpInterface>();
+            await userbetCalculation.userBetCalculation(raceSimulateService.simulateRace().Result);
 
             return "Success";
         }

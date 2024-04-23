@@ -189,19 +189,16 @@ namespace boredBets.Repositories
                                         break;
                                 }
                             }
-                            var Profit = new UserDetail().Profit;
+                            var userDetail = _context.UserDetails.FirstOrDefault(u => u.UserId == userBet.UserId);
                             moneyWon = userBet.BetAmount * (decimal)betMultiplier;
                             if (moneyWon > 0)
                             {
                                 user.Wallet += moneyWon;
-                                Profit += moneyWon;
-                                await _context.SaveChangesAsync();
+                                userDetail.Profit += moneyWon;
                             }
-                            Profit-=userBet.BetAmount;
+                            userDetail.Profit -=userBet.BetAmount;
                             await _context.SaveChangesAsync();
 
-                            
-                            await Console.Out.WriteLineAsync();
                         }
                         var betInfo = new
                         {
@@ -210,11 +207,9 @@ namespace boredBets.Repositories
                             Winnings = moneyWon
                         };
                         winnerBets.Add(betInfo);
-                        await Console.Out.WriteLineAsync();
                     }
                 }
             }
-            await Console.Out.WriteLineAsync();
             return winnerBets;
         }
         #endregion
