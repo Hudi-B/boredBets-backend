@@ -1,17 +1,40 @@
-﻿using boredBets.Repositories.Interface;
+﻿using boredBets.Models;
+using boredBets.Repositories.Interface;
+using Microsoft.EntityFrameworkCore;
 
 namespace boredBets.Repositories
 {
     public class NotificationsService : INotificationsInterface
     {
-        public Task<object> GetAllNotificationsByUserId(Guid UserId)
+        private readonly BoredbetsContext _context;
+
+        public NotificationsService(BoredbetsContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public Task<object> GetAllUnseenNotificationsByUserId(Guid UserId)
+        public async Task<object> GetAllNotificationsByUserId(Guid UserId)
         {
-            throw new NotImplementedException();
+            var notifications = await _context.Notifications.ToListAsync();
+
+            if (notifications.Count()>0)
+            {
+                return null;
+            }
+
+            return notifications;
+        }
+
+        public async Task<object> GetAllUnseenNotificationsByUserId(Guid UserId)
+        {
+            var notifications = await _context.Notifications.Where(n=>n.Seen == false).ToListAsync();
+
+            if (notifications.Count()>0) 
+            {
+                return null;
+            }
+
+            return notifications;
         }
     }
 }

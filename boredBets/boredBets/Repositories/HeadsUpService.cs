@@ -197,6 +197,17 @@ namespace boredBets.Repositories
                                 userDetail.Profit += moneyWon;
                             }
                             userDetail.Profit -=userBet.BetAmount;
+
+                            var notification = new Notification
+                            {
+                                Id = Guid.NewGuid(),
+                                UserId = userBet.UserId,
+                                Source = "bet",
+                                RaceDate = userBet.Race.RaceScheduled,
+                                Created = DateTime.UtcNow,
+                                Seen=false
+                            };
+                            await _context.Notifications.AddAsync(notification);
                             await _context.SaveChangesAsync();
 
                         }
@@ -206,6 +217,7 @@ namespace boredBets.Repositories
                             BetAmount = userBet.BetAmount,
                             Winnings = moneyWon
                         };
+                        //await EveryDayNotifications(user.Id);
                         winnerBets.Add(betInfo);
                     }
                 }
@@ -229,5 +241,33 @@ namespace boredBets.Repositories
         {
             return simulateRace().Result;
         }
+
+        /*public async Task EveryDayNotifications(Guid UserId)
+        {
+            DateTime tomorrow = DateTime.UtcNow.Date.AddDays(1);
+
+            var user = _context.Users.FirstOrDefault(u => u.Id == UserId);
+
+            bool oncePerDay = false;
+            if (user.Wallet<10 && !oncePerDay) 
+            {
+                var notification = new Notification
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = UserId,
+                    Source = "wallet",
+                    Created = DateTime.UtcNow,
+                    Seen = false
+                };
+                oncePerDay = true;
+                await _context.Notifications.AddAsync(notification);
+                await _context.SaveChangesAsync();
+            }
+
+            if (DateTime.UtcNow.Date == tomorrow)
+            {
+                oncePerDay = false;
+            }
+        }*/
     }
 }
