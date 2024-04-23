@@ -2,6 +2,7 @@
 using boredBets.Models.Dtos;
 using boredBets.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
+using System.Formats.Asn1;
 using System.Net.Http.Headers;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography.X509Certificates;
@@ -77,7 +78,7 @@ namespace boredBets.Repositories
 
             return userBetDetails;
         }
-
+        #region GetAllUserBetsByUserId Classes
         public class UserBetWithHorsesAndTrack
         {
             public Guid Id { get; set; }
@@ -101,7 +102,7 @@ namespace boredBets.Repositories
             public string Name { get; set; }
             public bool Stallion { get; set; }
         }
-
+        #endregion
         public async Task<object> Post(UserBetCreateDto userBetCreateDto)
         {
             var horses = new List<Guid> { userBetCreateDto.First, userBetCreateDto.Second, userBetCreateDto.Third, userBetCreateDto.Fourth, userBetCreateDto.Fifth };
@@ -150,9 +151,12 @@ namespace boredBets.Repositories
                 TransactionType = 2,
             };
 
+            user.Wallet -= userbet.BetAmount;
+
             await _context.Transactions.AddAsync(transaction);
 
             await _context.UserBets.AddAsync(userbet);
+
             await _context.SaveChangesAsync();
 
             return "Success";
