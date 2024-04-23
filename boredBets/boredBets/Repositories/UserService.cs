@@ -263,10 +263,15 @@ namespace boredBets.Repositories
                 UserId = UserId,
                 Amount = wallet.Wallet,
                 Created = DateTime.UtcNow,
-                TransactionType = 0,
                 Detail = Guid.Parse(wallet.CreditCard)
             };
 
+            if (wallet.Wallet>0)
+            {
+                transaction.TransactionType = 0;
+                await _context.SaveChangesAsync();
+            }
+            transaction.TransactionType = 1;
             await _context.SaveChangesAsync();
 
             return "Success";
