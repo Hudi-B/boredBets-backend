@@ -15,11 +15,13 @@ namespace boredBets.Repositories
     {
         private readonly BoredbetsContext _context;
         private readonly IHorseInterface _horseInterface;
+        private readonly IServiceLocator _serviceLocator;
 
-        public RaceService(BoredbetsContext context, IHorseInterface horseInterface)
+        public RaceService(BoredbetsContext context, IHorseInterface horseInterface, IServiceLocator serviceLocator)
         {
             _context = context;
             _horseInterface = horseInterface;
+            _serviceLocator = serviceLocator;
         }
 
         public async Task<IEnumerable<Race>> Get()
@@ -319,6 +321,24 @@ namespace boredBets.Repositories
             return true;
 
 
+        }
+
+        public async Task<string> ForceStartRaceByRaceId(Guid RaceId)
+        {
+            var race = await _context.Races.FirstOrDefaultAsync(x => x.Id == RaceId);
+
+            if (race == null)
+            {
+                return null;
+            }
+
+            race.RaceScheduled = DateTime.UtcNow.AddMinutes(-1);
+            await _context.SaveChangesAsync();
+
+            var raceSimulateService = _serviceLocator.GetService<IHeadsUpInterface>();
+            await raceSimulateService.simulateRace();
+
+            return "Success";
         }
     }
 }

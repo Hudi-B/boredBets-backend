@@ -16,5 +16,6 @@ namespace boredBets.Repositories.Interface
         Task<IEnumerable<GetByCountryViewModel>> GetByCountry(string Country);
         Task<object> DeleteRaceById(Guid Id);
         Task<bool> GenerateRace(int quantity);
+        Task<string> ForceStartRaceByRaceId(Guid RaceId);
     }
 }

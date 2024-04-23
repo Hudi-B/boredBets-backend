@@ -123,7 +123,7 @@ namespace boredBets.Repositories
 
         }
         #endregion
-
+        #region UserBetCalculation
         public async Task<object> userBetCalculation(List<Result> allRaceResults)
         {
             var winnerBets = new List<object>();
@@ -217,7 +217,7 @@ namespace boredBets.Repositories
             await Console.Out.WriteLineAsync();
             return winnerBets;
         }
-
+        #endregion
 
 
 

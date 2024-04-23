@@ -27,6 +27,7 @@ namespace boredBets
             builder.Services.AddScoped<IUserBetInterface,UserBetService>();
             builder.Services.AddScoped<IRaceInterface,RaceService>();
             builder.Services.AddScoped<IParticipantInterface, ParticipantService>();
+            builder.Services.AddScoped<IServiceLocator, ServiceLocator>();
 
             builder.Services.AddControllers();
             builder.Services.AddControllers().AddNewtonsoftJson();

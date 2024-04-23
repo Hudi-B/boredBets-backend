@@ -102,7 +102,17 @@ namespace boredBets.Controllers
                 return BadRequest("There was an error during race generation");
             }
         }
-        
+
+        [HttpGet("ForceStartRaceByRaceId")]
+        public async Task<ActionResult> ForceStartRaceByRaceId(Guid RaceId)
+        {
+            var result = await _raceInterface.ForceStartRaceByRaceId(RaceId);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
 
     }
 }
