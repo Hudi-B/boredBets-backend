@@ -39,10 +39,10 @@ namespace boredBets.Controllers
             return Ok(result);
         }
 
-        [HttpGet("GetAllTransactions")]
-        public async Task<ActionResult<Transaction>> GetAllTransactions() 
+        [HttpGet("GetAllTransactionsByUserId")]
+        public async Task<ActionResult<Transaction>> GetAllTransactionsByUserId(Guid UserId) 
         {
-            var result = await _userDetail.GetAllTransactions();
+            var result = await _userDetail.GetAllTransactionsByUserId(UserId);
             if (result==null)
             {
                 return NotFound();
