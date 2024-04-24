@@ -27,7 +27,7 @@ namespace boredBets.Repositories
 
         public async Task<object> GetAllUnseenNotificationsByUserId(Guid UserId)
         {
-            var notifications = await _context.Notifications.Where(n=>n.Seen == false).ToListAsync();
+            var notifications = await _context.Notifications.Where(n=>n.Seen == false).OrderBy(n=>n.Created).ToListAsync();
 
             if (notifications.Count()>0) 
             {
