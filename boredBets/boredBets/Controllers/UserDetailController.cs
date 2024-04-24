@@ -39,6 +39,17 @@ namespace boredBets.Controllers
             return Ok(result);
         }
 
+        [HttpGet("GetAllTransactions")]
+        public async Task<ActionResult<Transaction>> GetAllTransactions() 
+        {
+            var result = await _userDetail.GetAllTransactions();
+            if (result==null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+
         [HttpPut("UpdateUserDetailByUserId")]
         public async Task<ActionResult<UserDetail>> UpdateUserDetailByUserId(Guid UserId, UserDetailUpdateDto updateDto)
         {

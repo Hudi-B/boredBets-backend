@@ -14,6 +14,16 @@ namespace boredBets.Repositories
             _context = context;
         }
 
+        public async Task<IEnumerable<Transaction>> GetAllTransactions()
+        {
+            var result = await _context.Transactions.OrderBy(t => t.Created).ToListAsync();
+            if (result==null)
+            {
+                return null;
+            }
+            return result;
+        }
+
         public async Task<object> GetUserDetailByUserId(Guid UserId)
         {
             var userDetail = await _context.UserDetails.FirstOrDefaultAsync(x => x.UserId == UserId);
