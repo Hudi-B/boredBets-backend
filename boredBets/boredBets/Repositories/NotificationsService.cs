@@ -15,7 +15,7 @@ namespace boredBets.Repositories
 
         public async Task<object> GetAllNotificationsByUserId(Guid UserId)
         {
-            var notifications = await _context.Notifications.ToListAsync();
+            var notifications = await _context.Notifications.Where(n=>n.UserId==UserId).OrderBy(n => n.Created).ToListAsync();
 
             if (notifications.Count()>0)
             {
@@ -27,7 +27,7 @@ namespace boredBets.Repositories
 
         public async Task<object> GetAllUnseenNotificationsByUserId(Guid UserId)
         {
-            var notifications = await _context.Notifications.Where(n=>n.Seen == false).OrderBy(n=>n.Created).ToListAsync();
+            var notifications = await _context.Notifications.Where(n=>n.UserId==UserId && n.Seen == false).OrderBy(n=>n.Created).ToListAsync();
 
             if (notifications.Count()>0) 
             {
