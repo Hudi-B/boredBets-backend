@@ -21,7 +21,7 @@ public partial class User
 
     public decimal? Wallet { get; set; }
 
-    public Guid? ImageId { get; set; }
+    public Guid ImageId { get; set; }
 
     public virtual Image? Image { get; set; }
 

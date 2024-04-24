@@ -197,7 +197,7 @@ namespace boredBets.Controllers
             return Ok();
         }
 
-        [HttpDelete("DeleteImageByUserId")]
+        [HttpPut("DeleteImageByUserId")]
         public async Task<ActionResult<User>> DeleteImageByUserId(Guid UserId, ImageUpdateByUserId imageUpdate)
         {
             var result = await userInterface.UpdateImageByUserId(UserId, imageUpdate);

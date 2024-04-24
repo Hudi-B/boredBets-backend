@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualBasic;
+using MySqlConnector;
 using System.Collections.Immutable;
 using System.Diagnostics.Metrics;
 using System.IdentityModel.Tokens.Jwt;
@@ -113,6 +114,15 @@ namespace boredBets.Repositories
 
             string hashedpassword = HashPassword(userCreateDto.Password);
 
+            var image = new Image
+            {
+                Id = Guid.NewGuid(),
+                ImageLink = "",
+                ImageDeleteLink = "",
+            };
+            _context.Images.Add(image);
+            await _context.SaveChangesAsync();
+
             Guid userId = Guid.NewGuid();
 
             var user = new User
@@ -124,8 +134,12 @@ namespace boredBets.Repositories
                 Admin = false,
                 Password = hashedpassword,
                 Created = DateTime.UtcNow,
-                RefreshToken = GenerateRefreshToken(userId.ToString())
+                RefreshToken = GenerateRefreshToken(userId.ToString()),
+                ImageId = image.Id,
             };
+
+            
+            
 
             if (user == null)
             {
@@ -414,6 +428,45 @@ namespace boredBets.Repositories
             string hashedpassword = HashPassword(passwordDto.newPassword);
             userId.Password = hashedpassword;
             await _context.SaveChangesAsync();
+
+            return "Success";
+        }
+
+        public async Task<string> UpdateImageByUserId(Guid UserId, ImageUpdateByUserId imageUpdate)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == UserId);
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            var image = await _context.Images.FirstOrDefaultAsync(i=>i.Id == user.ImageId);
+            
+            image.ImageLink = imageUpdate.ImageLink;
+            image.ImageDeleteLink = imageUpdate.ImageDeleteLink;
+
+            await _context.SaveChangesAsync();
+
+            return "Success";
+        }
+
+
+        public async Task<string> DeleteImageByUserId(Guid UserId, ImageUpdateByUserId imageUpdate)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == UserId);
+            var image = await _context.Images.FirstOrDefaultAsync(i=>i.ImageLink==imageUpdate.ImageLink);
+
+            if (user==null || image == null || imageUpdate == null)
+            {
+                return null;
+            }
+
+            image.ImageLink = "";
+            image.ImageDeleteLink = "";
+
+            await _context.SaveChangesAsync();
+
 
             return "Success";
         }
