@@ -21,6 +21,10 @@ public partial class User
 
     public decimal? Wallet { get; set; }
 
+    public Guid? ImageId { get; set; }
+
+    public virtual Image? Image { get; set; }
+
     public virtual ICollection<UserBet> UserBets { get; set; } = new List<UserBet>();
 
     public virtual ICollection<UserCard> UserCards { get; set; } = new List<UserCard>();

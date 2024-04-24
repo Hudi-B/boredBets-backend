@@ -119,9 +119,9 @@ public partial class BoredbetsContext : DbContext
 
             entity.ToTable("images");
 
-            entity.Property(e => e.Id)
-                .HasMaxLength(36)
-                .HasColumnName("id");
+            entity.HasIndex(e => e.Id, "id_UNIQUE").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.ImageDeleteLink)
                 .HasMaxLength(60)
                 .HasColumnName("image_delete_link");
@@ -276,6 +276,8 @@ public partial class BoredbetsContext : DbContext
 
             entity.ToTable("users");
 
+            entity.HasIndex(e => e.ImageId, "fk_user_image");
+
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Admin).HasColumnName("admin");
             entity.Property(e => e.Created)
@@ -284,6 +286,7 @@ public partial class BoredbetsContext : DbContext
             entity.Property(e => e.Email)
                 .HasMaxLength(255)
                 .HasColumnName("email");
+            entity.Property(e => e.ImageId).HasColumnName("image_id");
             entity.Property(e => e.Password)
                 .HasMaxLength(255)
                 .HasColumnName("password");
@@ -296,6 +299,10 @@ public partial class BoredbetsContext : DbContext
             entity.Property(e => e.Wallet)
                 .HasPrecision(32, 2)
                 .HasColumnName("wallet");
+
+            entity.HasOne(d => d.Image).WithMany(p => p.Users)
+                .HasForeignKey(d => d.ImageId)
+                .HasConstraintName("fk_user_image");
         });
 
         modelBuilder.Entity<UserBet>(entity =>

@@ -184,6 +184,32 @@ namespace boredBets.Controllers
             return Ok();
         }
 
+        [HttpPut("UpdateImageByUserId")]
+        public async Task<ActionResult<User>> UpdateImageByUserId(Guid UserId, ImageUpdateByUserId imageUpdate)
+        {
+            var result = await userInterface.UpdateImageByUserId(UserId, imageUpdate);
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            return Ok();
+        }
+
+        [HttpDelete("DeleteImageByUserId")]
+        public async Task<ActionResult<User>> DeleteImageByUserId(Guid UserId, ImageUpdateByUserId imageUpdate)
+        {
+            var result = await userInterface.UpdateImageByUserId(UserId, imageUpdate);
+
+            if (result == null || result=="1")
+            {
+                return NotFound();
+            }
+
+            return Ok();
+        }
+
         [HttpDelete("DeleteUserById")]
         public async Task<ActionResult<User>> DeleteUserById(Guid UserId)
         {
