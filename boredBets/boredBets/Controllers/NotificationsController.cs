@@ -19,7 +19,7 @@ namespace boredBets.Controllers
         [HttpGet("GetAllNotificationsByUserId")]
         public async Task<ActionResult> GetAllNotificationsByUserId(Guid UserId) 
         {
-            var result = _notifications.GetAllNotificationsByUserId(UserId);
+            var result = await _notifications.GetAllNotificationsByUserId(UserId);
             if (result == null)
             {
                 return NotFound();
@@ -30,7 +30,7 @@ namespace boredBets.Controllers
         [HttpGet("GetAllUnseenNotificationsByUserId")]
         public async Task<ActionResult> GetAllUnseenNotificationsByUserId(Guid UserId)
         {
-            var result = _notifications.GetAllUnseenNotificationsByUserId(UserId);
+            var result = await _notifications.GetAllUnseenNotificationsByUserId(UserId);
             if (result == null)
             {
                 return  NotFound();
