@@ -193,9 +193,11 @@ namespace boredBets.Repositories
                             moneyWon = userBet.BetAmount * (decimal)betMultiplier;
                             if (moneyWon > 0)
                             {
+                                userBet.Outcome += moneyWon;
                                 user.Wallet += moneyWon;
                                 userDetail.Profit += moneyWon;
                             }
+                            userBet.Outcome -= userBet.BetAmount;
                             userDetail.Profit -=userBet.BetAmount;
 
                             var notification = new Notification
