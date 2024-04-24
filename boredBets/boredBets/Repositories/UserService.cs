@@ -267,19 +267,23 @@ namespace boredBets.Repositories
                 Detail = wallet.CreditCard
             };
 
-            if (wallet.Wallet > 0)
+            bool depositOrwithdrawal = wallet.Wallet > 0;
+
+            if (depositOrwithdrawal)
             {
                 transaction.TransactionType = 0;
-                await _context.SaveChangesAsync();
             }
-            transaction.TransactionType = 1;
+            else
+            {
+                transaction.TransactionType = 1;
+            }
+
             await _context.Transactions.AddAsync(transaction);
 
             await _context.SaveChangesAsync();
 
             return "Success";
-
-            
+  
         }
 
         public async Task<object> UpdateUsernameByUserId(Guid UserId, UsernameDto username)
