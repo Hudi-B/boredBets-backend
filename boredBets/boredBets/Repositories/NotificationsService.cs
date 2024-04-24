@@ -17,7 +17,7 @@ namespace boredBets.Repositories
         {
             var notifications = await _context.Notifications.Where(n=>n.UserId==UserId).OrderBy(n => n.Created).ToListAsync();
 
-            if (notifications.Count()>0)
+            if (!notifications.Any())
             {
                 return null;
             }
@@ -29,7 +29,7 @@ namespace boredBets.Repositories
         {
             var notifications = await _context.Notifications.Where(n=>n.UserId==UserId && n.Seen == false).OrderBy(n=>n.Created).ToListAsync();
 
-            if (notifications.Count()>0) 
+            if (!notifications.Any()) 
             {
                 return null;
             }
