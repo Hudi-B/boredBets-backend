@@ -23,7 +23,9 @@ public partial class UserBet
 
     public int BetAmount { get; set; }
 
-    public int? BetTypeId { get; set; }
+    public int BetTypeId { get; set; }
+
+    public decimal Outcome { get; set; }
 
     public virtual BetType? BetType { get; set; }
 

@@ -20,6 +20,8 @@ public partial class BoredbetsContext : DbContext
 
     public virtual DbSet<Horse> Horses { get; set; }
 
+    public virtual DbSet<Image> Images { get; set; }
+
     public virtual DbSet<Jockey> Jockeys { get; set; }
 
     public virtual DbSet<Notification> Notifications { get; set; }
@@ -46,6 +48,7 @@ public partial class BoredbetsContext : DbContext
     {
 
         if (!optionsBuilder.IsConfigured)
+
         {
 
             IConfigurationRoot configuration = new ConfigurationBuilder()
@@ -56,14 +59,16 @@ public partial class BoredbetsContext : DbContext
 
                 .Build();
 
+
+
             string connectionString = configuration.GetConnectionString("YourConnectionString");
+
+
 
             optionsBuilder.UseMySql(connectionString, Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.4.28-mariadb"));
 
         }
-
     }
-
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -106,6 +111,23 @@ public partial class BoredbetsContext : DbContext
                 .HasForeignKey(d => d.JockeyId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("fk_horses_jockey");
+        });
+
+        modelBuilder.Entity<Image>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("images");
+
+            entity.Property(e => e.Id)
+                .HasMaxLength(36)
+                .HasColumnName("id");
+            entity.Property(e => e.ImageDeleteLink)
+                .HasMaxLength(60)
+                .HasColumnName("image_delete_link");
+            entity.Property(e => e.ImageLink)
+                .HasMaxLength(60)
+                .HasColumnName("image_link");
         });
 
         modelBuilder.Entity<Jockey>(entity =>
@@ -293,6 +315,9 @@ public partial class BoredbetsContext : DbContext
             entity.Property(e => e.Fifth).HasColumnName("fifth");
             entity.Property(e => e.First).HasColumnName("first");
             entity.Property(e => e.Fourth).HasColumnName("fourth");
+            entity.Property(e => e.Outcome)
+                .HasPrecision(32, 2)
+                .HasColumnName("outcome");
             entity.Property(e => e.RaceId).HasColumnName("race_id");
             entity.Property(e => e.Second).HasColumnName("second");
             entity.Property(e => e.Third).HasColumnName("third");
