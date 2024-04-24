@@ -216,6 +216,7 @@ namespace boredBets.Repositories
                         var betInfo = new
                         {
                             User = userBet.UserId,
+                            Race = userBet.Race,
                             BetAmount = userBet.BetAmount,
                             Winnings = moneyWon
                         };
