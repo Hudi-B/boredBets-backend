@@ -47,6 +47,10 @@ namespace boredBets.Controllers
             {
                 return Unauthorized();
             }
+            else if (result == "1")
+            {
+                return Problem("User not verified");
+            }
             return Ok(result);
         }
 

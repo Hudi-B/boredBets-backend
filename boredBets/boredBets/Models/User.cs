@@ -23,7 +23,7 @@ public partial class User
 
     public Guid? ImageId { get; set; }
 
-    public bool? IsVerified { get; set; }
+    public bool IsVerified { get; set; }
 
     public string? VerificationCode { get; set; }
 

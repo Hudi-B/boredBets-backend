@@ -195,7 +195,10 @@ namespace boredBets.Repositories
             {
                 return null;
             }
-
+            else if (!user.IsVerified) 
+            {
+                return "1";
+            }
             var accessToken = GenerateAccessToken(user.Id.ToString());
             var refreshToken = GenerateRefreshToken(user.Id.ToString());
 
