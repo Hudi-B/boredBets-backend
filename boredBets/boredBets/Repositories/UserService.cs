@@ -180,7 +180,7 @@ namespace boredBets.Repositories
             await _context.UserDetails.AddAsync(userDetails);
             await _context.SaveChangesAsync();
 
-            return new {Id = user.Id };
+            return user.Id;
         }
 
         public async Task<object> Login(UserLoginDto userLoginDto) //login
@@ -197,7 +197,7 @@ namespace boredBets.Repositories
             }
             else if (!user.IsVerified) 
             {
-                return "1";
+                return user.Id;
             }
             var accessToken = GenerateAccessToken(user.Id.ToString());
             var refreshToken = GenerateRefreshToken(user.Id.ToString());
