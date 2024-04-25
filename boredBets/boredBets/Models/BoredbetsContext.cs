@@ -287,6 +287,7 @@ public partial class BoredbetsContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("email");
             entity.Property(e => e.ImageId).HasColumnName("image_id");
+            entity.Property(e => e.IsVerified).HasColumnName("isVerified");
             entity.Property(e => e.Password)
                 .HasMaxLength(255)
                 .HasColumnName("password");
@@ -296,12 +297,16 @@ public partial class BoredbetsContext : DbContext
             entity.Property(e => e.Username)
                 .HasMaxLength(20)
                 .HasColumnName("username");
+            entity.Property(e => e.VerificationCode)
+                .HasMaxLength(6)
+                .HasColumnName("verificationCode");
             entity.Property(e => e.Wallet)
                 .HasPrecision(32, 2)
                 .HasColumnName("wallet");
 
             entity.HasOne(d => d.Image).WithMany(p => p.Users)
                 .HasForeignKey(d => d.ImageId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("fk_user_image");
         });
 

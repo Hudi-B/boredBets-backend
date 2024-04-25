@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace boredBets.Controllers
 {
@@ -60,6 +61,24 @@ namespace boredBets.Controllers
             }
             return Ok(result);
         }
+
+        [HttpGet("VerificationCodeCheck")]
+        public async Task<ActionResult> VerificationCodeCheck(Guid UserId, string VerificationCode) 
+        {
+            var result = await userInterface.VerificationCodeCheck(UserId,VerificationCode);
+
+            if (result == null)
+            {
+                return NotFound("User not found");
+            }
+            else if(result == "1") 
+            {
+                return Unauthorized();
+            }
+
+            return Ok(result);
+        }
+
 
         [Authorize]
         [HttpGet("GetAllUsers")]

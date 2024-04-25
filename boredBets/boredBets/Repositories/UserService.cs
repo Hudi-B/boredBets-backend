@@ -26,12 +26,15 @@ namespace boredBets.Repositories
 
         private readonly BoredbetsContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IServiceLocator serviceLocator;
 
-        public UserService(BoredbetsContext context, IConfiguration configuration)
+        public UserService(BoredbetsContext context, IConfiguration configuration, IServiceLocator serviceLocator)
         {
             _context = context;
             _configuration = configuration;
+            this.serviceLocator = serviceLocator;
         }
+
         private string GenerateRefreshToken(string Id)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -71,6 +74,15 @@ namespace boredBets.Repositories
         private bool VerifyHashedPassword(string enteredPassword, string storedPassword) 
         {
             return BCrypt.Net.BCrypt.Verify(enteredPassword, storedPassword);
+        }
+
+        private string GenerateCode() 
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            Random random = new Random();
+            return new string(Enumerable.Repeat(chars, 6)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+
         }
 
         public async Task<object> GetByUserId(Guid UserId)
@@ -125,6 +137,8 @@ namespace boredBets.Repositories
 
             Guid userId = Guid.NewGuid();
 
+            string verificationCode = GenerateCode();
+
             var user = new User
             {
                 Id = userId,
@@ -136,10 +150,9 @@ namespace boredBets.Repositories
                 Created = DateTime.UtcNow,
                 RefreshToken = GenerateRefreshToken(userId.ToString()),
                 ImageId = image.Id,
+                IsVerified=false,
+                VerificationCode = verificationCode,
             };
-
-            
-            
 
             if (user == null)
             {
@@ -158,6 +171,11 @@ namespace boredBets.Repositories
                 BirthDate = DateTime.Parse("2000.01.01"),
                 PhoneNum = "-",
             };
+
+            var result = serviceLocator.GetService<IEmailInterface>();
+            result.SendEmail(new EmailDTO(user.Email, "Verification Code", $"Your verification code: {verificationCode}"));//body styling
+
+
 
             await _context.UserDetails.AddAsync(userDetails);
             await _context.SaveChangesAsync();
@@ -467,6 +485,26 @@ namespace boredBets.Repositories
 
             await _context.SaveChangesAsync();
 
+
+            return "Success";
+        }
+
+        public async Task<string> VerificationCodeCheck(Guid UserId, string VerificationCode)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == UserId);
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            if (user.VerificationCode!=VerificationCode)
+            {
+                return "1";
+            }
+
+            user.IsVerified = true;
+            await _context.SaveChangesAsync();
 
             return "Success";
         }
