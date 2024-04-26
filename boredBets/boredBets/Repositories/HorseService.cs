@@ -118,10 +118,13 @@ namespace boredBets.Repositories
                 raceSchedulesFuture = await _context.Races
                     .Where(x => x.RaceScheduled > DateTime.UtcNow && x.Participants.Any(x => x.HorseId == horse.Id))
                     .Include(x => x.Track)
-                    .OrderByDescending(x => x.RaceScheduled) 
+                    .OrderByDescending(x => x.RaceScheduled)
                     .Take(3)
                     .ToListAsync();
             }
+
+            double avgPlacement = horseParticipations.Any() ? horseParticipations.Average() : 0;
+
             var result = new
             {
                 Id = horse.Id,
@@ -134,11 +137,12 @@ namespace boredBets.Repositories
                 Next3Races = raceSchedulesFuture,
                 Past3Races = raceSchedulesPast,
                 RaceParticipatedIn = horseParticipations.Count(),
-                AvgPlacement = horseParticipations.Average(),
+                AvgPlacement = avgPlacement,
             };
 
             return result;
         }
+
 
         public async Task<Horse> Post(HorseCreateDto horseCreateDto)
         {

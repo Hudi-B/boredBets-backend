@@ -70,8 +70,6 @@ namespace boredBets.Repositories
                     .ToListAsync();
             }
 
-
-
             var jockeysHorse = await _context.Horses.FirstOrDefaultAsync(x => x.JockeyId == jockey.Id);
 
             if (jockeysHorse == null)
@@ -88,7 +86,7 @@ namespace boredBets.Repositories
                     Next3Races = raceSchedulesFuture,
                     Past3Races = raceSchedulesPast,
                     RaceParticipatedIn = Placements.Count(),
-                    AvgPlacement = Placements.Average(),
+                    AvgPlacement = Placements.Any() ? Placements.Average() : 0,
                 };
                 return jockeyWithoutHorse;
             }
@@ -105,11 +103,12 @@ namespace boredBets.Repositories
                 Next3Races = raceSchedulesFuture,
                 Past3Races = raceSchedulesPast,
                 RaceParticipatedIn = Placements.Count(),
-                AvgPlacement = Placements.Average(),
+                AvgPlacement = Placements.Any() ? Placements.Average() : 0,
             };
 
             return result;
         }
+
 
         public async Task<Jockey> Post(JockeyCreateDto jockeyCreateDto)
         {
