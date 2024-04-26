@@ -248,9 +248,15 @@ namespace boredBets.Repositories
 
         public async Task deleteFakeUsers()
         {
-            var notVerifiedUsers = _context.Users.Where(u => !u.IsVerified && u.Created<DateTime.UtcNow.AddHours(-1)).ToListAsync();
+            var notVerifiedUsers = await _context.Users
+                .Where(u => !u.IsVerified && u.Created < DateTime.UtcNow.AddHours(-1))
+                .ToListAsync();
 
-            _context.Remove(notVerifiedUsers);
+            if (notVerifiedUsers.Any())
+            {
+                _context.Users.RemoveRange(notVerifiedUsers);
+                await _context.SaveChangesAsync();
+            }
 
             await _context.SaveChangesAsync();
         }

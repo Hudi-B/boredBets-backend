@@ -88,6 +88,7 @@ namespace boredBets.Repositories
         public async Task<object> GetByUserId(Guid UserId)
         {
             var users = await _context.Users
+                .Include(x => x.Image)
                 .FirstOrDefaultAsync(u => u.Id == UserId);
                 
 
@@ -99,10 +100,12 @@ namespace boredBets.Repositories
             var result = new
             {
                 Id=UserId,
+                username = users.Username,
                 Email = users.Email,
                 Wallet = users.Wallet,
                 Admin= users.Admin,
                 Created = users.Created,
+                ImageUrl = users.Image.ImageLink,
             };
 
             return result;
@@ -122,7 +125,7 @@ namespace boredBets.Repositories
             if (usernameExist != null)
             {
                 return "1";
-            }
+            } 
 
             string hashedpassword = HashPassword(userCreateDto.Password);
 
@@ -223,7 +226,8 @@ namespace boredBets.Repositories
                 RefreshToken = refreshToken,
                 Id = user.Id,
                 Wallet = user.Wallet,
-                Admin=user.Admin,
+                username = user.Username,
+                Admin =user.Admin,
                 ImageUrl = user.Image.ImageLink
             };
 

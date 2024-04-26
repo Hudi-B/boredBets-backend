@@ -207,12 +207,12 @@ namespace boredBets.Repositories
             {
                 Countries.Add(sr.ReadLine());
             }
-            sr = new StreamReader(staticData + "adjectives.txt");
+            sr = new StreamReader(staticData + "horseFirst.txt");
             while (!sr.EndOfStream)
             {
                 horseFirst.Add(sr.ReadLine());
             }
-            sr = new StreamReader(staticData + "objects.txt");
+            sr = new StreamReader(staticData + "horseSecond.txt");
             while (!sr.EndOfStream)
             {
                 horseSecond.Add(sr.ReadLine());
