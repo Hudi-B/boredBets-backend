@@ -199,6 +199,7 @@ namespace boredBets.Repositories
                                           .Include(x => x.UserCards)
                                           .Include(x => x.UserDetail)
                                           .Include(x => x.UserBets)
+                                          .Include(x => x.Image)
                                           .FirstOrDefaultAsync(x => x.Email == userLoginDto.EmailOrUsername || x.Username==userLoginDto.EmailOrUsername);
 
             if (user == null || !VerifyHashedPassword(userLoginDto.Password, user.Password))
@@ -223,6 +224,7 @@ namespace boredBets.Repositories
                 Id = user.Id,
                 Wallet = user.Wallet,
                 Admin=user.Admin,
+                ImageUrl = user.Image.ImageLink
             };
 
             return response;
@@ -462,6 +464,7 @@ namespace boredBets.Repositories
 
             return "Success";
         }
+
 
         public async Task<string> UpdateImageByUserId(Guid UserId, ImageUpdateByUserId imageUpdate)
         {
