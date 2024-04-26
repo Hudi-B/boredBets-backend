@@ -173,7 +173,17 @@ namespace boredBets.Repositories
             };
 
             var result = serviceLocator.GetService<IEmailInterface>();
-            result.SendEmail(new EmailDTO(user.Email, "Verification Code", $"Your verification code: {verificationCode}"));//body styling
+
+            string email_body = $@"
+    <html>
+    <body>
+        <p>Dear {user.Username}, Welcome to boredBets!</p>
+        <p>You can verify your account by clicking on this link:<a href='https://bored-bets.vercel.app/verification/{verificationCode}/{user.Id}'>Verify</a></p>
+        <p>If this action wasn't initiated by you, please disregard this email. Failure to verify your account within an hour will result in automatic termination.</p>
+        <p>Thank you</p>
+    </body>
+    </html>";
+            result.SendEmail(new EmailDTO(user.Email, "Welcome to boredBets", email_body));
 
 
 
