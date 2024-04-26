@@ -1,6 +1,7 @@
 ﻿using boredBets.Models;
 using boredBets.Models.Dtos;
 using boredBets.Repositories.Interface;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.SignalR.Protocol;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.Eventing.Reader;
@@ -245,32 +246,13 @@ namespace boredBets.Repositories
             return simulateRace().Result;
         }
 
-        /*public async Task EveryDayNotifications(Guid UserId)
+        public async Task deleteFakeUsers()
         {
-            DateTime tomorrow = DateTime.UtcNow.Date.AddDays(1);
+            var notVerifiedUsers = _context.Users.Where(u => !u.IsVerified && u.Created<DateTime.UtcNow.AddHours(-1)).ToListAsync();
 
-            var user = _context.Users.FirstOrDefault(u => u.Id == UserId);
+            _context.Remove(notVerifiedUsers);
 
-            bool oncePerDay = false;
-            if (user.Wallet<10 && !oncePerDay) 
-            {
-                var notification = new Notification
-                {
-                    Id = Guid.NewGuid(),
-                    UserId = UserId,
-                    Source = "wallet",
-                    Created = DateTime.UtcNow,
-                    Seen = false
-                };
-                oncePerDay = true;
-                await _context.Notifications.AddAsync(notification);
-                await _context.SaveChangesAsync();
-            }
-
-            if (DateTime.UtcNow.Date == tomorrow)
-            {
-                oncePerDay = false;
-            }
-        }*/
+            await _context.SaveChangesAsync();
+        }
     }
 }

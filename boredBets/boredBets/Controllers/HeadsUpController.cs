@@ -8,7 +8,9 @@ using static boredBets.Repositories.HeadsUpService;
 
 namespace boredBets.Controllers
 {
-    public class HeadsUpController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class HeadsUpController : ControllerBase
     {
         private readonly BoredbetsContext _context;
         private readonly IHeadsUpInterface headsUp;
@@ -25,6 +27,7 @@ namespace boredBets.Controllers
         {
             await headsUp.simulateRace();
             await headsUp.checkRace();
+            await headsUp.deleteFakeUsers();
 
             List<Result> raceResult = await headsUp.GetResults();
 
