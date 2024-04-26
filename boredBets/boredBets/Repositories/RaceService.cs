@@ -96,7 +96,7 @@ namespace boredBets.Repositories
 
             int startIndex = (page - 1) * perPage;
 
-            var Search = allHappenedRaces.Skip(startIndex).Take(perPage).ToList().OrderBy(d=>d.RaceScheduled);
+            var Search = allHappenedRaces.Skip(startIndex).Take(perPage).ToList().OrderByDescending(d=>d.RaceScheduled);
 
             var result = new
             {
