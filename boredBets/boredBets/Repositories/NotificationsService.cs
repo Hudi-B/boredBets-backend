@@ -29,6 +29,14 @@ namespace boredBets.Repositories
         {
             var notifications = await _context.Notifications.Where(n=>n.UserId==UserId && n.Seen == false).OrderBy(n=>n.Created).ToListAsync();
 
+            foreach (var notification in notifications)
+            {
+                notification.Seen = true;
+            }
+
+            await _context.SaveChangesAsync();
+
+
             return notifications;
         }
     }
