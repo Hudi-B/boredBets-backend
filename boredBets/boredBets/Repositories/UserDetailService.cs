@@ -1,6 +1,7 @@
 ﻿using boredBets.Models;
 using boredBets.Models.Dtos;
 using boredBets.Repositories.Interface;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 
 namespace boredBets.Repositories
@@ -14,14 +15,53 @@ namespace boredBets.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Transaction>> GetAllTransactionsByUserId(Guid UserId)
+        public async Task<IEnumerable<object>> GetAllTransactionsByUserId(Guid UserId)
         {
-            var result = await _context.Transactions.Where(t => t.UserId == UserId).OrderBy(t => t.Created).ToListAsync();
-            if (result==null)
+            var results = await _context.Transactions.Where(t => t.UserId == UserId).OrderBy(t => t.Created).ToListAsync();
+
+            if (results==null)
             {
                 return null;
             }
-            return result;
+
+            var transactions = new List<object>();
+
+            foreach (var result in results)
+            {
+                string transactionType;
+                switch (result.TransactionType)
+                {
+                    case 0:
+                        transactionType = "Deposit";
+                        break;
+                    case 1:
+                        transactionType = "Withdrawal";
+                        break;
+                    case 2:
+                        transactionType = "Bet";
+                        break;
+                    case 3:
+                        transactionType = "OutCome";
+                        break;
+                    default:
+                        transactionType = "Unknown";
+                        break;
+                }
+
+                var transaction = new
+                {
+                    Id = result.Id,
+                    UserId = result.UserId,
+                    Amount = result.Amount,
+                    Created = result.Created,
+                    Transaction_Type = transactionType,
+                    Detail = result.Detail,
+                };
+
+                transactions.Add(transaction);
+            }
+
+            return transactions;
         }
 
         public async Task<object> GetUserDetailByUserId(Guid UserId)
