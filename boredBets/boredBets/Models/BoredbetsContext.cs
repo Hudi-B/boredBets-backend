@@ -123,10 +123,10 @@ public partial class BoredbetsContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.ImageDeleteLink)
-                .HasMaxLength(60)
+                .HasMaxLength(255)
                 .HasColumnName("image_delete_link");
             entity.Property(e => e.ImageLink)
-                .HasMaxLength(60)
+                .HasMaxLength(255)
                 .HasColumnName("image_link");
         });
 
@@ -395,9 +395,7 @@ public partial class BoredbetsContext : DbContext
             entity.Property(e => e.Address)
                 .HasMaxLength(255)
                 .HasColumnName("address");
-            entity.Property(e => e.BirthDate)
-                .HasMaxLength(6)
-                .HasColumnName("birth_date");
+            entity.Property(e => e.BirthDate).HasColumnName("birth_date");
             entity.Property(e => e.Fullname)
                 .HasMaxLength(255)
                 .HasColumnName("fullname");

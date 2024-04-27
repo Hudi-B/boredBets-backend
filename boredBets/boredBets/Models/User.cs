@@ -11,17 +11,17 @@ public partial class User
 
     public string? Password { get; set; }
 
-    public DateTime? Created { get; set; }
+    public DateTime Created { get; set; }
 
     public string? RefreshToken { get; set; }
 
-    public bool? Admin { get; set; }
+    public bool Admin { get; set; }
 
     public string? Username { get; set; }
 
-    public decimal? Wallet { get; set; }
+    public decimal Wallet { get; set; }
 
-    public Guid? ImageId { get; set; }
+    public Guid ImageId { get; set; }
 
     public bool IsVerified { get; set; }
 

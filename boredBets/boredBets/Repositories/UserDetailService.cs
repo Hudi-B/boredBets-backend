@@ -4,6 +4,7 @@ using boredBets.Repositories.Interface;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace boredBets.Repositories
 {

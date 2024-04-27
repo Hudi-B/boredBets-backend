@@ -15,7 +15,7 @@ public partial class Horse
 
     public bool Stallion { get; set; }
 
-    public Guid JockeyId { get; set; }
+    public Guid? JockeyId { get; set; }
 
     public virtual Jockey? Jockey { get; set; }
 
