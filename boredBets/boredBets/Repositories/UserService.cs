@@ -287,7 +287,7 @@ namespace boredBets.Repositories
 
         public async Task<object> GetWalletByUserId(Guid UserId)
         {
-            var wallet = await _context.Users.FirstOrDefaultAsync(x => x.Id == UserId);
+            var wallet = await _context.Users.Include(x => x.UserDetail).FirstOrDefaultAsync(x => x.Id == UserId);
 
             if (wallet == null)
             {
@@ -295,7 +295,7 @@ namespace boredBets.Repositories
             }
 
             
-            return new {wallet = wallet.Wallet};
+            return new {wallet = wallet.Wallet, profit = wallet.UserDetail.Profit};
         }
 
         public async Task<object> UpdateWalletByUserId(Guid UserId,UserWalletDto wallet)

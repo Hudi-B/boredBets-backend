@@ -230,8 +230,6 @@ namespace boredBets.Repositories
         }
         #endregion
 
-
-
         public async Task checkRace()
         {
             var futureRaces = await raceInterface.GetAllFutureRaces();
