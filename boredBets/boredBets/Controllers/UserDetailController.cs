@@ -60,5 +60,19 @@ namespace boredBets.Controllers
             }
             return Ok(result);
         }
+
+        [HttpPut("Preferences")]
+        public async Task<ActionResult<UserDetail>> Preferences(Guid UserId, bool IsPrivate)
+        {
+            var result = await _userDetail.Preferences(UserId, IsPrivate);
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(result);
+        }
+
     }
 }

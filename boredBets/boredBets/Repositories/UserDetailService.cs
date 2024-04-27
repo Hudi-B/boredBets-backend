@@ -3,6 +3,7 @@ using boredBets.Models.Dtos;
 using boredBets.Repositories.Interface;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 
 namespace boredBets.Repositories
 {
@@ -157,6 +158,21 @@ namespace boredBets.Repositories
             }
         }
 
+        public async Task<object> Preferences(Guid UserId, bool IsPrivate)
+        {
+            var userExist = await _context.UserDetails.FirstOrDefaultAsync(u => u.UserId == UserId);
+
+            if (userExist == null) 
+            {
+                return null;
+            }
+
+            userExist.IsPrivate = IsPrivate;
+            await _context.SaveChangesAsync();
+
+            return userExist;
+        }
+
         public async Task<UserDetail> UpdateUserDetailByUserId(Guid UserId, UserDetailUpdateDto userDetailUpdateDto)
         {
             var existingUserDetail = await _context.UserDetails.FirstOrDefaultAsync(x => x.UserId == UserId);
@@ -169,7 +185,6 @@ namespace boredBets.Repositories
             existingUserDetail.Fullname = userDetailUpdateDto.Fullname;
             existingUserDetail.PhoneNum = userDetailUpdateDto.PhoneNum;
             existingUserDetail.Address = userDetailUpdateDto.Address;
-            existingUserDetail.IsPrivate = userDetailUpdateDto.IsPrivate;
             existingUserDetail.BirthDate = userDetailUpdateDto.BirthDate;
 
            
