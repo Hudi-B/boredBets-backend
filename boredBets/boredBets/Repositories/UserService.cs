@@ -234,7 +234,43 @@ namespace boredBets.Repositories
             return response;
         }
 
-        
+        public async Task<object> UserLoginByRefreshToken(string RefreshToken)
+        {
+            var user = await _context.Users
+                                          .Include(x => x.UserCards)
+                                          .Include(x => x.UserDetail)
+                                          .Include(x => x.UserBets)
+                                          .Include(x => x.Image)
+                                          .FirstOrDefaultAsync(x => x.RefreshToken == RefreshToken);
+            if (user == null)
+            {
+                return null;
+            }
+            if (!user.IsVerified)
+            {
+                return user.Id;
+            }
+            var accessToken = GenerateAccessToken(user.Id.ToString());
+            var refreshToken = GenerateRefreshToken(user.Id.ToString());
+
+            user.RefreshToken = refreshToken;
+            await _context.SaveChangesAsync();
+
+
+            var response = new
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+                Id = user.Id,
+                Wallet = user.Wallet,
+                username = user.Username,
+                Admin = user.Admin,
+                ImageUrl = user.Image.ImageLink
+            };
+
+            return response;
+        }
+
 
         public async Task<IEnumerable<User>> GetAllUser()
         {
@@ -360,39 +396,9 @@ namespace boredBets.Repositories
             return null;
         }
 
-        public async Task<object> UserLoginByRefreshToken(string RefreshToken)
-        {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.RefreshToken == RefreshToken);
-
-            if (user == null) 
-            {
-                return "0";
-            }
-
-            var accessToken = GenerateAccessToken(user.Id.ToString());
-            var refreshToken = GenerateRefreshToken(user.Id.ToString());
-
-            user.RefreshToken = refreshToken;
-            await _context.SaveChangesAsync();
-
-
-            var response = new
-            {
-                AccessToken = accessToken,
-                RefreshToken = refreshToken,
-                Id = user.Id,
-                Wallet = user.Wallet,
-                Admin = user.Admin,
-            };
-
-            return response;
-
-
-        }
-
         public async Task<object> GetUserDetailsByUserId(Guid UserId)
         {
-            var user = await  _context.Users.FirstOrDefaultAsync(x => x.Id == UserId);
+            var user = await  _context.Users.Include(x => x.Image).FirstOrDefaultAsync(x => x.Id == UserId);
 
             if (user == null) 
             {
@@ -400,28 +406,41 @@ namespace boredBets.Repositories
             }
 
             var userDetail = await _context.UserDetails.FirstOrDefaultAsync(x => x.UserId == user.Id);
-
-            if (userDetail.IsPrivate == true) 
+            if (userDetail.IsPrivate == true)
             {
-                var privateResult = new {
-                    userDetail.User.Username,
-                    userDetail.User.Created,
-                    userDetail.User.Admin,
-                    userDetail.IsPrivate,
+                var privateResult = new
+                {
+                    Username = userDetail.User.Username,
+                    Created = userDetail.User.Created,
+                    Admin = userDetail.User.Admin,
+                    Profit = userDetail.Profit,
+                    IsPrivate = userDetail.IsPrivate,
+                    ProfilePicture = user.Image.ImageLink, // Placeholder for profile picture
                 };
 
                 return privateResult;
             }
 
-            var userAlltimeBets = _context.UserBets.Where(x=>x.UserId==user.Id).ToList();
+            var userAlltimeBets = _context.UserBets.Where(x => x.UserId == user.Id).ToList();
 
-            var result = new {
-                Fullname=userDetail.Fullname,
-                Birthdate=userDetail.BirthDate,
-                Wallet=userDetail.User.Wallet,
-                AllTimeBets=userAlltimeBets.Count(),
+            var result = new
+            {
+                Username = userDetail.User.Username,
+                Created = userDetail.User.Created,
+                Admin = userDetail.User.Admin,
+                IsPrivate = userDetail.IsPrivate,
+                Fullname = userDetail.Fullname,
+                Email = user.Email,
+                Phone = userDetail.PhoneNum,
+                Address = userDetail.Address,
+                Profit = userDetail.Profit,
+                Birthdate = userDetail.BirthDate,
+                Wallet = userDetail.User.Wallet,
+                AllTimeBets = userAlltimeBets.Count(),
                 WonBets = userAlltimeBets.Count(e => e.BetAmount > 0),
+                ProfilePicture = user.Image.ImageLink, // Placeholder for profile picture
             };
+
 
             return result;
         }
