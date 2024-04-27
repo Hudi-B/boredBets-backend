@@ -171,7 +171,7 @@ namespace boredBets.Repositories
                 Fullname = "-",
                 Address = "-",
                 IsPrivate = true,
-                BirthDate = DateTime.Parse("1111.01.01"),
+                BirthDate = DateOnly.Parse("1111.01.01"),
                 PhoneNum = "-",
             };
 
