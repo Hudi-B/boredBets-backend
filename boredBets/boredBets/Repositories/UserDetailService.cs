@@ -26,7 +26,7 @@ namespace boredBets.Repositories
 
             if (results.Count == 0) 
             {
-                return null;
+                return new List<object>();
             }
 
             var transactions = new List<object>();
