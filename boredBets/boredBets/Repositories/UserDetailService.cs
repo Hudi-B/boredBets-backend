@@ -15,11 +15,14 @@ namespace boredBets.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<object>> GetAllTransactionsByUserId(Guid UserId)
+        public async Task<IEnumerable<object>> GetAllTransactionsByUserId(Guid userId)
         {
-            var results = await _context.Transactions.Where(t => t.UserId == UserId).OrderBy(t => t.Created).ToListAsync();
+            var results = await _context.Transactions
+                .Where(t => t.UserId == userId)
+                .OrderBy(t => t.Created)
+                .ToListAsync();
 
-            if (results==null)
+            if (results.Count == 0) 
             {
                 return null;
             }
@@ -48,21 +51,41 @@ namespace boredBets.Repositories
                         break;
                 }
 
-                var transaction = new
+                if (result.TransactionType!=0 && result.TransactionType!=1)
                 {
-                    Id = result.Id,
-                    UserId = result.UserId,
-                    Amount = result.Amount,
-                    Created = result.Created,
-                    Transaction_Type = transactionType,
-                    Detail = result.Detail,
-                };
+                    var transaction = new
+                    {
+                        Id = result.Id,
+                        UserId = result.UserId,
+                        Amount = result.Amount,
+                        Created = result.Created,
+                        Transaction_Type = transactionType,
+                        Detail = result.Detail,
+                    };
 
-                transactions.Add(transaction);
+                    transactions.Add(transaction);
+                }
+                else
+                {
+                    var cardName = _context.UserCards.FirstOrDefault(c => c.CreditcardNum == result.Detail);
+
+                    var transaction = new
+                    {
+                        Id = result.Id,
+                        UserId = result.UserId,
+                        Amount = result.Amount,
+                        Created = result.Created,
+                        Transaction_Type = transactionType,
+                        CardName = cardName.CardName,
+                    };
+
+                    transactions.Add(transaction);
+                }
             }
 
             return transactions;
         }
+
 
         public async Task<object> GetUserDetailByUserId(Guid UserId)
         {
