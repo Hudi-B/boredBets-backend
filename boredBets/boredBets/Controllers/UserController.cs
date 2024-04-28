@@ -245,5 +245,18 @@ namespace boredBets.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("ForgotYourPassword")]
+        public async Task<ActionResult<string>> ForgotYourPassword(string Email)
+        {
+            var result = await userInterface.ForgotYourPassword(Email);
+
+            if (result == null) 
+            {
+                return NotFound();
+            }
+
+            return Ok(result);
+        }
     }
 }

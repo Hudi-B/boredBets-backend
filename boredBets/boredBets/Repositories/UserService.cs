@@ -547,5 +547,34 @@ namespace boredBets.Repositories
 
             return "Success";
         }
+
+        public async Task<string> ForgotYourPassword(string Email)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == Email);
+
+            if (user == null) 
+            {
+                return null;
+            }
+            string password = GenerateCode();
+            user.Password = HashPassword(password);
+            await _context.SaveChangesAsync();
+
+            var result = serviceLocator.GetService<IEmailInterface>();
+
+            string email_body = $@"
+                    <html>
+                    <body>
+                        <p>Dear {user.Username}, Welcome to boredBets!</p>
+                        <p>Your password has been changed</p>
+                        <h2>{password}</h2>
+                        <p>If this action wasn't initiated by you, please disregard this email. Failure to verify your account within an hour will result in automatic termination.</p>
+                        <p>Thank you</p>
+                    </body>
+                    </html>";
+            result.SendEmail(new EmailDTO(user.Email, "Welcome to boredBets", email_body));
+
+            return "Success";
+        }
     }
 }
