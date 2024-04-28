@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.CompilerServices;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace boredBets.Repositories
 {
@@ -193,30 +194,35 @@ namespace boredBets.Repositories
 
             #region ReadFile
 
-            string staticData = AppDomain.CurrentDomain.BaseDirectory.ToString() + "../../../staticData/";
+            string _maleHorses = FilePathConstants.MaleHorses;
+            string _femaleHorses = FilePathConstants.FemaleHorses;
+            string _countries = FilePathConstants.Countries;
+            string _horseFirst = FilePathConstants.HorseFirst;
+            string _horseSecond = FilePathConstants.HorseSecond;
+
 
             StreamReader sr;
-            sr = new StreamReader(staticData + "maleHorses.txt");
+            sr = new StreamReader(_maleHorses);
             while (!sr.EndOfStream)
             {
                 maleHorseName.Add(sr.ReadLine());
             }
-            sr = new StreamReader(staticData + "femaleHorses.txt");
+            sr = new StreamReader(_femaleHorses);
             while (!sr.EndOfStream)
             {
                 femaleHorseName.Add(sr.ReadLine());
             }
-            sr = new StreamReader(staticData + "countries.txt");
+            sr = new StreamReader(_countries);
             while (!sr.EndOfStream)
             {
                 Countries.Add(sr.ReadLine());
             }
-            sr = new StreamReader(staticData + "horseFirst.txt");
+            sr = new StreamReader(_horseFirst);
             while (!sr.EndOfStream)
             {
                 horseFirst.Add(sr.ReadLine());
             }
-            sr = new StreamReader(staticData + "horseSecond.txt");
+            sr = new StreamReader(_horseSecond);
             while (!sr.EndOfStream)
             {
                 horseSecond.Add(sr.ReadLine());
