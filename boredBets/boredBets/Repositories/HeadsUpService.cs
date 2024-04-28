@@ -221,7 +221,6 @@ namespace boredBets.Repositories
                             BetAmount = userBet.BetAmount,
                             Winnings = moneyWon
                         };
-                        //await EveryDayNotifications(user.Id);
                         winnerBets.Add(betInfo);
                     }
                 }

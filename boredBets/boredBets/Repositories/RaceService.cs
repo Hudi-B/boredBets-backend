@@ -2,16 +2,11 @@
 using boredBets.Models.Dtos;
 using boredBets.Repositories.Interface;
 using boredBets.Repositories.Viewmodels;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
-using static boredBets.Repositories.HeadsUpService;
-using System.Collections.Generic;
 
 namespace boredBets.Repositories
 {
-    
+
 
     public class RaceService : IRaceInterface
     {
@@ -263,28 +258,13 @@ namespace boredBets.Repositories
                     .ToListAsync();
             }
 
-            List<string> Tracks = new List<string>();
-
-            #region ReadFile
-
-            string _tracks = FilePathConstants.Tracks;
-            StreamReader sr = new StreamReader(_tracks);
-            while (!sr.EndOfStream)
-            {
-                Tracks.Add(sr.ReadLine());
-            }
-            sr.Close();
-            #endregion
-
-
             var latestRace = _context.Races
                                             .Where(r => r.RaceScheduled > DateTime.UtcNow)
                                             .OrderByDescending(r => r.RaceScheduled)
                                             .FirstOrDefault();
 
-
-            var trackz = await _context.Tracks.ToListAsync();
-            int maxTrakc = trackz.Count();
+            var tracks = await _context.Tracks.ToListAsync();
+            int maxTrakc = tracks.Count();
             for (int i = 0; i < quantity; i++)
             {
                 Guid raceId = Guid.NewGuid();
@@ -295,7 +275,7 @@ namespace boredBets.Repositories
                     RaceTime = rnd.Next(3, 11),
                     RaceScheduled = latestRace != null ? latestRace.RaceScheduled.AddMinutes((i + 1) * rnd.Next(8,10)) : DateTime.UtcNow.AddMinutes((i + 1) * rnd.Next(5, 10)),
                     Rain = Convert.ToBoolean(rainValue),
-                    TrackId = trackz[rnd.Next(maxTrakc)].Id
+                    TrackId = tracks[rnd.Next(maxTrakc)].Id
                 };
 
                 for (int j = 0; j < 20; j++)
