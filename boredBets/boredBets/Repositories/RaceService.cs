@@ -266,8 +266,9 @@ namespace boredBets.Repositories
             List<string> Tracks = new List<string>();
 
             #region ReadFile
-            string staticData = AppDomain.CurrentDomain.BaseDirectory.ToString() + "../../../staticData/";
-            StreamReader sr = new StreamReader(staticData + "trackNames.txt");
+
+            string _tracks = FilePathConstants.Tracks;
+            StreamReader sr = new StreamReader(_tracks);
             while (!sr.EndOfStream)
             {
                 Tracks.Add(sr.ReadLine());
