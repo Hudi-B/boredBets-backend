@@ -140,39 +140,44 @@ namespace boredBets.Repositories
                 List<string> Countries = new List<string>();
 
                 #region ReadFile
-                string staticData = AppDomain.CurrentDomain.BaseDirectory.ToString() + "../../../staticData/";
+                string _familyNames = FilePathConstants.FamilyNames;
+                string _maleNames = FilePathConstants.MaleNames;
+                string _femaleNames = FilePathConstants.FemaleNames;
+                string _maleMiddleNames = FilePathConstants.MaleMiddleNames;
+                string _femaleMiddleNames = FilePathConstants.FemaleMiddleNames;
+                string _countries = FilePathConstants.Countries;
 
                 StreamReader sr;
-                sr = new StreamReader(staticData + "familyNames.txt");
+                sr = new StreamReader(_familyNames);
                 while (!sr.EndOfStream)
                 {
                     familyNames.Add(sr.ReadLine());
                 }
 
-                sr = new StreamReader(staticData + "maleNames.txt");
+                sr = new StreamReader(_maleNames);
                 while (!sr.EndOfStream)
                 {
                     maleNames.Add(sr.ReadLine());
                 }
 
-                sr = new StreamReader(staticData + "femaleNames.txt");
+                sr = new StreamReader(_femaleNames);
                 while (!sr.EndOfStream)
                 {
                     femaleNames.Add(sr.ReadLine());
                 }
 
-                sr = new StreamReader(staticData + "maleMiddleNames.txt");
+                sr = new StreamReader(_maleMiddleNames);
                 while (!sr.EndOfStream)
                 {
                     maleMiddleNames.Add(sr.ReadLine());
                 }
 
-                sr = new StreamReader(staticData + "femaleMiddleNames.txt");
+                sr = new StreamReader(_femaleMiddleNames);
                 while (!sr.EndOfStream)
                 {
                     femaleMiddleNames.Add(sr.ReadLine());
                 }
-                sr = new StreamReader(staticData + "countries.txt");
+                sr = new StreamReader(_countries);
                 while (!sr.EndOfStream)
                 {
                     Countries.Add(sr.ReadLine());
