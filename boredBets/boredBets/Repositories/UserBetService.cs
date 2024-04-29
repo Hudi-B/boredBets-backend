@@ -149,6 +149,7 @@ namespace boredBets.Repositories
                 Amount = userBetCreateDto.BetAmount,
                 Created = DateTime.UtcNow,
                 TransactionType = 2,
+                Detail = userBetCreateDto.RaceId.ToString()
             };
 
             user.Wallet -= userbet.BetAmount;
