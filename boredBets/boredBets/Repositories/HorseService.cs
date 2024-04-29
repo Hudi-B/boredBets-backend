@@ -138,7 +138,7 @@ namespace boredBets.Repositories
                 Next3Races = raceSchedulesFuture,
                 Past3Races = raceSchedulesPast,
                 RaceParticipatedIn = horseParticipations.Count(),
-                AvgPlacement = avgPlacement,
+                AvgPlacement = Math.Round(avgPlacement, 2)
             };
 
             return result;

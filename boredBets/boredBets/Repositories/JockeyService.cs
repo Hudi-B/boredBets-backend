@@ -86,7 +86,7 @@ namespace boredBets.Repositories
                     Next3Races = raceSchedulesFuture,
                     Past3Races = raceSchedulesPast,
                     RaceParticipatedIn = Placements.Count(),
-                    AvgPlacement = Placements.Any() ? Placements.Average() : 0,
+                    AvgPlacement = Placements.Any() ? Math.Round(Placements.Average()) : 0,
                 };
                 return jockeyWithoutHorse;
             }
