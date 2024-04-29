@@ -13,11 +13,11 @@ public partial class UserDetail
 
     public bool IsPrivate { get; set; }
 
-    public DateOnly BirthDate { get; set; }
+    public DateOnly? BirthDate { get; set; }
 
     public string? PhoneNum { get; set; }
 
-    public decimal Profit { get; set; }
+    public decimal? Profit { get; set; }
 
     public virtual User User { get; set; } = null!;
 }

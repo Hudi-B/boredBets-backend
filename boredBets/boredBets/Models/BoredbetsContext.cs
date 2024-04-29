@@ -18,6 +18,8 @@ public partial class BoredbetsContext : DbContext
 
     public virtual DbSet<BetType> BetTypes { get; set; }
 
+    public virtual DbSet<ClaimedPromotion> ClaimedPromotions { get; set; }
+
     public virtual DbSet<Horse> Horses { get; set; }
 
     public virtual DbSet<Image> Images { get; set; }
@@ -86,6 +88,17 @@ public partial class BoredbetsContext : DbContext
             entity.Property(e => e.BetType1)
                 .HasMaxLength(20)
                 .HasColumnName("bet_type");
+        });
+
+        modelBuilder.Entity<ClaimedPromotion>(entity =>
+        {
+            entity.HasKey(e => e.UserId).HasName("PRIMARY");
+
+            entity.ToTable("claimed_promotion");
+
+            entity.HasIndex(e => e.UserId, "user_id_UNIQUE").IsUnique();
+
+            entity.Property(e => e.UserId).HasColumnName("user_id");
         });
 
         modelBuilder.Entity<Horse>(entity =>
