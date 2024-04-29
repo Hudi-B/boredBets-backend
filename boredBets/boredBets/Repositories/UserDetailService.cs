@@ -78,7 +78,7 @@ namespace boredBets.Repositories
                         Amount = result.Amount,
                         Created = result.Created,
                         Transaction_Type = transactionType,
-                        Detail = cardName!=null ? cardName.CardName : "Unknow card",
+                        Detail = cardName!=null ? cardName.CardName : "Unknown card",
                     };
 
                     transactions.Add(transaction);
