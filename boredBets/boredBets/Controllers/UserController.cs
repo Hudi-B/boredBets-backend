@@ -96,10 +96,10 @@ namespace boredBets.Controllers
             }
             return Ok(result);
         }
-        [HttpGet("GetUserDetailsByUserId")]
-        public async Task<object> GetUserDetailsByUserId(Guid UserId) 
+        [HttpGet("UserSinglePage")]
+        public async Task<object> UserSinglePage(Guid UserId) 
         {
-            var result = await userInterface.GetUserDetailsByUserId(UserId);
+            var result = await userInterface.UserSinglePage(UserId);
 
             if (result == "0") 
             {

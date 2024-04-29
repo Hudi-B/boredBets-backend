@@ -12,7 +12,7 @@ namespace boredBets.Repositories.Interface
         Task<object> GetNewAccessToken(Guid UserId, string refreshtoken);
         Task<string> VerificationCodeCheck(Guid UserId, string VerificationCode);
         Task<IEnumerable<User>> GetAllUser();
-        Task<object> GetUserDetailsByUserId(Guid UserId);
+        Task<object> UserSinglePage(Guid UserId);
         Task<object> UpdateUsernameByUserId(Guid UserId, UsernameDto username);
         Task<object> GetByUserId(Guid UserId);
         Task<object> DeleteUserById(Guid UserId);

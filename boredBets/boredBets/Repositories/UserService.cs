@@ -396,7 +396,7 @@ namespace boredBets.Repositories
             return null;
         }
 
-        public async Task<object> GetUserDetailsByUserId(Guid UserId)
+        public async Task<object> UserSinglePage(Guid UserId)
         {
             var user = await  _context.Users.Include(x => x.Image).FirstOrDefaultAsync(x => x.Id == UserId);
 
@@ -415,7 +415,7 @@ namespace boredBets.Repositories
                     Admin = userDetail.User.Admin,
                     Profit = userDetail.Profit,
                     IsPrivate = userDetail.IsPrivate,
-                    ProfilePicture = user.Image.ImageLink, // Placeholder for profile picture
+                    ProfilePicture = user.Image.ImageLink, 
                 };
 
                 return privateResult;
@@ -438,7 +438,7 @@ namespace boredBets.Repositories
                 Wallet = userDetail.User.Wallet,
                 AllTimeBets = userAlltimeBets.Count(),
                 WonBets = userAlltimeBets.Count(e => e.BetAmount > 0),
-                ProfilePicture = user.Image.ImageLink, // Placeholder for profile picture
+                ProfilePicture = user.Image.ImageLink, 
             };
 
 
