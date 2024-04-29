@@ -576,5 +576,28 @@ namespace boredBets.Repositories
 
             return "Success";
         }
+
+        public async Task<string> Bonus(Guid UserId)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == UserId);
+            var claimedPromotions = await _context.ClaimedPromotions.FirstOrDefaultAsync(u => u.UserId == UserId);
+
+            if (user == null || claimedPromotions!=null) 
+            {
+                return null;
+            }
+
+            user.Wallet += 5;
+
+            var dataclaimedByUser = new ClaimedPromotion
+            {
+                UserId = user.Id,
+            };
+
+            await _context.ClaimedPromotions.AddAsync(dataclaimedByUser);
+            await _context.SaveChangesAsync();
+
+            return "Success";
+        }
     }
 }

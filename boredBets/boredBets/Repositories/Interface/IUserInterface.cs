@@ -24,5 +24,6 @@ namespace boredBets.Repositories.Interface
         Task<string> UpdateImageByUserId(Guid UserId, ImageUpdateByUserId imageUpdate);
         Task<string> DeleteImageByUserId(Guid UserId, ImageUpdateByUserId imageUpdate);
         Task<string> ForgotYourPassword(string Email);
+        Task<string> Bonus(Guid UserId);
     }
 }

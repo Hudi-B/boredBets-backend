@@ -258,5 +258,18 @@ namespace boredBets.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("Bonus")]
+        public async Task<ActionResult<bool>> Bonus(Guid UserId)
+        {
+            var result = await userInterface.Bonus(UserId);
+
+            if (result == null)
+            {
+                return false;
+            }
+
+            return Ok(true);
+        }
     }
 }
