@@ -71,6 +71,11 @@ namespace boredBets.Repositories
                 {
                     var cardName = _context.UserCards.FirstOrDefault(c => c.CreditcardNum == result.Detail);
 
+                    if (cardName == null) 
+                    {
+                        return null;
+                    }
+
                     var transaction = new
                     {
                         Id = result.Id,
