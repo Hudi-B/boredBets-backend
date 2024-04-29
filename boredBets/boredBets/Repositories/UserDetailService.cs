@@ -71,11 +71,6 @@ namespace boredBets.Repositories
                 {
                     var cardName = _context.UserCards.FirstOrDefault(c => c.CreditcardNum == result.Detail);
 
-                    if (cardName == null) 
-                    {
-                        return null;
-                    }
-
                     var transaction = new
                     {
                         Id = result.Id,
@@ -83,7 +78,7 @@ namespace boredBets.Repositories
                         Amount = result.Amount,
                         Created = result.Created,
                         Transaction_Type = transactionType,
-                        CardName = cardName.CardName,
+                        CardName = cardName!=null ? cardName.CardName : "Unknow card",
                     };
 
                     transactions.Add(transaction);

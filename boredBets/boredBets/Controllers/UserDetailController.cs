@@ -43,11 +43,7 @@ namespace boredBets.Controllers
         public async Task<ActionResult<string>> GetAllTransactionsByUserId(Guid UserId) 
         {
             var result = await _userDetail.GetAllTransactionsByUserId(UserId);
-            if (result == null)
-            {
-                return "Unknow card";
-            }
-            else if (result.Count() == 0) 
+            if (result.Count() == 0) 
             {
                 return "No transaction found";
             }
