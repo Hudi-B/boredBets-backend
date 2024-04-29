@@ -10,5 +10,6 @@ namespace boredBets.Repositories.Interface
         Task<UserDetail> UpdateUserDetailByUserId(Guid UserId, UserDetailUpdateDto userDetailUpdateDto);
         Task<IEnumerable<object>> GetAllTransactionsByUserId(Guid UserId);
         Task<object> Preferences(Guid UserId,bool IsPrivate);
+        Task<bool> GetIsPrivateByUserId(Guid UserId);
     }
 }

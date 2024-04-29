@@ -88,6 +88,12 @@ namespace boredBets.Repositories
             return transactions;
         }
 
+        public async Task<bool> GetIsPrivateByUserId(Guid UserId)
+        {
+            var user = await _context.UserDetails.FirstOrDefaultAsync(u => u.UserId == UserId);
+
+            return user.IsPrivate;
+        }
 
         public async Task<object> GetUserDetailByUserId(Guid UserId)
         {

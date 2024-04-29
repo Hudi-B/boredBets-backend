@@ -50,6 +50,12 @@ namespace boredBets.Controllers
             return Ok(result);
         }
 
+        [HttpGet("GetIsPrivateByUserId")]
+        public async Task<ActionResult<bool>> GetIsPrivateByUserId(Guid UserId) 
+        {
+            return await _userDetail.GetIsPrivateByUserId(UserId);
+        }
+
         [HttpPut("UpdateUserDetailByUserId")]
         public async Task<ActionResult<UserDetail>> UpdateUserDetailByUserId(Guid UserId, UserDetailUpdateDto updateDto)
         {
