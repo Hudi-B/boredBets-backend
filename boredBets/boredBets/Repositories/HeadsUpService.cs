@@ -152,7 +152,10 @@ namespace boredBets.Repositories
                     foreach (var result in allRaceResults)
                     {
                         double inverted = Math.Round(2.5 / result.Chance * 0.9, 2);
-                        invertedChance.Add(result.Horse.Id, inverted);
+                        if (!invertedChance.ContainsKey(result.Horse.Id))
+                        {
+                            invertedChance.Add(result.Horse.Id, inverted);
+                        }
                     }
 
                     foreach (var userBet in userBets)
