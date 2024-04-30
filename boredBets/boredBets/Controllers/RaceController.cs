@@ -58,6 +58,19 @@ namespace boredBets.Controllers
         {
             return StatusCode(201, await _raceInterface.GetAllFutureRaces());
         }
+
+        [HttpGet("GetByAllRaces")]
+        public async Task<ActionResult<object>> GetByAllRaces()
+        {
+            var result = await _raceInterface.GetByAllRaces();
+
+            if (result == null)
+            {
+                return NoContent();
+            }
+            return Ok(result);
+        }
+
         [HttpGet("GetByRaceId")]
         public async Task<ActionResult<Race>> GetByRaceId(Guid Id)
         {

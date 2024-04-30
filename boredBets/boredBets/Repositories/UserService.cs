@@ -271,24 +271,31 @@ namespace boredBets.Repositories
             return response;
         }
 
-
-        public async Task<IEnumerable<User>> GetAllUser()
+        public async Task<IEnumerable<object>> GetAllUser()
         {
-            var result = await _context.Users
-                                 .Include(u => u.UserDetail)
-                                 .Select(u => new User
-                                 {
-                                     Id = u.Id,
-                                     Email = u.Email,
-                                     Admin = u.Admin
-                                 })
-                                 .ToListAsync();
-            if (result == null)
+            var users = await _context.Users.ToListAsync();
+
+            if (users.Count<0)
             {
                 return null;
             }
 
-            return result;
+            List<object> usersList = new List<object>();
+
+            foreach (var user in users)
+            {
+                var result = new 
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    Username = user.Username,
+                    Created = user.Created,
+                    Admin = user.Admin,
+                };
+                usersList.Add(result);
+            }
+
+            return usersList;
         }
 
         public async Task<object> GetNewAccessToken(Guid UserId, string refreshtoken)
@@ -595,6 +602,16 @@ namespace boredBets.Repositories
             };
 
             await _context.ClaimedPromotions.AddAsync(dataclaimedByUser);
+            await _context.SaveChangesAsync();
+
+            return "Success";
+        }
+
+        public async Task<string> UpdateAdminStatusByUserId(Guid UserId, bool Admin)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == UserId);
+
+            user.Admin = Admin;
             await _context.SaveChangesAsync();
 
             return "Success";

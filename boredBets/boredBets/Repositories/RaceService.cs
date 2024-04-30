@@ -3,6 +3,7 @@ using boredBets.Models.Dtos;
 using boredBets.Repositories.Interface;
 using boredBets.Repositories.Viewmodels;
 using Microsoft.EntityFrameworkCore;
+using System.Net.WebSockets;
 
 namespace boredBets.Repositories
 {
@@ -324,6 +325,35 @@ namespace boredBets.Repositories
             await userbetCalculation.userBetCalculation(raceSimulateService.simulateRace().Result);
 
             return "Success";
+        }
+
+        public async Task<IEnumerable<object>> GetByAllRaces()
+        {
+            var races = await _context.Races
+                                            .Include(t=>t.Track)
+                                            .OrderByDescending(d => d.RaceScheduled)
+                                            .ToListAsync();
+
+            if (races.Count<0)
+            {
+                return null;
+            }
+
+            List<object> racesList = new List<object>();
+
+            foreach (var race in races) 
+            {
+                var result = new
+                {
+                    Id = race.Id,
+                    RaceScheduled = race.RaceScheduled,
+                    Name = race.Track.Name,
+                    Country = race.Track.Country,
+                };
+                racesList.Add(result);
+            }
+
+            return racesList;
         }
     }
 }
