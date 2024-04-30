@@ -8,7 +8,7 @@
 
         // Properties from Track class
         public string? Country { get; set; }
-        public string? Track_Name { get; set; }
+        public string? Name { get; set; }
 
     }
 }
