@@ -83,10 +83,8 @@ namespace boredBets.Controllers
             return Ok(result);
         }
 
-
-        [Authorize]
         [HttpGet("GetAllUsers")]
-        public async Task<ActionResult<User>> GetAllUser() 
+        public async Task<ActionResult<object>> GetAllUser() 
         {
             var result = await userInterface.GetAllUser();
 

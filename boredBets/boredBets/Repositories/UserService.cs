@@ -271,24 +271,31 @@ namespace boredBets.Repositories
             return response;
         }
 
-
-        public async Task<IEnumerable<User>> GetAllUser()
+        public async Task<IEnumerable<object>> GetAllUser()
         {
-            var result = await _context.Users
-                                 .Include(u => u.UserDetail)
-                                 .Select(u => new User
-                                 {
-                                     Id = u.Id,
-                                     Email = u.Email,
-                                     Admin = u.Admin
-                                 })
-                                 .ToListAsync();
-            if (result == null)
+            var users = await _context.Users.ToListAsync();
+
+            if (users == null)
             {
                 return null;
             }
 
-            return result;
+            List<object> usersList = new List<object>();
+
+            foreach (var user in users)
+            {
+                var result = new 
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    Username = user.Username,
+                    Created = user.Created,
+                    Admin = user.Admin,
+                };
+                usersList.Add(result);
+            }
+
+            return usersList;
         }
 
         public async Task<object> GetNewAccessToken(Guid UserId, string refreshtoken)
