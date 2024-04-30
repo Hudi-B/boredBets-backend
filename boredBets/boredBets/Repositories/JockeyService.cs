@@ -129,61 +129,15 @@ namespace boredBets.Repositories
         {
             try
             {
-                List<string> familyNames = new List<string>();
+                List<string> familyNames = FilePathConstants.FamilyNames;
 
-                List<string> maleNames = new List<string>();
-                List<string> femaleNames = new List<string>();
+                List<string> maleNames = FilePathConstants.MaleNames;
+                List<string> femaleNames = FilePathConstants.FemaleNames;
 
-                List<string> maleMiddleNames = new List<string>();
-                List<string> femaleMiddleNames = new List<string>();
+                List<string> maleMiddleNames = FilePathConstants.MaleMiddleNames;
+                List<string> femaleMiddleNames = FilePathConstants .FemaleMiddleNames;
 
-                List<string> Countries = new List<string>();
-
-                #region ReadFile
-                string _familyNames = FilePathConstants.FamilyNames;
-                string _maleNames = FilePathConstants.MaleNames;
-                string _femaleNames = FilePathConstants.FemaleNames;
-                string _maleMiddleNames = FilePathConstants.MaleMiddleNames;
-                string _femaleMiddleNames = FilePathConstants.FemaleMiddleNames;
-                string _countries = FilePathConstants.Countries;
-
-                StreamReader sr;
-                sr = new StreamReader(_familyNames);
-                while (!sr.EndOfStream)
-                {
-                    familyNames.Add(sr.ReadLine());
-                }
-
-                sr = new StreamReader(_maleNames);
-                while (!sr.EndOfStream)
-                {
-                    maleNames.Add(sr.ReadLine());
-                }
-
-                sr = new StreamReader(_femaleNames);
-                while (!sr.EndOfStream)
-                {
-                    femaleNames.Add(sr.ReadLine());
-                }
-
-                sr = new StreamReader(_maleMiddleNames);
-                while (!sr.EndOfStream)
-                {
-                    maleMiddleNames.Add(sr.ReadLine());
-                }
-
-                sr = new StreamReader(_femaleMiddleNames);
-                while (!sr.EndOfStream)
-                {
-                    femaleMiddleNames.Add(sr.ReadLine());
-                }
-                sr = new StreamReader(_countries);
-                while (!sr.EndOfStream)
-                {
-                    Countries.Add(sr.ReadLine());
-                }
-                sr.Close();
-                #endregion
+                List<string> Countries = FilePathConstants.Countries;
 
                 Random random = new Random();
                 for (int i = 0; i < quantity; i++)

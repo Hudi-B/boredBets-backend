@@ -186,49 +186,11 @@ namespace boredBets.Repositories
                     select jockey.Id;
             }
 
-            List<string> maleHorseName = new List<string>();
-            List<string> femaleHorseName = new List<string>();
-            List<string> Countries = new List<string>();
-            List<string> horseFirst = new List<string>();
-            List<string> horseSecond = new List<string>();
-
-            #region ReadFile
-
-            string _maleHorses = FilePathConstants.MaleHorses;
-            string _femaleHorses = FilePathConstants.FemaleHorses;
-            string _countries = FilePathConstants.Countries;
-            string _horseFirst = FilePathConstants.HorseFirst;
-            string _horseSecond = FilePathConstants.HorseSecond;
-
-
-            StreamReader sr;
-            sr = new StreamReader(_maleHorses);
-            while (!sr.EndOfStream)
-            {
-                maleHorseName.Add(sr.ReadLine());
-            }
-            sr = new StreamReader(_femaleHorses);
-            while (!sr.EndOfStream)
-            {
-                femaleHorseName.Add(sr.ReadLine());
-            }
-            sr = new StreamReader(_countries);
-            while (!sr.EndOfStream)
-            {
-                Countries.Add(sr.ReadLine());
-            }
-            sr = new StreamReader(_horseFirst);
-            while (!sr.EndOfStream)
-            {
-                horseFirst.Add(sr.ReadLine());
-            }
-            sr = new StreamReader(_horseSecond);
-            while (!sr.EndOfStream)
-            {
-                horseSecond.Add(sr.ReadLine());
-            }
-            sr.Close();
-            #endregion
+            List<string> maleHorseName = FilePathConstants.MaleHorses;
+            List<string> femaleHorseName = FilePathConstants.FemaleHorses;
+            List<string> Countries = FilePathConstants.Countries;
+            List<string> horseFirst = FilePathConstants.HorseFirst;
+            List<string> horseSecond = FilePathConstants.HorseSecond;
 
             Random random = new Random();
             int maleHorseNameCount = maleHorseName.Count();
@@ -275,7 +237,6 @@ namespace boredBets.Repositories
                     Stallion = male,
                     JockeyId = freeJockeyIds[i]
                 };
-
                 await _context.Horses.AddAsync(newHorse);
             }
 
