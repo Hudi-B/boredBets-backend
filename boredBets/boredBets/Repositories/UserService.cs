@@ -275,7 +275,7 @@ namespace boredBets.Repositories
         {
             var users = await _context.Users.ToListAsync();
 
-            if (users == null)
+            if (users.Count<0)
             {
                 return null;
             }
