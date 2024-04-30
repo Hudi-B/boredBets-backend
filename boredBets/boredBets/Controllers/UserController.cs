@@ -141,6 +141,13 @@ namespace boredBets.Controllers
             }
             return Ok(result);
         }
+        [HttpPut("UpdateAdminStatusByUserId")]
+        public async Task<ActionResult<UserWalletDto>> UpdateAdminStatusByUserId(Guid UserId, bool Admin)
+        {
+            var result = await userInterface.UpdateAdminStatusByUserId(UserId, Admin);
+
+            return Ok(result);
+        }
 
         [HttpPut("UpdateWalletByUserId")]
         public async Task<ActionResult<UserWalletDto>> UpdateWalletByUserId(Guid UserId, UserWalletDto wallet)

@@ -606,5 +606,15 @@ namespace boredBets.Repositories
 
             return "Success";
         }
+
+        public async Task<string> UpdateAdminStatusByUserId(Guid UserId, bool Admin)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == UserId);
+
+            user.Admin = Admin;
+            await _context.SaveChangesAsync();
+
+            return "Success";
+        }
     }
 }
