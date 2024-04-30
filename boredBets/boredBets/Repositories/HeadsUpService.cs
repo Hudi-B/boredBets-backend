@@ -35,7 +35,6 @@ namespace boredBets.Repositories
             var comparer = new CustomComparer();
             foreach (var race in racesToSimulate)
             {
-                
                 var participant = race.Participants.ToList();
                 List<Result> horses = new List<Result>();
                 foreach (var item in race.Participants)
@@ -54,7 +53,6 @@ namespace boredBets.Repositories
                 allRaceResults.AddRange(horses);
                 
                 await _context.SaveChangesAsync();
-                
             }
 
             await userBetCalculation(allRaceResults);
@@ -124,6 +122,7 @@ namespace boredBets.Repositories
 
         }
         #endregion
+
         #region UserBetCalculation
         public async Task<object> userBetCalculation(List<Result> allRaceResults)
         {
